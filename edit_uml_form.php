@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Question type class for uml is defined here.
+ * The editing form for uml question type is defined here.
  *
  * @package     qtype_uml
  * @copyright   copy
@@ -24,19 +24,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/questionlib.php');
-
 /**
- * Class that represents a uml question type.
+ * uml question editing form defition.
  *
- * The class loads, saves and deletes questions of the type uml
- * to and from the database and provides methods to help with editing questions
- * of this type. It can also provide the implementation for import and export
- * in various formats.
+ * You should override functions as necessary from the parent class located at
+ * /question/type/edit_question_form.php.
  */
-class qtype_uml extends question_type {
+class qtype_uml_edit_form extends question_edit_form {
 
-    // Override functions as necessary from the parent class located at
-    // /question/type/questiontype.php.
-
+    /**
+     * Returns the question type name.
+     *
+     * @return string The question type name.
+     */
+    public function qtype() {
+        return 'uml';
+    }
 }
