@@ -25,4 +25,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Moodle UML';
+$string['pluginname'] = 'Moodle UML (BFH)';
+$string['pluginname_help'] = 'UML questions consist of interactive editor where responders can design their diagram.';
+$string['pluginname_link'] = 'question/type/uml';
+$string['pluginnameadding'] = 'Adding a UML question';
+$string['pluginnameediting'] = 'Editing a UML question';
+$string['pluginnamesummary'] = 'UML questions consist of interactive editor where responders can design their diagram.';
+$string['privacy:metadata'] = 'The UML question type plugin does not store any personal data.';

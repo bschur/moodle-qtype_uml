@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class that represents a uml question.
  */
-class qtype_uml_question extends uml {
+class qtype_uml_question extends qtype_uml {
 
     /**
      * Returns data to be included in the form submission.
