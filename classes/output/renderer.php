@@ -43,6 +43,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
+        syslog(LOG_INFO, 'formulation_and_controls called');
         return parent::formulation_and_controls($qa, $options);
     }
 
@@ -55,6 +56,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @return string HTML fragment.
      */
     protected function specific_feedback(question_attempt $qa) {
+        syslog(LOG_INFO, 'question_attempt called');
         return parent::specific_feedback($qa);
     }
 
@@ -67,6 +69,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @return string HTML fragment.
      */
     protected function correct_response(question_attempt $qa) {
+        syslog(LOG_INFO, 'correct_response called');
         return parent::correct_response($qa);
     }
 

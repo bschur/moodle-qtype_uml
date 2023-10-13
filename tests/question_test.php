@@ -31,6 +31,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 class question_test extends advanced_testcase {
     /**
      * Test simple
+     * @covers ::self()
      */
     public function test_simple() {
         $this->assertTrue(true, true);

@@ -37,10 +37,10 @@ class qtype_uml_question extends qtype_uml {
     /**
      * Returns data to be included in the form submission.
      *
-     * @return array|string.
+     * @return array.
      */
     public function get_expected_data() {
-        return array();
+        return [];
     }
 
     /**
@@ -64,6 +64,7 @@ class qtype_uml_question extends qtype_uml {
      * @return bool True if the user can access this file.
      */
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
+        syslog(LOG_INFO, 'check_file_access called');
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 }
