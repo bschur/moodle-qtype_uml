@@ -13,3 +13,36 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace qtype_uml;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/uml/questiontype.php');
+require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once($CFG->dirroot . '/question/type/uml/edit_uml_form.php');
+
+class questiontype_test extends advanced_testcase {
+
+    /** @var object qtype */
+    protected $qtype;
+
+    protected function setUp(): void {
+        $this->qtype = new qtype_uml();
+    }
+
+    protected function tearDown(): void {
+        $this->qtype = null;
+    }
+
+    /**
+     * Test get_name
+     *
+     * @covers ::get_name()
+     */
+    public function test_name() {
+        $this->assertEquals($this->qtype->name(), 'uml');
+    }
+}
