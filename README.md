@@ -1,6 +1,6 @@
 # Moodle-UML (BFH)
 
-![](https://github.com/bschur/moodle-uml/actions/workflows/moodle-plugin-ci.yml/badge.svg)
+![](https://github.com/bschur/moodle-qtype_uml/actions/workflows/moodle-plugin-ci.yml/badge.svg)
 
 ## Installing via uploaded ZIP file ##
 
