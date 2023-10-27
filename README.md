@@ -1,6 +1,12 @@
-# Moodle-UML (BFH)
+# UML question type for Moodle
 
 ![](https://github.com/bschur/moodle-qtype_uml/actions/workflows/moodle-plugin-ci.yml/badge.svg)
+[![GitHub
+Release](https://img.shields.io/github/release/bschur/moodle-qtype_uml.svg)](https://github.com/bschur/moodle-qtype_uml/releases)
+[![PHP Support](https://img.shields.io/badge/php-7.4--8.2-blue)](https://github.com/bschur/moodle-qtype_uml/actions)
+[![Moodle Support](https://img.shields.io/badge/Moodle-4.1--4.3-orange)](https://github.com/bschur/moodle-qtype_uml/actions)
+[![License GPL-3.0](https://img.shields.io/github/license/bschur/moodle-qtype_uml?color=lightgrey)](https://github.com/bschur/moodle-qtype_uml/blob/main/LICENSE)
+[![GitHub contributors](https://img.shields.io/github/contributors/bschur/moodle-qtype_uml)](https://github.com/bschur/moodle-qtype_uml/graphs/contributors)
 
 ## Installing via uploaded ZIP file ##
 
