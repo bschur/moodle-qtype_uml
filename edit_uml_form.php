@@ -48,6 +48,7 @@ class qtype_uml_edit_form extends question_edit_form {
      *
      * @param $mform
      * @return void
+     * @throws coding_exception editor not found
      */
     protected function definition_inner($mform) {
         // Generate the label html.

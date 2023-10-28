@@ -27,35 +27,35 @@
  */
 class qtype_uml_question extends question_graded_automatically_with_countback {
 
-    public function get_expected_data() {
-        // TODO: Implement get_expected_data() method.
-    }
-
-    public function get_correct_response() {
-        // TODO: Implement get_correct_response() method.
-    }
-
-    public function is_complete_response(array $response) {
-        // TODO: Implement is_complete_response() method.
-    }
-
-    public function is_same_response(array $prevresponse, array $newresponse) {
-        // TODO: Implement is_same_response() method.
-    }
-
-    public function summarise_response(array $response) {
-        // TODO: Implement summarise_response() method.
-    }
-
-    public function get_validation_error(array $response) {
-        // TODO: Implement get_validation_error() method.
-    }
-
-    public function grade_response(array $response) {
-        // TODO: Implement grade_response() method.
-    }
-
-    public function compute_final_grade($responses, $totaltries) {
-        // TODO: Implement compute_final_grade() method.
-    }
+    //public function get_expected_data() {
+    //    // TODO: Implement get_expected_data() method.
+    //}
+    //
+    //public function get_correct_response() {
+    //    // TODO: Implement get_correct_response() method.
+    //}
+    //
+    //public function is_complete_response(array $response) {
+    //    // TODO: Implement is_complete_response() method.
+    //}
+    //
+    //public function is_same_response(array $prevresponse, array $newresponse) {
+    //    // TODO: Implement is_same_response() method.
+    //}
+    //
+    //public function summarise_response(array $response) {
+    //    // TODO: Implement summarise_response() method.
+    //}
+    //
+    //public function get_validation_error(array $response) {
+    //    // TODO: Implement get_validation_error() method.
+    //}
+    //
+    //public function grade_response(array $response) {
+    //    // TODO: Implement grade_response() method.
+    //}
+    //
+    //public function compute_final_grade($responses, $totaltries) {
+    //    // TODO: Implement compute_final_grade() method.
+    //}
 }
