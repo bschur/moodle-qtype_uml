@@ -50,26 +50,26 @@ class qtype_uml_edit_form extends question_edit_form {
      * @return void
      */
     protected function definition_inner($mform) {
-        // Generate the label html
-        $labelHtml = '
+        // Generate the label html.
+        $labelhtml = '
         <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
             <label id="id_idnumber_label" class="d-inline word-break " for="id_idnumber">
                 ' . get_string("correctanswer", "qtype_uml") . '
             </label>
         </div>';
 
-        // Load the editor and generate html
-        $filePath = dirname(__FILE__) . '/editor/index.html';
-        $myfile = fopen($filePath, "r") or die("Unable to load editor");
-        $editorContent = fread($myfile, filesize($filePath));
-        fclose($myfile);
+        // Load the editor and generate html.
+        $filepath = dirname(__FILE__) . '/editor/index.html';
+        $file = fopen($filepath, "r") || die("Unable to load editor");
+        $editorcontent = fread($file, filesize($filepath));
+        fclose($file);
 
-        $editorHTML = '
+        $editorhtml = '
         <div class="col-md-9 form-inline align-items-start felement" data-fieldtype="text">
-            ' . $editorContent . '
+            ' . $editorcontent . '
         </div>';
 
-        $mform->addElement('html', '<div class="form-group row fitem">' . $labelHtml . $editorHTML . '</div>');
+        $mform->addElement('html', '<div class="form-group row fitem">' . $labelhtml . $editorhtml . '</div>');
     }
 
     /**
@@ -81,7 +81,7 @@ class qtype_uml_edit_form extends question_edit_form {
     public function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
 
-        // TODO read from LS and put editor output into correctanswer field
+        // TODO read from LS and put editor output into correctanswer field.
 
         return $question;
     }
