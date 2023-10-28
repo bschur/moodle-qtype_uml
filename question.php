@@ -43,6 +43,8 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
 
     /**
      * Checks whether the response is complete
+     *
+     * @param array $response the response
      */
     public function is_complete_response(array $response) {
         // TODO: Implement is_complete_response() method.
@@ -50,6 +52,9 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
 
     /**
      * Checks if two responses are the same
+     *
+     * @param array $prevresponse the previous response
+     * @param array $newresponse the current response to check
      */
     public function is_same_response(array $prevresponse, array $newresponse) {
         // TODO: Implement is_same_response() method.
@@ -57,6 +62,8 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
 
     /**
      * Summarizes the response
+     *
+     * @param array $response the response
      */
     public function summarise_response(array $response) {
         // TODO: Implement summarise_response() method.
@@ -64,6 +71,8 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
 
     /**
      * Gets validation errors
+     *
+     * @param array $response the response
      */
     public function get_validation_error(array $response) {
         // TODO: Implement get_validation_error() method.
@@ -71,6 +80,8 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
 
     /**
      * Generates the grade response
+     *
+     * @param array $response the response
      */
     public function grade_response(array $response) {
         // TODO: Implement grade_response() method.
@@ -78,6 +89,9 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
 
     /**
      * Computes the final grade
+     *
+     * @param array $responses all responses
+     * @param array $totaltries all entries
      */
     public function compute_final_grade($responses, $totaltries) {
         // TODO: Implement compute_final_grade() method.

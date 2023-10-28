@@ -45,6 +45,9 @@ class qtype_uml_edit_form extends question_edit_form {
 
     /**
      * Loads and sets up the editor
+     *
+     * @param MoodleQuickForm $mform The form to load the inputs to
+     * @throws coding_exception Editor could not being loaded
      */
     protected function definition_inner($mform) {
         // Generate the label html.
@@ -71,12 +74,14 @@ class qtype_uml_edit_form extends question_edit_form {
 
     /**
      * Reads the question data and processes it
+     *
+     * @param object $question The question to process
+     * @return object
      */
-    public function data_preprocessing($question) {
-        $question = parent::data_preprocessing($question);
-
+    protected function data_preprocessing($question) {
+        $processresult = parent::data_preprocessing($question);
         // TODO read from LS and put editor output into correctanswer field.
 
-        return $question;
+        return $processresult;
     }
 }
