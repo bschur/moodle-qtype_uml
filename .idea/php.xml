@@ -12,6 +12,7 @@
   <component name="PHPCodeSnifferOptionsConfiguration">
     <option name="customRuleset" value="$PROJECT_DIR$/../../../local/codechecker" />
     <option name="highlightLevel" value="WARNING" />
+    <option name="showSniffs" value="true" />
     <option name="transferred" value="true" />
   </component>
   <component name="PhpCodeSniffer">
