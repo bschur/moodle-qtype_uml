@@ -45,10 +45,6 @@ class qtype_uml_edit_form extends question_edit_form {
 
     /**
      * Loads and sets up the editor
-     *
-     * @param $mform
-     * @return void
-     * @throws coding_exception editor not found
      */
     protected function definition_inner($mform) {
         // Generate the label html.
@@ -75,9 +71,6 @@ class qtype_uml_edit_form extends question_edit_form {
 
     /**
      * Reads the question data and processes it
-     *
-     * @param $question
-     * @return void
      */
     public function data_preprocessing($question) {
         $question = parent::data_preprocessing($question);
