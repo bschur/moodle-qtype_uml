@@ -60,7 +60,10 @@ class qtype_uml_edit_form extends question_edit_form {
 
         // Load the editor and generate html.
         $filepath = dirname(__FILE__) . '/editor/index.html';
-        $file = fopen($filepath, "r") || die("Unable to load editor");
+        $file = fopen($filepath, "r");
+        if (!$file) {
+            die();
+        }
         $editorcontent = fread($file, filesize($filepath));
         fclose($file);
 
