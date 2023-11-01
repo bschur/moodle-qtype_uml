@@ -3,10 +3,28 @@
   <head>
     <meta charset="utf-8" />
     <title>WebGL Demo</title>
+    <link rel="stylesheet" href="./editor.css" type="text/css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gl-matrix/2.8.1/gl-matrix-min.js"
+      integrity="sha512-zhHQR0/H5SEBL3Wn6yYSaTTZej12z0hVZKOv3TwCUXT1z5qeqGcXJLLrbERYRScEDDpYIJhPC1fk31gqR783iQ=="
+      crossorigin="anonymous"
+      defer></script>
     <script src="webgl-editor.js" type="module"></script>
   </head>
 
   <body>
-    <canvas id="glcanvas" width="640" height="480"></canvas>
+    <div class="split left">
+      <div class="centered">
+
+        <canvas id="canvas1" width="640" height="480"></canvas>
+      </div>
+    </div>
+    
+    <div class="split right">
+      <div class="centered">
+        <canvas id="canvas2" width="640" height="480"></canvas>
+      </div>
+    </div> 
+
   </body>
 </html>
