@@ -6,14 +6,14 @@
     top: 0;
     overflow-x: hidden;
     padding-top: 20px;
-    border-color: black;  
-    border-style: solid;  
+
   }
   
   /* Control the left side */
   .left {
-    left: 0;
-    width: 30%;
+      border-right: black solid;
+      left: 0;
+      width: 30%;
   }
   
   /* Control the right side */
@@ -22,11 +22,14 @@
     width: 70%;
   }
   
-  /* If you want the content centered horizontally and vertically */
+
   .centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
+/* If you want the content centered horizontally and verticallyposition: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-20%, -20%);
+text-align: center;*/
+      padding-left: 50px;
+      width: 80%;
+      height: 80%;
+}
