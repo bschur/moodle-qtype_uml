@@ -6,16 +6,11 @@ main();
 function main() {
  // Holen Sie sich die Canvas-Elemente
 const canvas = document.getElementById('canvas1');
-
-//const gl = canvas.getContext('webgl');
-
-// Zeichnen Sie etwas auf canvas1
- //gl.clearColor(1.0, 1.0, 0.0, 1.0);
- //gl.clear(gl2.COLOR_BUFFER_BIT);
-
+const canvasTool = document.getElementById('canvas');
 
 
  const ctx = canvas.getContext("2d");
+ const ctx2 = canvasTool.getContext("2d");
  let isDragging = false;
  let offsetX, offsetY;
 
@@ -31,6 +26,12 @@ const canvas = document.getElementById('canvas1');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = object.color;
   ctx.fillRect(object.x, object.y, object.width, object.height);
+ }
+
+ function drawObjectTool() {
+  ctx2.clearRect(0, 0, canvas.width, canvas.height);
+  ctx2.fillStyle = object.color;
+  ctx2.fillRect(object.x, object.y, object.width, object.height);
  }
 
  canvas.addEventListener("mousedown", (event) => {
@@ -59,20 +60,14 @@ const canvas = document.getElementById('canvas1');
   }
  });
 
+ canvasTool.addEventListener("click", (event) => {
+  drawObject();
+ });
  canvas.addEventListener("mouseup", () => {
   isDragging = false;
  });
 
- drawObject();
 
-
-
-
-
-
-
-
- 
-
+ drawObjectTool();
 
 }
