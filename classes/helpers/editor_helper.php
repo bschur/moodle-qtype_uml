@@ -25,7 +25,7 @@
 /**
  * Helper functions for the editor loading
  */
-public class EditorHelper {
+class EditorHelper {
     /**
      * Loads the editor html with the given display options
      *
