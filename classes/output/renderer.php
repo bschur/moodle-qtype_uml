@@ -22,6 +22,10 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/../helpers/editor_helper.php');
+
 /**
  * Generates the output for uml questions.
  *
@@ -42,7 +46,12 @@ class qtype_uml_renderer extends qtype_renderer {
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         syslog(LOG_INFO, 'formulation_and_controls called');
-        return parent::formulation_and_controls($qa, $options);
+
+        $result = parent::formulation_and_controls($qa, $options);
+
+        $result .= EditorHelper::load_editor_html($options);
+
+        return $result;
     }
 
     /**
@@ -70,5 +79,4 @@ class qtype_uml_renderer extends qtype_renderer {
         syslog(LOG_INFO, 'correct_response called');
         return parent::correct_response($qa);
     }
-
 }

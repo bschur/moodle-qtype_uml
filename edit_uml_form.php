@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once(__DIR__ . '/classes/helpers/editor_helper.php');
 
 /**
  * uml question editing form defition.
@@ -58,14 +59,7 @@ class qtype_uml_edit_form extends question_edit_form {
             </label>
         </div>';
 
-        // Load the editor and generate html.
-        $filepath = dirname(__FILE__) . '/editor/index.html';
-        $file = fopen($filepath, "r");
-        if (!$file) {
-            die();
-        }
-        $editorcontent = fread($file, filesize($filepath));
-        fclose($file);
+        $editorcontent = EditorHelper::load_editor_html();
 
         $editorhtml = '
         <div class="col-md-9 form-inline align-items-start felement" data-fieldtype="text">
