@@ -1,24 +1,30 @@
 main();
 
-//
-// start here
-//
+/**
+ * start point
+ */
 function main() {
- // Holen Sie sich die Canvas-Elemente
-const canvas = document.getElementById('canvas1');
-const canvasTool = document.getElementById('canvas');
-
+ // get canvas elements
+ const canvas = document.getElementById('canvasEditor');
+ const canvasTool = document.getElementById('canvasTool');
  const ctx = canvas.getContext("2d");
-
  const ctx2 = canvasTool.getContext("2d");
+
+ //set responsive size for canvas
+ canvas.width = canvas.parentElement.clientWidth;
+ canvas.height = canvas.parentElement.clientHeight
+ canvasTool.width = canvasTool.parentElement.clientWidth;
+ canvasTool.height = canvasTool.parentElement.clientHeight;
+
  let offsetX, offsetY;
  let draggedObject = null;
 
  const objects = [];
 
-
+ /**
+  * Draw all instances in the Editor
+  */
  function drawObject() {
-
   ctx.clearRect(0, 0, canvasTool.width, canvasTool.height);
   for (const obj of objects) {
    ctx.fillStyle = obj.color;
@@ -26,6 +32,9 @@ const canvasTool = document.getElementById('canvas');
   }
  }
 
+ /**
+  * Draw a instance for each object in the Toolbox
+  */
  function drawObjectTool() {
   ctx2.clearRect(0, 0, canvas.width, canvas.height);
   ctx2.fillStyle = "blue";
@@ -47,7 +56,9 @@ const canvasTool = document.getElementById('canvas');
   return null; // No object found
  }
 
- 
+ /**
+  * Save dragged object
+  */
  canvas.addEventListener("mousedown", (event) => {
   const x = event.clientX - canvas.getBoundingClientRect().left;
   const y = event.clientY - canvas.getBoundingClientRect().top;
@@ -60,6 +71,9 @@ const canvasTool = document.getElementById('canvas');
   }
  });
 
+ /**
+  * refresh Editor for every mousemove
+  */
  canvas.addEventListener("mousemove", (event) => {
   if (draggedObject) {
    const x = event.clientX - canvas.getBoundingClientRect().left;
@@ -71,13 +85,17 @@ const canvasTool = document.getElementById('canvas');
   }
  });
 
+ /**
+  * save location of dragged object
+  */
  canvas.addEventListener("mouseup", () => {
-  console.log(draggedObject);
   objects[draggedObject.id] = draggedObject;
-  draggedObject = null; // Zurücksetzen des gezogenen Objekts
+  draggedObject = null;
  });
 
-
+ /**
+  * Draw a instance of a clickt object (in Toolbox) on the editor
+  */
  canvasTool.addEventListener("click", (event) => {
   const obj = {
    id: objects.length + 1,
@@ -90,8 +108,6 @@ const canvasTool = document.getElementById('canvas');
   objects.push(obj);
   drawObject();
  });
-
-
 
  drawObjectTool();
 
