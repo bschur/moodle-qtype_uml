@@ -1,0 +1,40 @@
+html, body {
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Split the screen in half */
+.split {
+   /* height: 60%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    overflow-x: hidden;
+    padding-top: 20px;
+    ;
+*/
+    display: flex;
+    flex-direction: row;
+    height: 70%;
+  }
+
+  /* Control the left side */
+  .left {
+      border-right: black solid;
+      // left: 0;
+      flex: 30%;
+      background-color: red;
+  }
+
+  /* Control the right side */
+  .right {
+    /* right: 0;*/
+    flex: 70%;
+      background-color: blue;
+  }
+
+canvas {
+    top: 0;
+    /* margin-left: 10px;*/
+
+}
