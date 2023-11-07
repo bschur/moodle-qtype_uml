@@ -2,13 +2,13 @@ const template = document.createElement('template');
 
 template.innerHTML = `
 <style>
-/* Split the screen in half */
-.split {
+:host {   
     display: flex;
     flex-direction: row;
-    gap: 2px;
+    flex-wrap: wrap;
     height: 100%;
     width: 100%;
+    gap: 2px;
     padding: 4px;
 }
 
@@ -27,22 +27,21 @@ canvas {
 }
 </style>
 
-<div class="split">
-    <div class=" left">
-        <canvas id="canvasTool"></canvas>
-    </div>
-    <div class=" right">
-        <canvas id="canvasEditor"></canvas>
-    </div>
+<div class="left">
+    <canvas id="canvasTool"></canvas>
+</div>
+<div class="right">
+    <canvas id="canvasEditor"></canvas>
 </div>
 `
 
 class WebglEditor extends HTMLElement {
     objects = [];
 
-    canvas = null
+    canvasEditor = null
+    ctxEditor = null
+
     canvasTool = null
-    ctx = null
     ctxTool = null
 
     offsetX = 0
@@ -55,11 +54,14 @@ class WebglEditor extends HTMLElement {
         this._shadowRoot.appendChild(template.content.cloneNode(true));
     }
 
+    /**
+     * Is being called when the web-component is connected
+     */
     connectedCallback() {
-        this.canvas = this._shadowRoot.getElementById('canvasEditor');
-        this.ctx = this.canvas.getContext("2d");
-        this.canvas.width = this.canvas.parentElement.clientWidth;
-        this.canvas.height = this.canvas.parentElement.clientHeight;
+        this.canvasEditor = this._shadowRoot.getElementById('canvasEditor');
+        this.ctxEditor = this.canvasEditor.getContext("2d");
+        this.canvasEditor.width = this.canvasEditor.parentElement.clientWidth;
+        this.canvasEditor.height = this.canvasEditor.parentElement.clientHeight;
 
         this.canvasTool = this._shadowRoot.getElementById('canvasTool');
         this.ctxTool = this.canvasTool.getContext("2d");
@@ -73,10 +75,10 @@ class WebglEditor extends HTMLElement {
      * Draw all instances in the Editor
      */
     drawObject() {
-        this.ctx.clearRect(0, 0, this.canvasTool.width, this.canvasTool.height);
+        this.ctxEditor.clearRect(0, 0, this.canvasTool.width, this.canvasTool.height);
         for (const obj of this.objects) {
-            this.ctx.fillStyle = obj.color;
-            this.ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+            this.ctxEditor.fillStyle = obj.color;
+            this.ctxEditor.fillRect(obj.x, obj.y, obj.width, obj.height);
         }
     }
 
@@ -84,7 +86,7 @@ class WebglEditor extends HTMLElement {
      * Draw a instance for each object in the Toolbox
      */
     drawObjectTool() {
-        this.ctxTool.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctxTool.clearRect(0, 0, this.canvasEditor.width, this.canvasEditor.height);
         this.ctxTool.fillStyle = "blue";
         this.ctxTool.fillRect(100, 100, 50, 50);
     }
@@ -108,9 +110,9 @@ class WebglEditor extends HTMLElement {
         /**
          * Save dragged object
          */
-        this.canvas.addEventListener("mousedown", (event) => {
-            const x = event.clientX - this.canvas.getBoundingClientRect().left;
-            const y = event.clientY - this.canvas.getBoundingClientRect().top;
+        this.canvasEditor.addEventListener("mousedown", (event) => {
+            const x = event.clientX - this.canvasEditor.getBoundingClientRect().left;
+            const y = event.clientY - this.canvasEditor.getBoundingClientRect().top;
 
             this.draggedObject = this.findTopObject(x, y);
 
@@ -123,10 +125,10 @@ class WebglEditor extends HTMLElement {
         /**
          * refresh Editor for every mousemove
          */
-        this.canvas.addEventListener("mousemove", (event) => {
+        this.canvasEditor.addEventListener("mousemove", (event) => {
             if (this.draggedObject) {
-                const x = event.clientX - this.canvas.getBoundingClientRect().left;
-                const y = event.clientY - this.canvas.getBoundingClientRect().top;
+                const x = event.clientX - this.canvasEditor.getBoundingClientRect().left;
+                const y = event.clientY - this.canvasEditor.getBoundingClientRect().top;
                 this.draggedObject.x = x - this.offsetX;
                 this.draggedObject.y = y - this.offsetY;
                 this.objects[this.draggedObject.id - 1] = this.draggedObject;
@@ -137,7 +139,7 @@ class WebglEditor extends HTMLElement {
         /**
          * save location of dragged object
          */
-        this.canvas.addEventListener("mouseup", () => {
+        this.canvasEditor.addEventListener("mouseup", () => {
             this.objects[this.draggedObject.id] = this.draggedObject;
             this.draggedObject = null;
         });

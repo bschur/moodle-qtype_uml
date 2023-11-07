@@ -33,24 +33,25 @@ class EditorHelper {
      * @return false|string|void
      */
     public static function load_editor_html(question_display_options $options = null) {
-        // Load the editor and generate html.
-        $webComponentFilePath = dirname(__FILE__) . '/../../editor/webgl-editor.js';
-        $webComponentFile = fopen($webComponentFilePath, "r");
-        if (!$webComponentFile) {
+        // Load the web component script.
+        $webcomponentfilepath = dirname(__FILE__) . '/../../editor/webgl-editor.js';
+        $webcomponentfile = fopen($webcomponentfilepath, "r");
+        if (!$webcomponentfile) {
             die();
         }
-        $webComponentScriptContent = fread($webComponentFile, filesize($webComponentFilePath));
-        fclose($webComponentFile);
+        $webcomponentscript = fread($webcomponentfile, filesize($webcomponentfilepath));
+        fclose($webcomponentfile);
 
-        $editorContent = '<script>' . $webComponentScriptContent . '</script> <webgl-editor></webgl-editor>';
+        // Wrap the script inside a html script tag and use the web component directly.
+        $editorcontent = '<script>' . $webcomponentscript . '</script><webgl-editor/>';
 
         if (isset($options)) {
             if ($options->readonly) {
                 // TODO handle readonly.
-                $editorContent .= ' [readonly]';
+                $editorcontent .= ' [readonly]';
             }
         }
 
-        return $editorContent;
+        return $editorcontent;
     }
 }
