@@ -5,7 +5,6 @@ template.innerHTML = `
 :host {   
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
     height: 100%;
     width: 100%;
     gap: 2px;
@@ -13,12 +12,12 @@ template.innerHTML = `
 }
 
 .left {
-    flex: 0 0 min(10%, 150px);
+    width: 30%;
     background-color: grey;
 }
 
 .right {
-    flex: 0 0 100%;
+    width: 100%;
     background-color: grey;
 }
 
@@ -58,24 +57,23 @@ class WebglEditor extends HTMLElement {
      * Is being called when the web-component is connected
      */
     connectedCallback() {
-        this.canvasEditor = this._shadowRoot.getElementById('canvasEditor');
-        this.ctxEditor = this.canvasEditor.getContext("2d");
-        this.canvasEditor.width = this.canvasEditor.parentElement.clientWidth;
-        this.canvasEditor.height = this.canvasEditor.parentElement.clientHeight;
+        const editorInformation = this.getCanvasInformation('canvasEditor');
+        this.canvasEditor = editorInformation.element
+        this.ctxEditor = editorInformation.context
 
-        this.canvasTool = this._shadowRoot.getElementById('canvasTool');
-        this.ctxTool = this.canvasTool.getContext("2d");
-        this.canvasTool.width = this.canvasTool.parentElement.clientWidth;
-        this.canvasTool.height = this.canvasTool.parentElement.clientHeight;
+        const toolInformation = this.getCanvasInformation('canvasTool')
+        this.canvasTool = toolInformation.element
+        this.ctxTool = toolInformation.context
 
-        this.postSetup();
+        this.setupListeners()
+        this.drawObjectTool()
     }
 
     /**
      * Draw all instances in the Editor
      */
-    drawObject() {
-        this.ctxEditor.clearRect(0, 0, this.canvasTool.width, this.canvasTool.height);
+    drawObjectEditor() {
+        this.ctxEditor.clearRect(0, 0, this.canvasEditor.width, this.canvasEditor.height);
         for (const obj of this.objects) {
             this.ctxEditor.fillStyle = obj.color;
             this.ctxEditor.fillRect(obj.x, obj.y, obj.width, obj.height);
@@ -86,7 +84,7 @@ class WebglEditor extends HTMLElement {
      * Draw a instance for each object in the Toolbox
      */
     drawObjectTool() {
-        this.ctxTool.clearRect(0, 0, this.canvasEditor.width, this.canvasEditor.height);
+        this.ctxTool.clearRect(0, 0, this.canvasTool.width, this.canvasTool.height);
         this.ctxTool.fillStyle = "blue";
         this.ctxTool.fillRect(100, 100, 50, 50);
     }
@@ -106,7 +104,7 @@ class WebglEditor extends HTMLElement {
         return null; // No object found
     }
 
-    postSetup() {
+    setupListeners() {
         /**
          * Save dragged object
          */
@@ -132,7 +130,7 @@ class WebglEditor extends HTMLElement {
                 this.draggedObject.x = x - this.offsetX;
                 this.draggedObject.y = y - this.offsetY;
                 this.objects[this.draggedObject.id - 1] = this.draggedObject;
-                this.drawObject();
+                this.drawObjectEditor();
             }
         });
 
@@ -158,10 +156,21 @@ class WebglEditor extends HTMLElement {
                 color: "blue",
             };
             this.objects.push(obj);
-            this.drawObject();
+            this.drawObjectEditor();
         });
+    }
 
-        this.drawObjectTool();
+    getCanvasInformation(id) {
+        const element = this._shadowRoot.getElementById(id);
+        const context = element.getContext("2d");
+
+        element.width = element.parentElement.clientWidth;
+        element.height = element.parentElement.clientHeight;
+
+        return {
+            element,
+            context
+        }
     }
 }
 
