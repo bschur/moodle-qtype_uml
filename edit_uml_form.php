@@ -22,6 +22,11 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once(__DIR__ . '/classes/helpers/editor_helper.php');
+
 /**
  * uml question editing form defition.
  *
@@ -37,5 +42,43 @@ class qtype_uml_edit_form extends question_edit_form {
      */
     public function qtype() {
         return 'uml';
+    }
+
+    /**
+     * Loads and sets up the editor
+     *
+     * @param MoodleQuickForm $mform The form to load the inputs to
+     * @throws coding_exception Editor could not being loaded
+     */
+    protected function definition_inner($mform) {
+        // Generate the label html.
+        $labelhtml = '
+        <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
+            <label id="id_idnumber_label" class="d-inline word-break " for="id_idnumber">
+                ' . get_string("correctanswer", "qtype_uml") . '
+            </label>
+        </div>';
+
+        $editorcontent = EditorHelper::load_editor_html();
+
+        $editorhtml = '
+        <div class="col-md-9 form-inline align-items-start felement" data-fieldtype="text">
+            ' . $editorcontent . '
+        </div>';
+
+        $mform->addElement('html', '<div class="form-group row fitem">' . $labelhtml . $editorhtml . '</div>');
+    }
+
+    /**
+     * Reads the question data and processes it
+     *
+     * @param object $question The question to process
+     * @return object
+     */
+    protected function data_preprocessing($question) {
+        $processresult = parent::data_preprocessing($question);
+        // TODO read from LS and put editor output into correctanswer field.
+
+        return $processresult;
     }
 }
