@@ -1,4 +1,4 @@
-const templateCode = `
+const templateHTML = `
 <style>
     :host {
         display: flex;
@@ -29,24 +29,31 @@ const templateCode = `
 `
 
 class WebglEditor extends HTMLElement {
+    canvasEditor = null;
+    ctxEditor = null;
+
+    canvasTool = null;
+    ctxTool = null;
+
+    offsetX = 0;
+    offsetY = 0;
+    draggedObject = null;
+
+    objects = [];
+
+    get attributeDiagram() {
+        return this.getAttribute('diagram');
+    }
+
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
 
         // Create the template for the shadow DOM
-        this.shadowRoot.innerHTML = templateCode;
-
-        // Initialize properties
-        this.objects = [];
-        this.canvasEditor = null;
-        this.ctxEditor = null;
-        this.canvasTool = null;
-        this.ctxTool = null;
-        this.offsetX = 0;
-        this.offsetY = 0;
-        this.draggedObject = null;
+        this.shadowRoot.innerHTML = templateHTML;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     connectedCallback() {
         // Initialize canvas elements and contexts
         this.initCanvas('canvasEditor', 'ctxEditor');
@@ -57,6 +64,13 @@ class WebglEditor extends HTMLElement {
 
         // Initial rendering
         this.drawObjectTool();
+
+        this.displayDiagramSchema(this.attributeDiagram);
+    }
+
+    // noinspection JSUnusedGlobalSymbols
+    detachedCallback() {
+        this.emitDiagramChanged()
     }
 
     initCanvas(canvasId, contextId) {
@@ -68,6 +82,24 @@ class WebglEditor extends HTMLElement {
 
         this[canvasId] = canvas;
         this[contextId] = context;
+    }
+
+    displayDiagramSchema(diagram) {
+        if (diagram) {
+            this.objects = JSON.parse(diagram)
+            this.drawObjectEditor()
+        }
+    }
+
+    emitDiagramChanged() {
+        // TODO convert real diagram to string
+        const diagram = JSON.stringify(this.objects)
+
+        const event = new CustomEvent('diagramChanged', {
+            bubbles: true,
+            detail: {diagram}
+        });
+        this.dispatchEvent(event)
     }
 
     drawObjectEditor() {
@@ -119,6 +151,8 @@ class WebglEditor extends HTMLElement {
                 this.draggedObject.x = x - this.offsetX;
                 this.draggedObject.y = y - this.offsetY;
                 this.objects[this.draggedObject.id - 1] = this.draggedObject;
+
+                this.emitDiagramChanged()
                 this.drawObjectEditor();
             }
         });
@@ -131,7 +165,7 @@ class WebglEditor extends HTMLElement {
             }
         });
 
-        // Draw a instance of a clickt object (in Toolbox) on the editor
+        // Draw an instance of a click object (in Toolbox) on the editor
         this.canvasTool.addEventListener('click', (event) => {
             event.preventDefault();
             const obj = {
@@ -143,6 +177,8 @@ class WebglEditor extends HTMLElement {
                 color: 'blue',
             };
             this.objects.push(obj);
+
+            this.emitDiagramChanged()
             this.drawObjectEditor();
         });
     }

@@ -30,9 +30,10 @@ class EditorHelper {
      * Loads the editor html with the given display options
      *
      * @param question_display_options|null $options
+     * @param string|null $diagram
      * @return false|string|void
      */
-    public static function load_editor_html(question_display_options $options = null) {
+    public static function load_editor_html(question_display_options $options = null, string $diagram = null) {
         // Load the web component script.
         $webcomponentfilepath = dirname(__FILE__) . '/../../editor/webgl-editor.js';
         $webcomponentfile = fopen($webcomponentfilepath, "r");
@@ -43,7 +44,7 @@ class EditorHelper {
         fclose($webcomponentfile);
 
         // Wrap the script inside a html script tag and use the web component directly.
-        $editorcontent = '<script>' . $webcomponentscript . '</script><webgl-editor/>';
+        $editorcontent = '<script>' . $webcomponentscript . '</script><webgl-editor diagram="' . $diagram . '" />';
 
         if (isset($options)) {
             if ($options->readonly) {
