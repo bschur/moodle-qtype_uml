@@ -27,24 +27,62 @@
  */
 class EditorHelper {
     /**
-     * Loads the editor html with the given display options
+     * @var string The id which is set to the hidden input field which holds the diagram.
+     */
+    private static string $diagramhiddeninputid = 'diagram-input';
+
+    /**
+     * Loads a files content relative to project root directory and returns its content.
+     *
+     * @param string $filepath
+     * @return false|string|void
+     */
+    private static function get_file_content(string $filepath) {
+        $absolutefilepath = dirname(__FILE__) . '/../../' . $filepath;
+        $file = fopen($absolutefilepath, "r");
+        if (!$file) {
+            die();
+        }
+        $filecontent = fread($file, filesize($absolutefilepath));
+        fclose($file);
+        return $filecontent;
+    }
+
+    /**
+     * Loads the change handler functionality as HTML content.
+     *
+     * @return string
+     */
+    private static function load_change_handler_content() {
+        // Set up the input field, which holds the diagram content.
+        $diagraminputid = uniqid(self::$diagramhiddeninputid);
+        $diagraminputhtml = '<input type="hidden" id="' . $diagraminputid . '" name="diagram">';
+
+        $changehandlerscript = '<script>' . self::get_file_content('editor/diagram-change-handler.js') . '</script>';
+        // Replace the placeholder {{id}} for referencing the input with the according input id.
+        $changehandlerscript = str_replace("{{id}}", $diagraminputid, $changehandlerscript);
+
+        return $diagraminputhtml . $changehandlerscript;
+    }
+
+    /**
+     * Loads the editor html with the given display options.
      *
      * @param question_display_options|null $options
      * @param string|null $diagram
      * @return false|string|void
      */
     public static function load_editor_html(question_display_options $options = null, string $diagram = null) {
-        // Load the web component script.
-        $webcomponentfilepath = dirname(__FILE__) . '/../../editor/webgl-editor.js';
-        $webcomponentfile = fopen($webcomponentfilepath, "r");
-        if (!$webcomponentfile) {
-            die();
-        }
-        $webcomponentscript = fread($webcomponentfile, filesize($webcomponentfilepath));
-        fclose($webcomponentfile);
+        // Load the different scripts needed for the editor.
+        $webcomponentscript = '<script>' . self::get_file_content('editor/uml-editor.js') . '</script>';
+
+        // Load the change handler.
+        // TODO check wheter to load or not.
+        $changehandlercontent = self::load_change_handler_content();
 
         // Wrap the script inside a html script tag and use the web component directly.
-        $editorcontent = '<script>' . $webcomponentscript . '</script><webgl-editor diagram="' . $diagram . '" />';
+        $editorcontent =
+                $webcomponentscript . $changehandlercontent . '<uml-editor diagram="' . $diagram . '" />';
 
         if (isset($options)) {
             if ($options->readonly) {

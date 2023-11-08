@@ -3,10 +3,8 @@
 <head>
     <meta charset="utf-8"/>
     <title>UML Editor</title>
-    <script src="./webgl-editor.js" type="module"></script>
-    <script>
-        document.querySelector("html").addEventListener("diagramChanged", (event) => console.log("diagram changed", event))
-    </script>
+    <script src="uml-editor.js" type="module"></script>
+    <script src="diagram-change-handler.js" type="module"></script>
     <style>
         html, body {
             height: 100vh;
@@ -17,6 +15,6 @@
     </style>
 </head>
 <body>
-    <webgl-editor />
+    <uml-editor />
 </body>
 </html>
