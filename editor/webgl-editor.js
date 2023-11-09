@@ -1,3 +1,5 @@
+
+
 const templateCode = `
 <style>
     :host {
@@ -16,18 +18,27 @@ const templateCode = `
     
     .right {
         width: 100%;
-        background-color: grey;
+        
+    }
+    #myholder {
+        width: 1000px;
+        height: 700px;
+       
+    
     }
 </style>
-    
+
+
 <div class="left">
     <canvas id="canvasTool"></canvas>
 </div>
 <div class="right">
+<div id="myholder"></div>
     <canvas id="canvasEditor"></canvas>
 </div>
-`
 
+
+`
 class WebglEditor extends HTMLElement {
     constructor() {
         super();
@@ -45,6 +56,7 @@ class WebglEditor extends HTMLElement {
         this.offsetX = 0;
         this.offsetY = 0;
         this.draggedObject = null;
+        this.myholder = null;
     }
 
     connectedCallback() {
@@ -68,6 +80,45 @@ class WebglEditor extends HTMLElement {
 
         this[canvasId] = canvas;
         this[contextId] = context;
+
+
+        var namespace = joint.shapes;
+                
+        var graph = new joint.dia.Graph({}, { cellNamespace: namespace });
+
+        var myholder = new joint.dia.Paper({
+            el: this.myholder,
+            model: graph,
+            width: 600,
+            height: 100,
+            gridSize: 1,
+            cellViewNamespace: namespace
+        });
+
+        var rect = new joint.shapes.standard.Rectangle();
+        rect.position(100, 30);
+        rect.resize(100, 40);
+        rect.attr({
+            body: {
+                fill: 'blue'
+            },
+            label: {
+                text: 'Hello',
+                fill: 'white'
+            }
+        });
+        rect.addTo(graph);
+
+        var rect2 = rect.clone();
+        rect2.translate(300, 0);
+        rect2.attr('label/text', 'World!');
+        rect2.addTo(graph);
+
+        var link = new joint.shapes.standard.Link();
+        link.source(rect);
+        link.target(rect2);
+        link.addTo(graph);
+
     }
 
     drawObjectEditor() {
