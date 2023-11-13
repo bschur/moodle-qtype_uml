@@ -49,7 +49,10 @@ class qtype_uml_renderer extends qtype_renderer {
 
         $result = parent::formulation_and_controls($qa, $options);
 
-        $result .= EditorHelper::load_editor_html($options);
+        // TODO get the diagram from the question attempt.
+        $response = '';
+
+        $result .= EditorHelper::load_editor_html($response, $options);
 
         return $result;
     }

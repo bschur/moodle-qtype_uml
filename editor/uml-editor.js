@@ -63,6 +63,10 @@ class UmlEditor extends HTMLElement {
         return this.getAttribute('diagram');
     }
 
+    get attributeAllowEdit() {
+        return this.getAttribute('allowEdit') === '1';
+    }
+
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
@@ -77,11 +81,16 @@ class UmlEditor extends HTMLElement {
         this.initCanvas('canvasEditor', 'ctxEditor');
         this.initCanvas('canvasTool', 'ctxTool');
 
-        // Setup event listeners
-        this.setupListeners();
+        if (this.attributeAllowEdit) {
+            // Initial rendering
+            this.drawObjectTool();
 
-        // Initial rendering
-        this.drawObjectTool();
+            // Setup event listeners
+            this.setupListeners();
+        } else {
+            // Hide toolbox (left part)
+            this.shadowRoot.querySelector('.left').style.display = 'none';
+        }
 
         this.displayDiagramSchema(this.attributeDiagram);
     }

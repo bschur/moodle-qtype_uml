@@ -56,6 +56,8 @@ class EditorHelper {
     private static function load_change_handler_content() {
         // Set up the input field, which holds the diagram content.
         $diagraminputid = uniqid(self::$diagramhiddeninputid);
+
+        // TODO generate this in the according moodle function (not in this class).
         $diagraminputhtml = '<input type="hidden" id="' . $diagraminputid . '" name="diagram">';
 
         $changehandlerscript = '<script>' . self::get_file_content('editor/diagram-change-handler.js') . '</script>';
@@ -68,27 +70,24 @@ class EditorHelper {
     /**
      * Loads the editor html with the given display options.
      *
-     * @param question_display_options|null $options
      * @param string|null $diagram
+     * @param question_display_options|null $options
      * @return false|string|void
      */
-    public static function load_editor_html(question_display_options $options = null, string $diagram = null) {
+    public static function load_editor_html(string $diagram = null, question_display_options $options = null) {
+        // Default edit mode when no options set. Otherwise, check whether not in readonly mode.
+        $iseditmode = !isset($options) || !$options->readonly;
+
         // Load the different scripts needed for the editor.
         $webcomponentscript = '<script>' . self::get_file_content('editor/uml-editor.js') . '</script>';
 
-        // Load the change handler.
-        // TODO check wheter to load or not.
-        $changehandlercontent = self::load_change_handler_content();
-
         // Wrap the script inside a html script tag and use the web component directly.
         $editorcontent =
-                $webcomponentscript . $changehandlercontent . '<uml-editor diagram="' . $diagram . '" />';
+                $webcomponentscript . '<uml-editor diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode . '\'/>';
 
-        if (isset($options)) {
-            if ($options->readonly) {
-                // TODO handle readonly.
-                $editorcontent .= ' [readonly]';
-            }
+        if ($iseditmode) {
+            // Load the change handler.
+            $editorcontent .= self::load_change_handler_content();
         }
 
         return $editorcontent;
