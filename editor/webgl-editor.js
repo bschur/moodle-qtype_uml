@@ -18,7 +18,7 @@ const templateCode = `
         width: 100%;
     }
 
-    #diagram {
+    #editor {
         width: 100%;
         height: 100%;
         border: 1px solid #ccc;
@@ -26,10 +26,10 @@ const templateCode = `
 </style>
 
 <div class="left">
-    <!-- Your left section content -->
+    <div id="toolBox"></div>
 </div>
 <div class="right">
-    <div id="diagram"></div>
+    <div id="editor"></div>
 </div>
 `;
 
@@ -46,22 +46,34 @@ class WebglEditor extends HTMLElement {
         this.myholder = null;
 
         // Create the JointJS diagram
-        const diagramDiv = this.shadowRoot.querySelector('#diagram');
+        const editorDiv = this.shadowRoot.querySelector('#editor');
+        const toolBoxDiv = this.shadowRoot.querySelector('#toolBox');
 
-        // Create an instance of JointJS graph
-        const graph = new joint.dia.Graph;
+        // Create an instance of JointJS graph for the editor and toolbox
+        const graphEditor = new joint.dia.Graph();
+        const graphToolBox = new joint.dia.Graph();
 
-        // Create a paper where the diagram will be rendered
-        const paper = new joint.dia.Paper({
-            el: diagramDiv,
-            model: graph,
+        // Create a paper where the diagram will be rendered for the editor and toolbox
+        const paperEditor = new joint.dia.Paper({
+            el: editorDiv,
+            model: graphEditor,
             width: '100%',
             height: '100%',
             gridSize: 10,
             drawGrid: true,
             background: {
-                color: 'rgba(0, 255, 0, 0.3)'
+                color: 'rgba(0, 255, 255, 0.3)'
             }
+        });
+
+        const paperToolbox = new joint.dia.Paper({
+            el: toolBoxDiv,
+            model: graphToolBox,
+            width: '100%',
+            height: '100%',
+            gridSize: 10,
+            drawGrid: true,
+            interactive: false 
         });
 
         // Define class shapes
@@ -88,30 +100,32 @@ class WebglEditor extends HTMLElement {
             }
         });
 
-        // Create classes
+        // Create classes for the toolbox
         const class1 = new Class({
             position: { x: 50, y: 50 },
             attrs: {
                 label: { text: 'ClassA' }
-            }
+            },
+            draggable: false
         });
 
         const class2 = new Class({
-            position: { x: 300, y: 50 },
+            position: { x: 50, y: 150 },
             attrs: {
                 label: { text: 'ClassB' }
             }
         });
 
-        // Add classes to the graph
-        graph.addCell(class1);
-        graph.addCell(class2);
+        // Add classes to the toolbox graph
+        graphToolBox.addCell(class1);
+        graphToolBox.addCell(class2);
 
-        // Create an arrow
-        const link = new joint.shapes.standard.Link();
-        link.source(class1);
-        link.target(class2);
-        graph.addCell(link);
+        paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
+            const clickedClass = cellView.model.clone();
+            clickedClass.position(x, y);
+            graphEditor.addCell(clickedClass);
+        });
+
     }
 }
 
