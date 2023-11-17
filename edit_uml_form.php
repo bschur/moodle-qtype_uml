@@ -52,9 +52,12 @@ class qtype_uml_edit_form extends question_edit_form {
      */
     protected function definition_inner($mform) {
         // Generate hidden input element to keep the editors content.
-        $correctanswer = $this->question->id ?? '';
+        $correctanswer = $this->question->correctanswer ?? '';
         $correctanswerinput = $mform->addElement('hidden', 'correctanswer', $correctanswer);
         $mform->setType('correctanswer', PARAM_TEXT);
+        // Generate the id for the input element to bind the editor to.
+        $bindelementid = uniqid('correctanswer');
+        $correctanswerinput->setAttributes(['id' => $bindelementid]);
 
         // Generate the label html.
         $labelhtml = '
@@ -65,8 +68,7 @@ class qtype_uml_edit_form extends question_edit_form {
         </div>';
 
         // Generate the editor html.
-        $editorcontent = EditorHelper::load_editor_html(null, true, $correctanswerinput);
-
+        $editorcontent = EditorHelper::load_editor_html_for_id($bindelementid, true, $correctanswer);
         $editorhtml = '
         <div class="col-md-9 form-inline align-items-start felement" data-fieldtype="text">
             ' . $editorcontent . '

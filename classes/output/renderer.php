@@ -46,17 +46,24 @@ class qtype_uml_renderer extends qtype_renderer {
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
         syslog(LOG_INFO, 'formulation_and_controls called');
-
         $result = parent::formulation_and_controls($qa, $options);
 
-        // TODO get the diagram from the question attempt.
-        // TODO form input element.
-        $response = '';
-        $answerinput = null;
+        // Get the last response.
+        $response = $qa->get_last_qt_var('answer', '');
 
-        $result .= EditorHelper::load_editor_html($response, $options->readonly, $answerinput);
+        // Generate the input field.
+        $answerinputname = $qa->get_qt_field_name('answer');
+        $answerattributes = [
+                'type' => 'hidden',
+                'id' => $answerinputname . 'Input',
+                'name' => $answerinputname,
+                'value' => $response->answer ?? '',
+                'disabled' => $options->readonly ? 'true' : 'false',
+        ];
+        $answerinput = html_writer::empty_tag('input', $answerattributes);
 
-        return $result;
+        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $response->answer) .
+                $answerinput;
     }
 
     /**

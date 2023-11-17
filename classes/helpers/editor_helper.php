@@ -27,11 +27,6 @@
  */
 class EditorHelper {
     /**
-     * @var string The id which is set to the hidden input field which holds the diagram.
-     */
-    private static string $diagramhiddeninputid = 'diagram-input';
-
-    /**
      * Loads a files content relative to project root directory and returns its content.
      *
      * @param string $filepath
@@ -51,46 +46,37 @@ class EditorHelper {
     /**
      * Loads the change handler functionality as HTML content.
      *
-     * @param string $diagraminputid the id of the input field which holds the diagram.
-     * @param html_quickform_element $bindingelement the element to keep track of the diagram content.
-     * @return string
+     * @param string $bindelementid the id of the element which holds the diagram.
+     * @return string The script of the change handler
      */
-    private static function load_change_handler_content(string $diagraminputid, html_quickform_element $bindingelement): string {
-        // Represent the id on the input field with the generated one.
-        $bindingelement->setAttributes(['id' => $diagraminputid]);
-
+    private static function load_change_handler_content(string $bindelementid): string {
         $changehandlerscript = '<script>' . self::get_file_content('editor/diagram-change-handler.js') . '</script>';
 
         // Replace the placeholder {{id}} for referencing the input with the according input id.
-        return str_replace("{{id}}", $diagraminputid, $changehandlerscript);
+        return str_replace("{{id}}", $bindelementid, $changehandlerscript);
     }
 
     /**
      * Loads the editor html with the given display options.
      *
-     * @param string|null $diagram
-     * @param bool $iseditmode
-     * @param html_quickform_element|null $bindingelement
-     * @return string
+     * @param string $bindelementid The id of the input field which holds the diagram.
+     * @param bool $iseditmode Whether the editor should be editable or not.
+     * @param string|null $diagram The diagram to load.
+     * @return string The editor html.
      */
-    public static function load_editor_html(string $diagram = null, bool $iseditmode = false,
-            html_quickform_element $bindingelement = null): string {
-        // Set up an unique id for the diagram.
-        $diagramid = uniqid(self::$diagramhiddeninputid);
-
+    public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
+            string $diagram = null): string {
         // Load the different scripts needed for the editor.
         $webcomponentscript = '<script>' . self::get_file_content('editor/uml-editor.js') . '</script>';
 
         // Wrap the script inside a html script tag and use the web component directly.
         $editorcontent =
-                $webcomponentscript . '<uml-editor inputId=\'' . $diagramid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' .
+                $webcomponentscript . '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' .
                 $iseditmode . '\'/>';
 
         if ($iseditmode) {
-            if (isset($bindingelement)) {
-                // Load the change handler to the according binding element.
-                $editorcontent .= self::load_change_handler_content($diagramid, $bindingelement);
-            }
+            // Load the change handler to the according binding element.
+            $editorcontent .= self::load_change_handler_content($bindelementid);
         }
 
         return $editorcontent;
