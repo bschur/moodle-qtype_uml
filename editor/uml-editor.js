@@ -59,6 +59,10 @@ class UmlEditor extends HTMLElement {
     eventBuffer = [];
     bufferTimeout = null;
 
+    get attributeInputId() {
+        return this.getAttribute('inputId');
+    }
+
     get attributeDiagram() {
         return this.getAttribute('diagram');
     }
@@ -124,7 +128,10 @@ class UmlEditor extends HTMLElement {
 
         const event = new CustomEvent('diagramChanged', {
             bubbles: true,
-            detail: {diagram}
+            detail: {
+                inputId: this.attributeInputId,
+                diagram,
+            }
         });
 
         // Add the event to the buffer

@@ -50,9 +50,11 @@ class qtype_uml_renderer extends qtype_renderer {
         $result = parent::formulation_and_controls($qa, $options);
 
         // TODO get the diagram from the question attempt.
+        // TODO form input element.
         $response = '';
+        $answerinput = null;
 
-        $result .= EditorHelper::load_editor_html($response, $options);
+        $result .= EditorHelper::load_editor_html($response, $options->readonly, $answerinput);
 
         return $result;
     }

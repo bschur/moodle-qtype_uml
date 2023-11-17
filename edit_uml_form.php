@@ -51,6 +51,11 @@ class qtype_uml_edit_form extends question_edit_form {
      * @throws coding_exception Editor could not being loaded
      */
     protected function definition_inner($mform) {
+        // Generate hidden input element to keep the editors content.
+        $correctanswer = $this->question->id ?? '';
+        $correctanswerinput = $mform->addElement('hidden', 'correctanswer', $correctanswer);
+        $mform->setType('correctanswer', PARAM_TEXT);
+
         // Generate the label html.
         $labelhtml = '
         <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
@@ -59,7 +64,8 @@ class qtype_uml_edit_form extends question_edit_form {
             </label>
         </div>';
 
-        $editorcontent = EditorHelper::load_editor_html();
+        // Generate the editor html.
+        $editorcontent = EditorHelper::load_editor_html(null, true, $correctanswerinput);
 
         $editorhtml = '
         <div class="col-md-9 form-inline align-items-start felement" data-fieldtype="text">
@@ -76,9 +82,12 @@ class qtype_uml_edit_form extends question_edit_form {
      * @return object
      */
     protected function data_preprocessing($question) {
-        $processresult = parent::data_preprocessing($question);
-        // TODO read from LS and put editor output into correctanswer field.
+        $question = parent::data_preprocessing($question);
 
-        return $processresult;
+        if (isset($question->correctanswer)) {
+            echo($question->correctanswer);
+        }
+
+        return $question;
     }
 }

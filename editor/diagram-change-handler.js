@@ -16,6 +16,11 @@
 const diagramId = '#{{id}}';
 
 function setDiagramToReferenceInputField(event) {
+    // Check whether the event is for this diagram
+    if (event?.detail?.inputId !== diagramId) {
+        return;
+    }
+
     const targetElem = document.querySelector(diagramId)
     targetElem.value = event.detail.diagram;
     console.debug('diagram data changed', targetElem.value)

@@ -35,9 +35,9 @@ class EditorHelper {
      * Loads a files content relative to project root directory and returns its content.
      *
      * @param string $filepath
-     * @return false|string|void
+     * @return string
      */
-    private static function get_file_content(string $filepath) {
+    private static function get_file_content(string $filepath): string {
         $absolutefilepath = dirname(__FILE__) . '/../../' . $filepath;
         $file = fopen($absolutefilepath, "r");
         if (!$file) {
@@ -51,43 +51,46 @@ class EditorHelper {
     /**
      * Loads the change handler functionality as HTML content.
      *
+     * @param string $diagraminputid the id of the input field which holds the diagram.
+     * @param html_quickform_element $bindingelement the element to keep track of the diagram content.
      * @return string
      */
-    private static function load_change_handler_content() {
-        // Set up the input field, which holds the diagram content.
-        $diagraminputid = uniqid(self::$diagramhiddeninputid);
-
-        // TODO generate this in the according moodle function (not in this class).
-        $diagraminputhtml = '<input type="hidden" id="' . $diagraminputid . '" name="diagram">';
+    private static function load_change_handler_content(string $diagraminputid, html_quickform_element $bindingelement): string {
+        // Represent the id on the input field with the generated one.
+        $bindingelement->setAttributes(['id' => $diagraminputid]);
 
         $changehandlerscript = '<script>' . self::get_file_content('editor/diagram-change-handler.js') . '</script>';
-        // Replace the placeholder {{id}} for referencing the input with the according input id.
-        $changehandlerscript = str_replace("{{id}}", $diagraminputid, $changehandlerscript);
 
-        return $diagraminputhtml . $changehandlerscript;
+        // Replace the placeholder {{id}} for referencing the input with the according input id.
+        return str_replace("{{id}}", $diagraminputid, $changehandlerscript);
     }
 
     /**
      * Loads the editor html with the given display options.
      *
      * @param string|null $diagram
-     * @param question_display_options|null $options
-     * @return false|string|void
+     * @param bool $iseditmode
+     * @param html_quickform_element|null $bindingelement
+     * @return string
      */
-    public static function load_editor_html(string $diagram = null, question_display_options $options = null) {
-        // Default edit mode when no options set. Otherwise, check whether not in readonly mode.
-        $iseditmode = !isset($options) || !$options->readonly;
+    public static function load_editor_html(string $diagram = null, bool $iseditmode = false,
+            html_quickform_element $bindingelement = null): string {
+        // Set up an unique id for the diagram.
+        $diagramid = uniqid(self::$diagramhiddeninputid);
 
         // Load the different scripts needed for the editor.
         $webcomponentscript = '<script>' . self::get_file_content('editor/uml-editor.js') . '</script>';
 
         // Wrap the script inside a html script tag and use the web component directly.
         $editorcontent =
-                $webcomponentscript . '<uml-editor diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode . '\'/>';
+                $webcomponentscript . '<uml-editor inputId=\'' . $diagramid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' .
+                $iseditmode . '\'/>';
 
         if ($iseditmode) {
-            // Load the change handler.
-            $editorcontent .= self::load_change_handler_content();
+            if (isset($bindingelement)) {
+                // Load the change handler to the according binding element.
+                $editorcontent .= self::load_change_handler_content($diagramid, $bindingelement);
+            }
         }
 
         return $editorcontent;

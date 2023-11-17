@@ -25,75 +25,34 @@
 /**
  * Class that represents a uml question.
  */
-class qtype_uml_question extends question_graded_automatically_with_countback {
-
+class qtype_uml_question extends question_with_responses {
     /**
-     * Reads the expected data
+     * @var string The correct answer fot the UML question.
      */
+    public $correctanswer;
+
     public function get_expected_data() {
-        // TODO: Implement get_expected_data() method.
+        return ['answer' => PARAM_TEXT];
     }
 
-    /**
-     * Gets the correct response
-     */
     public function get_correct_response() {
-        // TODO: Implement get_correct_response() method.
+        return ['answer' => $this->correctanswer];
     }
 
-    /**
-     * Checks whether the response is complete
-     *
-     * @param array $response the response
-     */
     public function is_complete_response(array $response) {
-        // TODO: Implement is_complete_response() method.
+        return array_key_exists('answer', $response);
     }
 
-    /**
-     * Checks if two responses are the same
-     *
-     * @param array $prevresponse the previous response
-     * @param array $newresponse the current response to check
-     */
     public function is_same_response(array $prevresponse, array $newresponse) {
         // TODO: Implement is_same_response() method.
     }
 
-    /**
-     * Summarizes the response
-     *
-     * @param array $response the response
-     */
     public function summarise_response(array $response) {
-        // TODO: Implement summarise_response() method.
-    }
+        if (array_key_exists('answer', $response) &&
+                isset($response['answer'])) {
+            return $response['answer'];
+        }
 
-    /**
-     * Gets validation errors
-     *
-     * @param array $response the response
-     */
-    public function get_validation_error(array $response) {
-        // TODO: Implement get_validation_error() method.
-    }
-
-    /**
-     * Generates the grade response
-     *
-     * @param array $response the response
-     */
-    public function grade_response(array $response) {
-        // TODO: Implement grade_response() method.
-    }
-
-    /**
-     * Computes the final grade
-     *
-     * @param array $responses all responses
-     * @param array $totaltries all entries
-     */
-    public function compute_final_grade($responses, $totaltries) {
-        // TODO: Implement compute_final_grade() method.
+        return null;
     }
 }
