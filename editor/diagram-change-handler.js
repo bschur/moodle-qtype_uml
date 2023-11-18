@@ -22,8 +22,13 @@ function setDiagramToReferenceInputField(event) {
     }
 
     const targetElem = document.querySelector(`#${diagramId}`)
+    if(!targetElem) {
+        console.error('Could not find target element', diagramId)
+        return;
+    }
+
     targetElem.value = event.detail.diagram;
-    console.debug('diagram data changed', targetElem.value)
+    console.debug('diagram data changed', targetElem.id, targetElem.value)
 }
 
 document.addEventListener("diagramChanged", setDiagramToReferenceInputField)

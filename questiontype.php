@@ -35,8 +35,84 @@ require_once($CFG->libdir . '/questionlib.php');
  * in various formats.
  */
 class qtype_uml extends question_type {
+    public function save_question_options($question): bool {
+        global $DB;
+        $context = $question->context;
 
-    // Override functions as necessary from the parent class located at
-    // /question/type/questiontype.php.
+        // Fetch old answer ids so that we can reuse them.
+        $oldanswers = $DB->get_records('question_answers',
+                ['question' => $question->id], 'id ASC');
 
+        // Save the correct answer - update an existing answer if possible.
+        $correctanswerobject = array_shift($oldanswers);
+        if (!$correctanswerobject) {
+            $correctanswerobject = new stdClass();
+            $correctanswerobject->question = $question->id;
+            $correctanswerobject->answer = '';
+            $correctanswerobject->feedback = '';
+            $correctanswerobject->id = $DB->insert_record('question_answers', $correctanswerobject);
+        }
+
+        $correctanswerobject->answer = $question->correctanswer;
+        $DB->update_record('question_answers', $correctanswerobject);
+        $correctanswerid = $correctanswerobject->id;
+
+        // Delete any leftover old answer records.
+        $fs = get_file_storage();
+        foreach ($oldanswers as $oldanswer) {
+            $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
+            $DB->delete_records('question_answers', ['id' => $oldanswer->id]);
+        }
+
+        // Save question options in question_uml table.
+        if ($options = $DB->get_record('question_uml', ['question' => $question->id])) {
+            // No need to do anything, since the answer IDs won't have changed
+            // But we'll do it anyway, just for robustness.
+            $options->correctanswer = $correctanswerid;
+            $DB->update_record('question_uml', $options);
+        } else {
+            $options = new stdClass();
+            $options->question = $question->id;
+            $options->correctanswer = $correctanswerid;
+            $DB->insert_record('question_truefalse', $options);
+        }
+
+        $this->save_hints($question);
+
+        return true;
+    }
+
+    public function get_question_options($question): bool {
+        global $DB, $OUTPUT;
+        parent::get_question_options($question);
+
+        // Get additional information from database
+        // and attach it to the question object.
+        if (!$question->options = $DB->get_record('question_uml',
+                ['question' => $question->id])) {
+            echo $OUTPUT->notification('Error: Missing question options!');
+            return false;
+        }
+        // Load the answers.
+        if (!$question->options->answers = $DB->get_records('question_answers',
+                ['question' => $question->id], 'id ASC')) {
+            echo $OUTPUT->notification('Error: Missing question answers for uml question ' .
+                    $question->id . '!');
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function initialise_question_instance(question_definition $question, $questiondata): void {
+        parent::initialise_question_instance($question, $questiondata);
+        $question->correctanswer = $questiondata->correctanswer;
+    }
+
+    public function delete_question($questionid, $contextid): void {
+        global $DB;
+        $DB->delete_records('question_uml', ['question' => $questionid]);
+
+        parent::delete_question($questionid, $contextid);
+    }
 }

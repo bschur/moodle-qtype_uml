@@ -44,8 +44,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
      */
-    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-        syslog(LOG_INFO, 'formulation_and_controls called');
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
         $result = parent::formulation_and_controls($qa, $options);
 
         // Get the last response.
@@ -74,7 +73,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
-    protected function specific_feedback(question_attempt $qa) {
+    protected function specific_feedback(question_attempt $qa): string {
         syslog(LOG_INFO, 'question_attempt called');
         return parent::specific_feedback($qa);
     }
@@ -87,7 +86,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
-    protected function correct_response(question_attempt $qa) {
+    protected function correct_response(question_attempt $qa): string {
         syslog(LOG_INFO, 'correct_response called');
         return parent::correct_response($qa);
     }

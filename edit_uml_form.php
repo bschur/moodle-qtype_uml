@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * The editing form for uml question type is defined here.
+ * The editing form for UML question type is defined here.
  *
  * @package     qtype_uml
  * @copyright   copy
@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/question/type/edit_question_form.php');
 require_once(__DIR__ . '/classes/helpers/editor_helper.php');
 
 /**
- * uml question editing form defition.
+ * UML question editing form definition.
  *
  * You should override functions as necessary from the parent class located at
  * /question/type/edit_question_form.php.
@@ -40,7 +40,7 @@ class qtype_uml_edit_form extends question_edit_form {
      *
      * @return string The question type name.
      */
-    public function qtype() {
+    public function qtype(): string {
         return 'uml';
     }
 
@@ -50,14 +50,14 @@ class qtype_uml_edit_form extends question_edit_form {
      * @param MoodleQuickForm $mform The form to load the inputs to
      * @throws coding_exception Editor could not being loaded
      */
-    protected function definition_inner($mform) {
+    protected function definition_inner($mform): void {
         // Generate hidden input element to keep the editors content.
-        $correctanswer = $this->question->correctanswer ?? '';
+        $correctanswer = $this->_customdata['id'] ?? '';
         $correctanswerinput = $mform->addElement('hidden', 'correctanswer', $correctanswer);
         $mform->setType('correctanswer', PARAM_TEXT);
         // Generate the id for the input element to bind the editor to.
         $bindelementid = uniqid('correctanswer');
-        $correctanswerinput->setAttributes(['id' => $bindelementid]);
+        $correctanswerinput->setAttributes(array_merge(['id' => $bindelementid], $correctanswerinput->_attributes));
 
         // Generate the label html.
         $labelhtml = '
@@ -83,11 +83,14 @@ class qtype_uml_edit_form extends question_edit_form {
      * @param object $question The question to process
      * @return object
      */
-    protected function data_preprocessing($question) {
+    protected function data_preprocessing($question): object {
         $question = parent::data_preprocessing($question);
 
-        if (isset($question->correctanswer)) {
-            echo($question->correctanswer);
+        if (!empty($question->options->correctanswer)) {
+            $correctanswerid = $question->options->correctanswer;
+            $correctanswer = $question->options->answers[$correctanswerid];
+
+            $question->correctanswer = $correctanswer->answer;
         }
 
         return $question;

@@ -29,30 +29,31 @@ class qtype_uml_question extends question_with_responses {
     /**
      * @var string The correct answer fot the UML question.
      */
-    public $correctanswer;
+    public string $correctanswer;
 
-    public function get_expected_data() {
+    public function get_expected_data(): array {
         return ['answer' => PARAM_TEXT];
     }
 
-    public function get_correct_response() {
+    public function get_correct_response(): array {
         return ['answer' => $this->correctanswer];
     }
 
-    public function is_complete_response(array $response) {
+    public function is_complete_response(array $response): bool {
         return array_key_exists('answer', $response);
     }
 
-    public function is_same_response(array $prevresponse, array $newresponse) {
+    public function is_same_response(array $prevresponse, array $newresponse): bool {
         // TODO: Implement is_same_response() method.
+        return false;
     }
 
-    public function summarise_response(array $response) {
+    public function summarise_response(array $response): string {
         if (array_key_exists('answer', $response) &&
                 isset($response['answer'])) {
             return $response['answer'];
         }
 
-        return null;
+        return '';
     }
 }
