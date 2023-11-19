@@ -43,25 +43,33 @@ class qtype_uml_renderer extends qtype_renderer {
      * @param question_attempt $qa the question attempt to display.
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
+     * @throws coding_exception
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
         $result = parent::formulation_and_controls($qa, $options);
 
         // Get the last response.
-        $response = $qa->get_last_qt_var('answer', '');
+        $step = $qa->get_last_step_with_qt_var('answer');
+
+        // Start new attempt if question has never been answered.
+        if (!$step->has_qt_var('answer') && empty($options->readonly)) {
+            // Question has never been answered, fill it with response template.
+            $step = new question_attempt_step(['answer' => '']);
+        }
+
+        $answer = $step->get_qt_var('answer') ?? '';
 
         // Generate the input field.
-        $answerinputname = $qa->get_qt_field_name('answer');
         $answerattributes = [
                 'type' => 'hidden',
-                'id' => $answerinputname . 'Input',
-                'name' => $answerinputname,
-                'value' => $response->answer ?? '',
+                'id' => uniqid('diagramInput'),
+                'name' => $qa->get_qt_field_name('answer'),
+                'value' => $answer,
                 'disabled' => $options->readonly ? 'true' : 'false',
         ];
         $answerinput = html_writer::empty_tag('input', $answerattributes);
 
-        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $response->answer) .
+        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $answer) .
                 $answerinput;
     }
 

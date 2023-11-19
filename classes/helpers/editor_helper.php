@@ -72,7 +72,7 @@ class EditorHelper {
         // Wrap the script inside a html script tag and use the web component directly.
         $editorcontent =
                 $webcomponentscript . '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' .
-                $iseditmode . '\'/>';
+                $iseditmode . '\'></uml-editor>';
 
         if ($iseditmode) {
             // Load the change handler to the according binding element.

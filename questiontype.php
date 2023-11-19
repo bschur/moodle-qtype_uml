@@ -42,7 +42,7 @@ class qtype_uml extends question_type {
      * @return bool
      * @throws dml_exception
      */
-    public function save_question_options(object $question): bool {
+    public function save_question_options($question): bool {
         global $DB;
         $context = $question->context;
 
@@ -96,7 +96,7 @@ class qtype_uml extends question_type {
      * @return bool
      * @throws dml_exception
      */
-    public function get_question_options(object $question): bool {
+    public function get_question_options($question): bool {
         global $DB, $OUTPUT;
         parent::get_question_options($question);
 
@@ -125,7 +125,7 @@ class qtype_uml extends question_type {
      * @param object $questiondata
      * @return void
      */
-    protected function initialise_question_instance(question_definition $question, object $questiondata): void {
+    protected function initialise_question_instance(question_definition $question, $questiondata): void {
         parent::initialise_question_instance($question, $questiondata);
         $question->correctanswer = $questiondata->options->correctanswer;
     }
@@ -138,7 +138,7 @@ class qtype_uml extends question_type {
      * @return void
      * @throws dml_exception
      */
-    public function delete_question(int $questionid, int $contextid): void {
+    public function delete_question($questionid, $contextid): void {
         global $DB;
         $DB->delete_records('question_uml', ['question' => $questionid]);
 

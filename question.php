@@ -32,12 +32,23 @@ class qtype_uml_question extends question_with_responses {
     public string $correctanswer;
 
     /**
+     * Defines the behaviour of the question.
+     *
+     * @param question_attempt $qa
+     * @param object $preferredbehaviour
+     * @return qbehaviour_missing|question_behaviour
+     */
+    public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
+        return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
+    }
+
+    /**
      * Returns the expected data for the question.
      *
      * @return array
      */
     public function get_expected_data(): array {
-        return ['answer' => PARAM_TEXT];
+        return ['answer' => PARAM_RAW];
     }
 
     /**

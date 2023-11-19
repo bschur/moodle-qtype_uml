@@ -49,13 +49,13 @@ class qtype_uml_edit_form extends question_edit_form {
      * @param MoodleQuickForm $mform The form to load the inputs to
      * @throws coding_exception Editor could not being loaded
      */
-    protected function definition_inner(MoodleQuickForm $mform): void {
+    protected function definition_inner($mform): void {
         // Generate hidden input element to keep the editors content.
         $correctanswerid = $this->question->options->correctanswer ?? null;
         $correctanswer = $this->question->options->answers[$correctanswerid]->answer ?? '';
 
         $correctanswerinput = $mform->addElement('hidden', 'correctanswer', $correctanswer);
-        $mform->setType('correctanswer', PARAM_TEXT);
+        $mform->setType('correctanswer', PARAM_RAW);
         // Generate the id for the input element to bind the editor to.
         $bindelementid = uniqid('correctanswer');
         $correctanswerinput->setAttributes(array_merge(['id' => $bindelementid], $correctanswerinput->_attributes));
@@ -84,7 +84,7 @@ class qtype_uml_edit_form extends question_edit_form {
      * @param object $question The question to process
      * @return object
      */
-    protected function data_preprocessing(object $question): object {
+    protected function data_preprocessing($question): object {
         $question = parent::data_preprocessing($question);
 
         if (!empty($question->options->correctanswer)) {
