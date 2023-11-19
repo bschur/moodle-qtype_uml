@@ -35,7 +35,14 @@ require_once($CFG->libdir . '/questionlib.php');
  * in various formats.
  */
 class qtype_uml extends question_type {
-    public function save_question_options($question): bool {
+    /**
+     * Saves the question options to the database.
+     *
+     * @param object $question
+     * @return bool
+     * @throws dml_exception
+     */
+    public function save_question_options(object $question): bool {
         global $DB;
         $context = $question->context;
 
@@ -74,7 +81,7 @@ class qtype_uml extends question_type {
             $options = new stdClass();
             $options->question = $question->id;
             $options->correctanswer = $correctanswerid;
-            $DB->insert_record('question_truefalse', $options);
+            $DB->insert_record('question_uml', $options);
         }
 
         $this->save_hints($question);
@@ -82,7 +89,14 @@ class qtype_uml extends question_type {
         return true;
     }
 
-    public function get_question_options($question): bool {
+    /**
+     * Get the question options from the database.
+     *
+     * @param object $question
+     * @return bool
+     * @throws dml_exception
+     */
+    public function get_question_options(object $question): bool {
         global $DB, $OUTPUT;
         parent::get_question_options($question);
 
@@ -104,12 +118,27 @@ class qtype_uml extends question_type {
         return true;
     }
 
-    protected function initialise_question_instance(question_definition $question, $questiondata): void {
+    /**
+     * Initialises a question instance.
+     *
+     * @param question_definition $question
+     * @param object $questiondata
+     * @return void
+     */
+    protected function initialise_question_instance(question_definition $question, object $questiondata): void {
         parent::initialise_question_instance($question, $questiondata);
-        $question->correctanswer = $questiondata->correctanswer;
+        $question->correctanswer = $questiondata->options->correctanswer;
     }
 
-    public function delete_question($questionid, $contextid): void {
+    /**
+     * Deletes the question from the database.
+     *
+     * @param int $questionid
+     * @param int $contextid
+     * @return void
+     * @throws dml_exception
+     */
+    public function delete_question(int $questionid, int $contextid): void {
         global $DB;
         $DB->delete_records('question_uml', ['question' => $questionid]);
 

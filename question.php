@@ -31,23 +31,52 @@ class qtype_uml_question extends question_with_responses {
      */
     public string $correctanswer;
 
+    /**
+     * Returns the expected data for the question.
+     *
+     * @return array
+     */
     public function get_expected_data(): array {
         return ['answer' => PARAM_TEXT];
     }
 
+    /**
+     * Returns the correct answer for the question.
+     *
+     * @return string[]
+     */
     public function get_correct_response(): array {
         return ['answer' => $this->correctanswer];
     }
 
+    /**
+     * Checks whether the response given is complete.
+     *
+     * @param array $response
+     * @return bool
+     */
     public function is_complete_response(array $response): bool {
         return array_key_exists('answer', $response);
     }
 
+    /**
+     * Check if the response is the same as the previous response.
+     *
+     * @param array $prevresponse
+     * @param array $newresponse
+     * @return bool
+     */
     public function is_same_response(array $prevresponse, array $newresponse): bool {
         // TODO: Implement is_same_response() method.
         return false;
     }
 
+    /**
+     * Summarise the response.
+     *
+     * @param array $response
+     * @return string
+     */
     public function summarise_response(array $response): string {
         if (array_key_exists('answer', $response) &&
                 isset($response['answer'])) {
