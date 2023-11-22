@@ -27,33 +27,16 @@
  */
 class EditorHelper {
     /**
-     * Loads a files content relative to project root directory and returns its content.
-     *
-     * @param string $filepath
-     * @return string
-     */
-    private static function get_file_content(string $filepath): string {
-        $absolutefilepath = dirname(__FILE__) . '/../../' . $filepath;
-        $file = fopen($absolutefilepath, "r");
-        if (!$file) {
-            die();
-        }
-        $filecontent = fread($file, filesize($absolutefilepath));
-        fclose($file);
-        return $filecontent;
-    }
-
-    /**
      * Loads the change handler functionality as HTML content.
      *
      * @param string $bindelementid the id of the element which holds the diagram.
      * @return string The script of the change handler
      */
     private static function load_change_handler_content(string $bindelementid): string {
-        $changehandlerscript = '<script>' . self::get_file_content('editor/diagram-change-handler.js') . '</script>';
+        global $PAGE;
+        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/diagram-change-handler.js'), true);
 
-        // Replace the placeholder {{id}} for referencing the input with the according input id.
-        return str_replace("{{id}}", $bindelementid, $changehandlerscript);
+        return '<script>registerChangeHandler(\'' . $bindelementid . '\')</script>';
     }
 
     /**
@@ -66,13 +49,12 @@ class EditorHelper {
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
-        // Load the different scripts needed for the editor.
-        $webcomponentscript = '<script>' . self::get_file_content('editor/uml-editor.js') . '</script>';
+        global $PAGE;
+        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/uml-editor.js'), true);
 
         // Wrap the script inside a html script tag and use the web component directly.
-        $editorcontent =
-                $webcomponentscript . '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' .
-                $iseditmode . '\'></uml-editor>';
+        $editorcontent = '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
+                '\'></uml-editor>';
 
         if ($iseditmode) {
             // Load the change handler to the according binding element.
