@@ -13,15 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-function setDiagramToReferenceInputField(diagramId, event) {
-    // Check whether the event is for this diagram
-    if (diagramId !== event?.detail?.inputId) {
+function setDiagramToReferenceInputField(event) {
+    const targetElem = document.querySelector(`#${event.detail.inputId}`)
+    if (!targetElem) {
+        console.error('Could not find target element', targetElem.id)
         return;
     }
 
-    const targetElem = document.querySelector(`#${diagramId}`)
-    if (!targetElem) {
-        console.error('Could not find target element', diagramId)
+    if (targetElem.disabled) {
+        console.debug('target element is disabled', targetElem.id)
         return;
     }
 
@@ -29,10 +29,5 @@ function setDiagramToReferenceInputField(diagramId, event) {
     console.debug('diagram data changed', targetElem.id, targetElem.value)
 }
 
-/**
- * Register a change handler for the given input field
- * @param inputId
- */
-function registerChangeHandler(inputId) {
-    document.addEventListener("diagramChanged", setDiagramToReferenceInputField.bind(null, inputId));
-}
+// Listen for diagram changes (globally)
+document.addEventListener("diagramChanged", setDiagramToReferenceInputField.bind(null));

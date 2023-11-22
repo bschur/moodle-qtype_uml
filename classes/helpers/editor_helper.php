@@ -26,18 +26,6 @@
  * Helper functions for the editor loading
  */
 class EditorHelper {
-    /**
-     * Loads the change handler functionality as HTML content.
-     *
-     * @param string $bindelementid the id of the element which holds the diagram.
-     * @return string The script of the change handler
-     */
-    private static function load_change_handler_content(string $bindelementid): string {
-        global $PAGE;
-        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/diagram-change-handler.js'), true);
-
-        return '<script>registerChangeHandler(\'' . $bindelementid . '\')</script>';
-    }
 
     /**
      * Loads the editor html with the given display options.
@@ -50,16 +38,12 @@ class EditorHelper {
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
         global $PAGE;
-        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/uml-editor.js'), true);
+        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/uml-editor.js'));
+        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/uml-editor-change-handler.js'));
 
         // Wrap the script inside a html script tag and use the web component directly.
         $editorcontent = '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
                 '\'></uml-editor>';
-
-        if ($iseditmode) {
-            // Load the change handler to the according binding element.
-            $editorcontent .= self::load_change_handler_content($bindelementid);
-        }
 
         return $editorcontent;
     }
