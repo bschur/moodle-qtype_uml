@@ -1,4 +1,6 @@
-    const templateCode = `
+import Actor from './elements.js';
+
+const templateCode = `
     <style>
         :host {
             display: flex;
@@ -33,8 +35,11 @@
     </div>
     `;
 
+
+
     class WebglEditor extends HTMLElement {
-        constructor() {
+
+            constructor() {
             super();
             this.attachShadow({ mode: 'open' });
 
@@ -100,14 +105,19 @@
                     }
                 });
                  // Add classes to the toolbox graph
+
+              const customActor = new Actor();
               graphToolBox.addCell(class1);
               graphToolBox.addCell(class2);
+              graphToolBox.addCell(customActor.position(50, 250));
+
             }
 
 
 
 
-        function initClass() {
+
+                function initClass() {
             const rectWidth = 100;
             const rectHeight = 60;
             return joint.shapes.standard.Rectangle.define('examples.Class', {
