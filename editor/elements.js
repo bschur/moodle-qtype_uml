@@ -20,6 +20,10 @@ class Actor extends dia.Element {
         return {
             ...super.defaults,
             type: "Actor",
+            size: {
+                width: 40,
+                height: 80
+            },
             attrs: {
                 background: {
                     width: "calc(w)",

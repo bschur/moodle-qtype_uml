@@ -107,9 +107,11 @@ const templateCode = `
                  // Add classes to the toolbox graph
 
               const customActor = new Actor();
+                customActor.position(50, 250)
+              console.log(customActor);
               graphToolBox.addCell(class1);
               graphToolBox.addCell(class2);
-              graphToolBox.addCell(customActor.position(50, 250));
+              graphToolBox.addCell(customActor);
 
             }
 
