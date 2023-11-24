@@ -22,6 +22,9 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+global $PAGE;
+$PAGE->requires->js_call_amd('qtype_uml/uml-editor-initializer');
+
 /**
  * Helper functions for the editor loading
  */
@@ -37,14 +40,8 @@ class EditorHelper {
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
-        global $PAGE;
-        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/uml-editor.js'));
-        $PAGE->requires->js(new moodle_url('/question/type/uml/editor/uml-editor-change-handler.js'));
-
         // Wrap the script inside a html script tag and use the web component directly.
-        $editorcontent = '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
+        return '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
                 '\'></uml-editor>';
-
-        return $editorcontent;
     }
 }

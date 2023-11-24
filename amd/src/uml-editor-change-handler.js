@@ -13,21 +13,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-function setDiagramToReferenceInputField(event) {
-    const targetElem = document.querySelector(`#${event.detail.inputId}`)
+/* eslint-disable no-console */
+
+/**
+ * Set the diagram data to the reference input field.
+ *
+ * @param {Event} event
+ */
+export function setDiagramToReferenceInputField(event) {
+    const targetElem = document.querySelector(`#${event.detail.inputId}`);
     if (!targetElem) {
-        console.error('Could not find target element', targetElem.id)
+        console.error('Could not find target element', targetElem.id);
         return;
     }
 
     if (targetElem.disabled) {
-        console.debug('target element is disabled', targetElem.id)
+        console.debug('target element is disabled', targetElem.id);
         return;
     }
 
     targetElem.value = event.detail.diagram;
-    console.debug('diagram data changed', targetElem.id, targetElem.value)
+    console.debug('diagram data changed', targetElem.id, targetElem.value);
 }
-
-// Listen for diagram changes (globally)
-document.addEventListener("diagramChanged", setDiagramToReferenceInputField.bind(null));

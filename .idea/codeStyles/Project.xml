@@ -2,6 +2,11 @@
   <code_scheme name="Project" version="173">
     <option name="LINE_SEPARATOR" value="&#10;" />
     <option name="RIGHT_MARGIN" value="180" />
+    <JSCodeStyleSettings version="0">
+      <option name="FORCE_SEMICOLON_STYLE" value="true" />
+      <option name="USE_DOUBLE_QUOTES" value="false" />
+      <option name="FORCE_QUOTE_STYlE" value="true" />
+    </JSCodeStyleSettings>
     <PHPCodeStyleSettings>
       <option name="PHPDOC_BLANK_LINE_BEFORE_TAGS" value="true" />
       <option name="PHPDOC_WRAP_LONG_LINES" value="true" />

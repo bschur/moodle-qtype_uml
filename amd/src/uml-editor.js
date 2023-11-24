@@ -13,6 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
+import {decodeDiagram, encodeDiagram} from "./uml-editor-compression.js";
+
 const templateHTML = `
 <style>
     :host {
@@ -41,9 +43,9 @@ const templateHTML = `
 <div class="right">
     <canvas id="canvasEditor"></canvas>
 </div>
-`
+`;
 
-class UmlEditor extends HTMLElement {
+export class UmlEditor extends HTMLElement {
     canvasEditor = null;
     ctxEditor = null;
 
@@ -64,7 +66,8 @@ class UmlEditor extends HTMLElement {
     }
 
     get attributeDiagram() {
-        return this.getAttribute('diagram');
+        const diagram = this.getAttribute('diagram');
+        return decodeDiagram(diagram);
     }
 
     get attributeAllowEdit() {
@@ -79,7 +82,6 @@ class UmlEditor extends HTMLElement {
         this.shadowRoot.innerHTML = templateHTML;
     }
 
-    // noinspection JSUnusedGlobalSymbols
     connectedCallback() {
         // Initialize canvas elements and contexts
         this.initCanvas('canvasEditor', 'ctxEditor');
@@ -99,9 +101,8 @@ class UmlEditor extends HTMLElement {
         this.displayDiagramSchema(this.attributeDiagram);
     }
 
-    // noinspection JSUnusedGlobalSymbols
     detachedCallback() {
-        this.emitDiagramChanged()
+        this.emitDiagramChanged();
     }
 
     initCanvas(canvasId, contextId) {
@@ -115,16 +116,15 @@ class UmlEditor extends HTMLElement {
         this[contextId] = context;
     }
 
-    displayDiagramSchema(diagram) {
-        if (diagram) {
-            this.objects = JSON.parse(diagram)
-            this.drawObjectEditor()
+    displayDiagramSchema(diagramObjects) {
+        if (diagramObjects) {
+            this.objects = diagramObjects;
+            this.drawObjectEditor();
         }
     }
 
     emitDiagramChanged() {
-        // TODO convert real diagram to string
-        const diagram = JSON.stringify(this.objects)
+        const diagram = encodeDiagram(this.objects);
 
         const event = new CustomEvent('diagramChanged', {
             bubbles: true,
@@ -202,7 +202,7 @@ class UmlEditor extends HTMLElement {
                 this.draggedObject.y = y - this.offsetY;
                 this.objects[this.draggedObject.id - 1] = this.draggedObject;
 
-                this.emitDiagramChanged()
+                this.emitDiagramChanged();
                 this.drawObjectEditor();
             }
         });
@@ -228,10 +228,8 @@ class UmlEditor extends HTMLElement {
             };
             this.objects.push(obj);
 
-            this.emitDiagramChanged()
+            this.emitDiagramChanged();
             this.drawObjectEditor();
         });
     }
 }
-
-customElements.define('uml-editor', UmlEditor);

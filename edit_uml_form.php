@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
 require_once($CFG->dirroot . '/question/type/edit_question_form.php');
 require_once(__DIR__ . '/classes/helpers/editor_helper.php');
 
