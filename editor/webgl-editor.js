@@ -58,16 +58,39 @@ const templateCode = `
             const paperEditor = initPaper(editorDiv, graphEditor, true);
             const paperToolbox = initPaper(toolBoxDiv, graphToolBox, false);
 
+            //const ChildHighlighterView = joint.dia.Highlighter.extend({});
+
             initToolBoxClasses();
 
             paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
                 const clickedClass = cellView.model.clone();
-                clickedClass.position(x, y);
+
+
+
                 graphEditor.addCell(clickedClass);
             });
 
-            paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
-                if (this.from) {
+                // Assuming paper is your JointJS paper
+
+                paperEditor.on('cell:mouseenter', function(cellView) {
+                    const tools = new joint.dia.ToolsView({
+                        tools: [
+                           new joint.linkTools.Remove({
+                                scale: 1.2,
+                                distance: 15
+                            })
+                        ]
+                    });
+                    cellView.addTools(tools);
+                });
+
+                paperEditor.on('cell:mouseleave', function(cellView) {
+                    cellView.removeTools();
+                });
+
+                paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
+
+                /*if (this.from) {
                     // If 'from' is set (meaning a previous element was selected), create a link
                     const link = new joint.shapes.standard.Link({
                         source: { id: this.from.id },
@@ -81,35 +104,28 @@ const templateCode = `
                 } else {
                     // Set the 'from' element upon the first click
                     this.from = cellView.model;
-                }
+
+                }*/
             });
 
-            function initToolBoxClasses () {
-                /* Create classes for the toolbox
-                const class1 = new Class({
-                    position: { x: 50, y: 50 },
-                    attrs: {
-                        label: { text: 'ClassA' }
-                    },
-                    draggable: false
+            let clicked = null;
+
+                paperEditor.on('cell:pointerdown', (cellView, evt, x, y) => {
+                    /*if (clicked) {
+                        clicked.model.prop('attrs/body/stroke', 'black');
+                    }
+
+                    cellView.model.prop('attrs/body/stroke', 'red');
+                    clicked = cellView;*/
+                    //const h1 = joint.dia.HighlighterView.add(cellView, 'root', 'id1');
+
                 });
 
-                const class2 = new Class({
-                    position: { x: 50, y: 150 },
-                    attrs: {
-                        label: { text: 'ClassB' }
-                    }
-                });*/
-                 // Add classes to the toolbox graph
-
-              const customActor = new UMLActor();
+            function initToolBoxClasses () {
+                const customActor = new UMLActor();
               const class1 = new UMLClass();
-                //const class2 = new UMLClass();
                 customActor.position(50, 250);
                 class1.position(50, 150);
-                console.log(class1);
-                console.log(customActor);
-              //graphToolBox.addCell(class1.classShape);
 
               graphToolBox.addCell(customActor);
                 graphToolBox.addCell(class1);
@@ -128,6 +144,7 @@ const templateCode = `
                 interactive: isInteractive
             });
         }
+
 
     }}
 

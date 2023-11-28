@@ -13,8 +13,9 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     selector: 'label'
                 }
             ],
-            // ... other configurations
         });
+        // Add an event listener to handle the click event
+        this.on('cell:pointerdown', this.onElementClick, this);
     }
 
     defaults() {
@@ -44,7 +45,11 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                 }
             }
         }, joint.shapes.standard.Rectangle.prototype.defaults);
+
     }
+
+
+
 }
 
 export default UMLClass;
