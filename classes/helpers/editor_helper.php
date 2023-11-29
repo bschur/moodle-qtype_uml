@@ -22,7 +22,9 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-global $PAGE;
+global $PAGE,$CFG;
+$CFG->cachejs = false;
+
 $PAGE->requires->js_call_amd('qtype_uml/uml-editor-initializer');
 
 /**

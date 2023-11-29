@@ -13,25 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/* eslint-disable no-console */
+import {UmlEditor} from './uml-editor.js';
+import {diagramChangeEventName, setDiagramToReferenceInputField} from './uml-editor-change-handler.js';
 
-/**
- * Set the diagram data to the reference input field.
- *
- * @param {Event} event
- */
-export function setDiagramToReferenceInputField(event) {
-    const targetElem = document.querySelector(`#${event.detail.inputId}`);
-    if (!targetElem) {
-        console.error('Could not find target element', targetElem.id);
-        return;
-    }
+// Setup web-component
+customElements.define('uml-editor', UmlEditor);
 
-    if (targetElem.disabled) {
-        console.debug('target element is disabled', targetElem.id);
-        return;
-    }
-
-    targetElem.value = event.detail.diagram;
-    console.debug('diagram data changed', targetElem.id, targetElem.value);
-}
+// Listen for diagram changes (globally)
+document.addEventListener(diagramChangeEventName, setDiagramToReferenceInputField.bind(null));

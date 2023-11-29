@@ -13,7 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-import {decodeDiagram, encodeDiagram} from './uml-editor-compression';
+import {decodeDiagram, encodeDiagram} from './uml-editor-compression.js';
+import {emitDiagramDataChangedEvent} from './uml-editor-change-handler.js';
 
 const templateHTML = `
 <style>
@@ -57,9 +58,6 @@ export class UmlEditor extends HTMLElement {
     draggedObject = null;
 
     objects = [];
-
-    eventBuffer = [];
-    bufferTimeout = null;
 
     get attributeInputId() {
         return this.getAttribute('inputId');
@@ -121,35 +119,6 @@ export class UmlEditor extends HTMLElement {
             this.objects = diagramObjects;
             this.drawObjectEditor();
         }
-    }
-
-    emitDiagramChanged() {
-        const diagram = encodeDiagram(this.objects);
-
-        const event = new CustomEvent('diagramChanged', {
-            bubbles: true,
-            detail: {
-                inputId: this.attributeInputId,
-                diagram,
-            }
-        });
-
-        // Add the event to the buffer
-        this.eventBuffer.push(event);
-
-        // If there's a buffer timeout already set, clear it
-        if (this.bufferTimeout) {
-            clearTimeout(this.bufferTimeout);
-        }
-
-        // Set a new buffer timeout to emit the events after 500ms
-        this.bufferTimeout = setTimeout(() => {
-            this.dispatchEvent(this.eventBuffer[this.eventBuffer.length - 1]);
-
-            // Clear the buffer and the buffer timeout
-            this.eventBuffer.splice(0, this.eventBuffer.length);
-            this.bufferTimeout = null;
-        }, 100);
     }
 
     drawObjectEditor() {
@@ -231,5 +200,10 @@ export class UmlEditor extends HTMLElement {
             this.emitDiagramChanged();
             this.drawObjectEditor();
         });
+    }
+
+    emitDiagramChanged() {
+        const diagram = encodeDiagram(this.objects);
+        emitDiagramDataChangedEvent(this.attributeInputId, diagram);
     }
 }
