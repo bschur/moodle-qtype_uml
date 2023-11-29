@@ -62,20 +62,27 @@ const templateCode = `
 
             initToolBoxClasses();
 
+
+                /** Events */
             paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
                 const clickedClass = cellView.model.clone();
-
-
-
+                let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20;
+                let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20;
+                clickedClass.position(tmpX, tmpY);
                 graphEditor.addCell(clickedClass);
             });
 
                 // Assuming paper is your JointJS paper
 
-                paperEditor.on('cell:mouseenter', function(cellView) {
+                paperEditor.on('cell:mouseenter', function (cellView) {
                     const tools = new joint.dia.ToolsView({
                         tools: [
-                           new joint.linkTools.Remove({
+                            new joint.elementTools.Boundary({
+                                padding: 3,
+                                rotate: true,
+                                useModelGeometry: true,
+                            }),
+                            new joint.linkTools.Remove({
                                 scale: 1.2,
                                 distance: 15
                             })
@@ -84,13 +91,24 @@ const templateCode = `
                     cellView.addTools(tools);
                 });
 
+
+
+
+
+
+                paperEditor.on('element:pointerdblclick', function(elementView, evt) {
+                    const target = elementView.model;
+                    const eventType = elementView.el.querySelector('rect').getAttribute('selector');
+                    console.log(eventType);
+                });
+
                 paperEditor.on('cell:mouseleave', function(cellView) {
                     cellView.removeTools();
                 });
 
-                paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
+                /*paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
 
-                /*if (this.from) {
+                if (this.from) {
                     // If 'from' is set (meaning a previous element was selected), create a link
                     const link = new joint.shapes.standard.Link({
                         source: { id: this.from.id },
@@ -105,27 +123,14 @@ const templateCode = `
                     // Set the 'from' element upon the first click
                     this.from = cellView.model;
 
-                }*/
-            });
-
-            let clicked = null;
-
-                paperEditor.on('cell:pointerdown', (cellView, evt, x, y) => {
-                    /*if (clicked) {
-                        clicked.model.prop('attrs/body/stroke', 'black');
-                    }
-
-                    cellView.model.prop('attrs/body/stroke', 'red');
-                    clicked = cellView;*/
-                    //const h1 = joint.dia.HighlighterView.add(cellView, 'root', 'id1');
-
-                });
+                }
+            });*/
 
             function initToolBoxClasses () {
                 const customActor = new UMLActor();
               const class1 = new UMLClass();
-                customActor.position(50, 250);
-                class1.position(50, 150);
+                customActor.position(20, 120);
+                class1.position(20, 20);
 
               graphToolBox.addCell(customActor);
                 graphToolBox.addCell(class1);

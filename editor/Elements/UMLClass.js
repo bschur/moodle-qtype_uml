@@ -9,18 +9,39 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     selector: 'body'
                 },
                 {
-                    tagName: 'text',
-                    selector: 'label'
+                    tagName: 'rect',
+                    selector: 'headerText'
+                },
+                {
+                    tagName: 'rect',
+                    selector: 'variablesRect'
+                },
+                {
+                    tagName: 'rect',
+                    selector: 'functionsRect'
                 }
             ],
         });
-        // Add an event listener to handle the click event
-        this.on('cell:pointerdown', this.onElementClick, this);
+
+        // Add event listeners for double-click on the variables and functions rectangles
+        this.on('element:dblclick', ({ view }) => {
+            const target = view.model;
+            const eventType = view.el.querySelector('rect').getAttribute('selector');
+            this.onUserEntry(eventType);
+        });
+    }
+
+    onUserEntry(eventType) {
+        // Handle the user entry based on the rectangle type
+        console.log(`User double-clicked on ${eventType}`);
+        // You can implement logic here to handle user entry for different sections
     }
 
     defaults() {
-        let rectWidth = 70;
-        let rectHeight = 50;
+        let rectWidth = 150; // Width of the class
+        let rectHeight = 100; // Height of the class
+        let headerHeight = 20; // Height of the header section
+        let sectionHeight = (rectHeight - headerHeight) / 2; // Height of each section
 
         return util.defaultsDeep({
             type: 'UMLClass.Class',
@@ -36,20 +57,38 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     strokeWidth: 2,
                     stroke: 'black',
                 },
-                label: {
-                    text: "class",
+                headerText: {
+                    text: 'Class',
                     fill: 'black',
                     fontSize: 12,
                     fontWeight: 'bold',
-                    fontFamily: 'Arial, helvetica, sans-serif'
+                    fontFamily: 'Arial, helvetica, sans-serif',
+                    'ref-y': 0.5,
+                    'ref-x': 0.5,
+                    ref: 'body',
+                    'text-anchor': 'middle'
+                },
+                variablesRect: {
+                    width: rectWidth,
+                    height: sectionHeight,
+                    fill: '#3498db',
+                    stroke: 'black',
+                    'ref-y': headerHeight,
+                    'ref-x': 0,
+                    ref: 'body',
+                },
+                functionsRect: {
+                    width: rectWidth,
+                    height: sectionHeight,
+                    fill: '#9b59b6',
+                    stroke: 'black',
+                    'ref-y': headerHeight + sectionHeight,
+                    'ref-x': 0,
+                    ref: 'body',
                 }
             }
         }, joint.shapes.standard.Rectangle.prototype.defaults);
-
     }
-
-
-
 }
 
 export default UMLClass;
