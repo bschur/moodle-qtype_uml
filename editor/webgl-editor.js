@@ -97,18 +97,35 @@ const templateCode = `
 
 
                 paperEditor.on('element:pointerdblclick', function(elementView, evt) {
-                    const target = elementView.model;
-                    const eventType = elementView.el.querySelector('rect').getAttribute('selector');
-                    console.log(eventType);
+
+                    const header = "headerText";
+                    const variablesRect = "variablesRect";
+                    const functionsRect = "functionsRect";
+                    const selectedRect = evt.target.attributes[0].value;
+
+                    switch (selectedRect) {
+                        case header:
+                            console.log('Header section double-clicked');
+                            break;
+                        case variablesRect:
+                            console.log('Variables section double-clicked');
+                            break;
+                        case functionsRect:
+                            console.log('Functions section double-clicked');
+                            break;
+                        default:
+                            console.log('Clicked outside the sections');
+                            break;
+                    }
                 });
 
                 paperEditor.on('cell:mouseleave', function(cellView) {
                     cellView.removeTools();
                 });
 
-                /*paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
+                paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
 
-                if (this.from) {
+                /*if (this.from) {
                     // If 'from' is set (meaning a previous element was selected), create a link
                     const link = new joint.shapes.standard.Link({
                         source: { id: this.from.id },
@@ -123,8 +140,8 @@ const templateCode = `
                     // Set the 'from' element upon the first click
                     this.from = cellView.model;
 
-                }
-            });*/
+                }*/
+            });
 
             function initToolBoxClasses () {
                 const customActor = new UMLActor();
@@ -149,6 +166,8 @@ const templateCode = `
                 interactive: isInteractive
             });
         }
+
+
 
 
     }}

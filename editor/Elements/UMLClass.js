@@ -23,19 +23,10 @@ class UMLClass extends joint.shapes.standard.Rectangle {
             ],
         });
 
-        // Add event listeners for double-click on the variables and functions rectangles
-        this.on('element:dblclick', ({ view }) => {
-            const target = view.model;
-            const eventType = view.el.querySelector('rect').getAttribute('selector');
-            this.onUserEntry(eventType);
-        });
+
     }
 
-    onUserEntry(eventType) {
-        // Handle the user entry based on the rectangle type
-        console.log(`User double-clicked on ${eventType}`);
-        // You can implement logic here to handle user entry for different sections
-    }
+
 
     defaults() {
         let rectWidth = 150; // Width of the class
@@ -89,6 +80,8 @@ class UMLClass extends joint.shapes.standard.Rectangle {
             }
         }, joint.shapes.standard.Rectangle.prototype.defaults);
     }
+
+
 }
 
 export default UMLClass;
