@@ -24,7 +24,7 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                 }
             ]
         });
-        this.variables = [];
+        this.variablesCounter = 0;
         this.functions = [];
 
     }
@@ -50,13 +50,15 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     stroke: 'black',
                 },
                 headerText: {
+                    width: rectWidth,
+                    height: 40,
                     text: 'Class',
-                    fill: 'black',
+                    //fill: 'black',
                     fontSize: 12,
                     fontWeight: 'bold',
                     fontFamily: 'Arial, helvetica, sans-serif',
-                    'ref-y': 0.5,
-                    'ref-x': 0.5,
+                    'ref-y': 0,
+                    'ref-x': 0,
                     ref: 'body',
                     'text-anchor': 'middle'
                 },
@@ -75,30 +77,36 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     height: sectionHeight,
                     fill: '#9b59b6',
                     stroke: 'black',
-                    'ref-y': headerHeight + sectionHeight,
+                    'ref-y': rectHeight - sectionHeight,
                     'ref-x': 0,
                     ref: 'body',
                 }
             }
         }, joint.shapes.standard.Rectangle.prototype.defaults);
-
-
     }
 
 
-
-    // Update the view with the rendered variables and functions
+   // Update the view with the rendered variables and functions
     updateView() {
-        // Update the view to render variables and functions
-        this.renderVariablesAndFunctions();
-        // Additional logic if required for updating functions
+
+        var attributes = this.attributes;
+
+        const height =  attributes.attrs.variablesRect.height + 20;
+            attributes.attrs.variablesRect.height = height;
+            this.attr(attributes.attrs);
+
+
+
+        this.resize(this.attributes.size.width, this.attributes.size.height + 20);
+
     }
 
-    addVariable(name) {
-        // Add a variable entry
-        this.variables.push(name);
-        // Update the view with the new entry
-        this.updateView();
+    counterVariablesUp() {
+        this.variablesCounter += 20;
+    }
+
+    getcounterVariables() {
+        return this.variablesCounter;
     }
 
     removeVariable(index) {

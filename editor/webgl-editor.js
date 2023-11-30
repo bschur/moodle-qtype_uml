@@ -109,7 +109,6 @@ const templateCode = `
                             console.log('Header section double-clicked');
                             break;
                         case variablesRect:
-                            var subElement = elementView.model.attributes.attrs.variablesRect;
 
                             const variables = ["test"];
                             let rectWidth = 150; // Width of the class
@@ -117,15 +116,19 @@ const templateCode = `
                             let headerHeight = 20; // Height of the header section
                             let sectionHeight = (rectHeight - headerHeight) / 2; // Height of each section
 
+                            elementView.model.updateView();
+
+
                             // Render variables
-                            let variableY = 0;
-                            variables.forEach((variableName) => {
+                            let variableYCounter = 0;
+                            const position = elementView.model.position();
+
                                 // Create and position components for each variable entry
                                 let variableComponent = new joint.shapes.standard.TextBlock({
-                                    position: elementView.model.position,
-                                    size: { width: 150 - 20 / 2, height: 20 / 2 },
+                                    position: { x: position.x, y: position.y + headerHeight + elementView.model.getcounterVariables() },
+                                    size: { width: rectWidth, height: 20 },
                                     text: 'Sample Text', // Text content for the block
-                                    fill: 'white', // Color of the text
+                                    fill: 'black', // Color of the text
                                     fontSize: 10, // Font size of the text
                                     fontFamily: 'Arial, helvetica, sans-serif', // Font family
                                     'ref-y': headerHeight, // Vertical position within the section
@@ -143,13 +146,14 @@ const templateCode = `
                                 currentAttributes.body2 = variableComponent;
                                 elementView.model.embed(variableComponent);
 
-                                console.log(elementView.model);
+                               // console.log(elementView.model);
 
 
                                 //elementView.model.embed(r2)
                                 graphEditor.addCell(variableComponent);
-                                variableY += 20; // Adjust as needed for spacing
-                            });
+                                variableYCounter += 20; // Adjust as needed for spacing
+                            elementView.model.counterVariablesUp();
+
 
 
 
