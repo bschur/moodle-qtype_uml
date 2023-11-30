@@ -120,22 +120,6 @@ class qtype_uml extends question_type {
     }
 
     /**
-     * Initialises a question instance.
-     *
-     * @param question_definition $question
-     * @param object $questiondata
-     * @return void
-     */
-    protected function initialise_question_instance(question_definition $question, $questiondata): void {
-        parent::initialise_question_instance($question, $questiondata);
-
-        $answers = $questiondata->options->answers;
-        $correctanswerid = $questiondata->options->correctanswer;
-
-        $question->correctanswer = $answers[$correctanswerid]->answer;
-    }
-
-    /**
      * Deletes the question from the database.
      *
      * @param int $questionid
@@ -155,7 +139,23 @@ class qtype_uml extends question_type {
      *
      * @return bool true if this question type sometimes requires manual grading.
      */
-    public function is_manual_graded() {
+    public function is_manual_graded(): bool {
         return true;
+    }
+
+    /**
+     * Initialises a question instance.
+     *
+     * @param question_definition $question
+     * @param object $questiondata
+     * @return void
+     */
+    protected function initialise_question_instance(question_definition $question, $questiondata): void {
+        parent::initialise_question_instance($question, $questiondata);
+
+        $answers = $questiondata->options->answers;
+        $correctanswerid = $questiondata->options->correctanswer;
+
+        $question->correctanswer = $answers[$correctanswerid]->answer;
     }
 }
