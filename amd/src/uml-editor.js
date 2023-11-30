@@ -65,7 +65,7 @@ export class UmlEditor extends HTMLElement {
 
     get attributeDiagram() {
         const diagram = this.getAttribute('diagram');
-        if(!diagram) {
+        if (!diagram) {
             return null;
         }
 
