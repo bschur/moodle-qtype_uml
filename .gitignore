@@ -181,4 +181,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+node_modules
+amd/src
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,phpstorm,composer

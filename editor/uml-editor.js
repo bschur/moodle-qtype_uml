@@ -65,6 +65,10 @@ export class UmlEditor extends HTMLElement {
 
     get attributeDiagram() {
         const diagram = this.getAttribute('diagram');
+        if(!diagram) {
+            return null;
+        }
+
         return decodeDiagram(diagram);
     }
 
@@ -96,7 +100,10 @@ export class UmlEditor extends HTMLElement {
             this.shadowRoot.querySelector('.left').style.display = 'none';
         }
 
-        this.displayDiagramSchema(this.attributeDiagram);
+        const diagramFromAttribute = this.attributeDiagram;
+        if (diagramFromAttribute) {
+            this.displayDiagramSchema(diagramFromAttribute);
+        }
     }
 
     detachedCallback() {
