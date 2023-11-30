@@ -128,7 +128,11 @@ class qtype_uml extends question_type {
      */
     protected function initialise_question_instance(question_definition $question, $questiondata): void {
         parent::initialise_question_instance($question, $questiondata);
-        $question->correctanswer = $questiondata->options->correctanswer;
+
+        $answers = $questiondata->options->answers;
+        $correctanswerid = $questiondata->options->correctanswer;
+
+        $question->correctanswer = $answers[$correctanswerid]->answer;
     }
 
     /**
