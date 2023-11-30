@@ -1,385 +1,215 @@
-import { dia, shapes, g, linkTools, util } from 'jointjs';
+const { dia, shapes, highlighters } = joint;
 
-const GRID_SIZE = 8;
-const PADDING_S = GRID_SIZE;
-const PADDING_L = GRID_SIZE * 2;
-const FONT_FAMILY = 'sans-serif';
-const LIGHT_COLOR = '#FFF';
-const DARK_COLOR = '#333';
-const SECONDARY_DARK_COLOR = '#999';
-const ACTION_COLOR = '#0057FF';
-const LINE_WIDTH = 2;
+// Paper
 
-const HEADER_ICON_SIZE = 50;
-const HEADER_HEIGHT = 80;
+const paperContainer = document.getElementById("paper-container");
 
-const LIST_MAX_PORT_COUNT = 100;
-const LIST_GROUP_NAME = 'list';
-const LIST_ITEM_HEIGHT = 28;
-const LIST_ITEM_WIDTH = GRID_SIZE * 40;
-const LIST_ITEM_LABEL = 'List Item';
-const LIST_ITEM_GAP = 1;
-const LIST_BUTTON_RADIUS = 16;
-const LIST_ADD_BUTTON_SIZE = 20;
-const LIST_REMOVE_BUTTON_SIZE = 16;
-const LIST_IMAGE_SIZE = 20;
+const highlighterId = "embedding";
 
-const itemPosition = (portsArgs: dia.Element.Port[], elBBox: dia.BBox): g.Point[] => {
-    return portsArgs.map((_port: dia.Element.Port, index: number, { length }) => {
-        const bottom = elBBox.height - (LIST_ITEM_HEIGHT + LIST_ADD_BUTTON_SIZE) / 2 - PADDING_S;
-        const y = (length - 1 - index) * (LIST_ITEM_HEIGHT + LIST_ITEM_GAP);
-        return new g.Point(0, bottom - y);
-    });
-};
-
-const itemAttributes = {
+const highlighterOptions = {
+    padding: 2,
     attrs: {
-        portBody: {
-            magnet: 'active',
-            width: 'calc(w)',
-            height: 'calc(h)',
-            x: '0',
-            y: 'calc(-0.5*h)',
-            fill: DARK_COLOR
-        },
-        portRemoveButton: {
-            cursor: 'pointer',
-            event: 'element:port:remove',
-            transform: `translate(${PADDING_L},0)`,
-            title: 'Remove List Item'
-        },
-        portRemoveButtonBody: {
-            width: LIST_REMOVE_BUTTON_SIZE,
-            height: LIST_REMOVE_BUTTON_SIZE,
-            x: -LIST_REMOVE_BUTTON_SIZE / 2,
-            y: -LIST_REMOVE_BUTTON_SIZE / 2,
-            fill: LIGHT_COLOR,
-            rx: LIST_BUTTON_RADIUS,
-            ry: LIST_BUTTON_RADIUS
-        },
-        portRemoveButtonIcon: {
-            d: 'M -4 -4 4 4 M -4 4 4 -4',
-            stroke: DARK_COLOR,
-            strokeWidth: LINE_WIDTH
-        },
-        portImage: {
-            x: PADDING_L + LIST_REMOVE_BUTTON_SIZE,
-            y: -LIST_IMAGE_SIZE / 2,
-            width: LIST_IMAGE_SIZE,
-            height: LIST_IMAGE_SIZE,
-            xlinkHref: 'https://via.placeholder.com/20/FFA800'
-
-        },
-        portLabel: {
-            pointerEvents: 'none',
-            fontFamily: FONT_FAMILY,
-            fontWeight: 400,
-            fontSize: 13,
-            fill: LIGHT_COLOR,
-            textAnchor: 'start',
-            textVerticalAnchor: 'middle',
-            textWrap: {
-                width: - LIST_REMOVE_BUTTON_SIZE - PADDING_L - 2 * PADDING_S - LIST_IMAGE_SIZE,
-                maxLineCount: 1,
-                ellipsis: true
-            },
-            x: PADDING_L + LIST_REMOVE_BUTTON_SIZE + LIST_IMAGE_SIZE + PADDING_S
-        },
-
-    },
-    size: {
-        width: LIST_ITEM_WIDTH,
-        height: LIST_ITEM_HEIGHT
-    },
-    markup: [{
-        tagName: 'rect',
-        selector: 'portBody'
-    }, {
-        tagName: 'image',
-        selector: 'portImage'
-    }, {
-        tagName: 'text',
-        selector: 'portLabel',
-    }, {
-        tagName: 'g',
-        selector: 'portRemoveButton',
-        children: [{
-            tagName: 'rect',
-            selector: 'portRemoveButtonBody'
-        }, {
-            tagName: 'path',
-            selector: 'portRemoveButtonIcon'
-        }]
-    }]
+        "stroke-width": 3,
+        stroke: "#7c68fc"
+    }
 };
 
-const headerAttributes = {
-    attrs: {
-        root: {
-            magnet: false
-        },
-        body: {
-            width: 'calc(w)',
-            height: 'calc(h)',
-            fill: LIGHT_COLOR,
-            strokeWidth: LINE_WIDTH / 2,
-            stroke: SECONDARY_DARK_COLOR,
-            rx: 3,
-            ry: 3,
-        },
-        icon: {
-            width: HEADER_ICON_SIZE,
-            height: HEADER_ICON_SIZE,
-            x: PADDING_L,
-            y: (HEADER_HEIGHT - HEADER_ICON_SIZE) / 2,
-            xlinkHref: 'https://via.placeholder.com/30/0057FF'
-        },
-        label: {
-            transform: `translate(${PADDING_L + HEADER_ICON_SIZE + PADDING_L},${PADDING_L})`,
-            fontFamily: FONT_FAMILY,
-            fontWeight: 600,
-            fontSize: 16,
-            fill: DARK_COLOR,
-            text: 'Label',
-            textWrap: {
-                width: - PADDING_L - HEADER_ICON_SIZE - PADDING_L - PADDING_L,
-                maxLineCount: 1,
-                ellipsis: true
-            },
-            textVerticalAnchor: 'top',
-        },
-        description: {
-            transform: `translate(${PADDING_L + HEADER_ICON_SIZE + PADDING_L},${PADDING_L + 20})`,
-            fontFamily: FONT_FAMILY,
-            fontWeight: 400,
-            fontSize: 13,
-            lineHeight: 13,
-            fill: SECONDARY_DARK_COLOR,
-            textVerticalAnchor: 'top',
-            text: 'Description',
-            textWrap: {
-                width: - PADDING_L - HEADER_ICON_SIZE - PADDING_L - PADDING_L,
-                maxLineCount: 2,
-                ellipsis: true
-            }
-        },
-        portAddButton: {
-            title: 'Add List Item',
-            cursor: 'pointer',
-            event: 'element:port:add',
-            transform: `translate(calc(w-${3 * PADDING_S}),calc(h))`
-        },
-        portAddButtonBody: {
-            width: LIST_ADD_BUTTON_SIZE,
-            height: LIST_ADD_BUTTON_SIZE,
-            rx: LIST_BUTTON_RADIUS,
-            ry: LIST_BUTTON_RADIUS,
-            x: -LIST_ADD_BUTTON_SIZE / 2,
-            y: -LIST_ADD_BUTTON_SIZE / 2,
-        },
-        portAddButtonIcon: {
-            d: 'M -4 0 4 0 M 0 -4 0 4',
-            stroke: LIGHT_COLOR,
-            strokeWidth: LINE_WIDTH
-        }
-    },
-    markup: [{
-        tagName: 'rect',
-        selector: 'body',
-    }, {
-        tagName: 'text',
-        selector: 'label',
-    }, {
-        tagName: 'text',
-        selector: 'description',
-    }, {
-        tagName: 'image',
-        selector: 'icon',
-    }, {
-        tagName: 'g',
-        selector: 'portAddButton',
-        children: [{
-            tagName: 'rect',
-            selector: 'portAddButtonBody'
-        }, {
-            tagName: 'path',
-            selector: 'portAddButtonIcon'
-        }]
-    }]
-};
-
-class ListElement extends dia.Element {
-
-    defaults() {
-        return {
-            ...super.defaults,
-            ...headerAttributes,
-            type: 'ListElement',
-            size: { width: LIST_ITEM_WIDTH, height: 0 },
-            ports: {
-                groups: {
-                    [LIST_GROUP_NAME]: {
-                        position: itemPosition,
-                        ...itemAttributes
-                    }
-                },
-                items: []
-            }
-        }
-    }
-
-    initialize(...args: any[]) {
-        this.on('change:ports', () => this.resizeToFitPorts());
-        this.resizeToFitPorts();
-        this.toggleAddPortButton(LIST_GROUP_NAME);
-        super.initialize.call(this, ...args);
-    }
-
-    resizeToFitPorts() {
-        const { length } = this.getPorts();
-        this.prop(['size', 'height'], HEADER_HEIGHT + (LIST_ITEM_HEIGHT + LIST_ITEM_GAP) * length + PADDING_L);
-    }
-
-    addDefaultPort() {
-        if (!this.canAddPort(LIST_GROUP_NAME)) return;
-        this.addPort({
-            group: LIST_GROUP_NAME,
-            attrs: { portLabel: { text: this.getDefaultPortName() }}
-        });
-    }
-
-    getDefaultPortName() {
-        const ports = this.getGroupPorts(LIST_GROUP_NAME);
-        let portName;
-        let i = 1;
-        do {
-            portName = `${LIST_ITEM_LABEL} ${i++}`;
-        } while (ports.find(port => port.attrs.portLabel.text === portName));
-        return portName;
-    }
-
-    canAddPort(group: string): boolean {
-        return Object.keys(this.getGroupPorts(group)).length < LIST_MAX_PORT_COUNT;
-    }
-
-    toggleAddPortButton(group: string): void {
-        const buttonAttributes = this.canAddPort(group)
-            ? { fill: ACTION_COLOR, cursor: 'pointer' }
-            : { fill: '#BEBEBE', cursor: 'not-allowed' };
-        this.attr(['portAddButton'], buttonAttributes, {
-            isolate: true
-        });
-    }
-}
-
-class ListLink extends shapes.standard.DoubleLink {
-
-    defaults() {
-        return util.defaultsDeep({
-            type: 'ListLink',
-            z: -1,
-            attrs: {
-                line: {
-                    stroke: LIGHT_COLOR,
-                    targetMarker: {
-                        stroke: SECONDARY_DARK_COLOR
-                    }
-                },
-                outline: {
-                    stroke: SECONDARY_DARK_COLOR
-                }
-            }
-        }, super.defaults);
-    }
-}
-
-const shapeNamespace = {
-    ...shapes,
-    ListElement,
-    ListLink
-};
-
-const graph = new dia.Graph({}, { cellNamespace: shapeNamespace });
-
+const graph = new dia.Graph({}, { cellNamespace: shapes });
 const paper = new dia.Paper({
-    el: document.getElementById('paper'),
-    width: 1000,
-    height: 800,
-    gridSize: GRID_SIZE,
     model: graph,
-    frozen: true,
+    cellViewNamespace: shapes,
+    width: "100%",
+    height: "100%",
+    gridSize: 1,
+    drawGrid: { name: "mesh" },
     async: true,
-    defaultLink: () => new ListLink(),
     sorting: dia.Paper.sorting.APPROX,
-    magnetThreshold: 'onleave',
-    linkPinning: false,
-    snapLinks: true,
-    background: {
-        color: '#F3F7F6'
+    background: { color: "#F3F7F6" },
+    embeddingMode: true,
+    frontParentOnly: false,
+    clickThreshold: 10,
+    highlighting: {
+        embedding: {
+            name: "mask",
+            options: highlighterOptions
+        }
     },
-    defaultRouter: { name: 'manhattan', args: { step: GRID_SIZE }},
-    cellViewNamespace: shapeNamespace,
-    validateConnection: (sourceView, _sourceMagnet, targetView, _targetMagnet) => {
-        if (sourceView === targetView) return false;
-        return true;
+    validateEmbedding: (childView, parentView) => isContainer(parentView.model)
+});
+
+paperContainer.appendChild(paper.el);
+
+// Elements
+
+const r1 = new shapes.standard.Rectangle({
+    position: { x: 100, y: 100 },
+    size: { width: 200, height: 100 },
+    z: -1,
+    attrs: {
+        body: {
+            stroke: "#999",
+            fill: "#f5f5f5"
+        }
     }
 });
 
-paper.el.style.border = `1px solid #e2e2e2`;
+r1.addTo(graph);
+
+const r2 = r1.clone().set({
+    position: { x: 400, y: 400 }
+});
+
+r2.addTo(graph);
+
+const c1 = new shapes.standard.Circle({
+    position: { x: 100, y: 400 },
+    size: { width: 50, height: 50 }
+});
+
+c1.addTo(graph);
+
+const c2 = c1.clone().set({
+    position: { x: 400, y: 100 }
+});
+
+c2.addTo(graph);
+
+const c3 = c1.clone().set({
+    position: { x: 450, y: 150 }
+});
+
+c3.addTo(graph);
 
 // Events
 
-function onPaperElementPortAdd(elementView: dia.ElementView, evt: dia.Event): void {
-    evt.stopPropagation();
-    const message = elementView.model as ListElement;
-    message.addDefaultPort();
-}
+paper.on("element:pointermove", function (elementView, evt, x, y) {
+    const element = elementView.model;
+    if (!isContainer(element)) return;
 
-function onPaperElementPortRemove(elementView: dia.ElementView, evt: dia.Event): void {
-    evt.stopPropagation();
-    const portId = elementView.findAttribute('port', evt.target);
-    const message = elementView.model as ListElement
-    message.removePort(portId);
-}
+    // The elementView is a container.
 
-function onPaperLinkMouseEnter(linkView: dia.LinkView) {
-    const toolsView = new dia.ToolsView({
-        tools: [new linkTools.Remove()]
-    });
-    linkView.addTools(toolsView);
-}
+    const elementsUnder = getElementsUnderElement(paper, element);
+    let found = false;
+    if (!elementsUnder.find((el) => isContainer(el))) {
+        // There is no other container under the elementView
+        found = getNewEmbeds(elementsUnder, element).length > 0;
+    }
 
-function onPaperLinkMouseLeave(linkView: dia.LinkView) {
-    linkView.removeTools();
-}
+    elementView.el.style.opacity = 0.7;
 
-paper.on({
-    'element:port:remove': onPaperElementPortRemove,
-    'element:port:add': onPaperElementPortAdd,
-    'link:mouseenter': onPaperLinkMouseEnter,
-    'link:mouseleave': onPaperLinkMouseLeave
-});
-
-// Example Diagram
-
-const list1 = new ListElement({
-    attrs: {
-        label: {
-            text: 'List of Items 1'
-        },
-        description: {
-            text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus quis gravida sem, vitae mollis lectus. Vivamus in justo sit amet turpis auctor facilisis eget vitae magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis ut varius tortor. Donec volutpat pharetra augue, sed tincidunt nibh tempus eu. Nulla facilisi. Quisque pharetra, elit porta laoreet faucibus, justo dui ullamcorper massa, vitae sollicitudin metus nunc vel leo. Curabitur sit amet mattis tortor. Morbi eleifend viverra suscipit. Maecenas fringilla, nibh vitae elementum rutrum, ipsum ipsum volutpat nisi, eu euismod arcu justo sit amet dolor. Nam pulvinar ligula varius purus vestibulum tincidunt.'
-        }
+    if (found) {
+        // and position it over elements that could be
+        // embedded into the elementView
+        highlighters.mask.add(
+            elementView,
+            "body",
+            highlighterId,
+            highlighterOptions
+        );
+    } else {
+        // There is no element under the elementView
+        // that could be embedded to it
+        highlighters.mask.remove(elementView, highlighterId);
     }
 });
-list1.position(50, 100);
-list1.addDefaultPort();
-list1.addDefaultPort();
 
-const list2 = list1.clone() as ListElement;
-list2.attr(['label', 'text'], 'List Of Items 2');
-list2.position(550, 400);
+paper.on("element:pointerup", function (elementView, evt, x, y) {
+    const element = elementView.model;
+    const elementsUnder = getElementsUnderElement(paper, element);
+    const parent = elementsUnder.findLast((el) => isContainer(el));
 
-graph.resetCells([list1, list2]);
+    if (!isContainer(element)) {
+        // The elementView is not a container
+        if (parent) {
+            // If an element is embedded into another we make sure
+            // the container is large enough to contain all the embeds
+            resizeContainer(graph, parent);
+        }
+        return;
+    }
 
-paper.unfreeze();
+    // The elementView is a container
+
+    element.set("z", -1);
+    elementView.el.style.opacity = "";
+    highlighters.mask.remove(elementView, highlighterId);
+
+    if (parent) {
+        // The elementView was embedded into another container
+        if (elementsUnder.length > 1) {
+            // The container has already children and some of them
+            // are located under the elementView.
+            // Let's make sure none of the children stays under
+            // elementView
+            layoutEmbeds(graph, parent);
+        }
+        // If an element is embedded into another we make sure
+        // the container is large enough to contain all the embeds
+        resizeContainer(graph, parent);
+        return;
+    }
+
+    // The elementView has not been embedded
+    // We check the elements under the elementView which are not
+    // containers and embed them into elementView.
+    const newEmbeds = getNewEmbeds(elementsUnder, element);
+    if (newEmbeds.length > 0) {
+        element.embed(newEmbeds);
+        resizeContainer(graph, element);
+    }
+});
+
+paper.on("element:pointerdblclick", (elementView) => {
+    const element = elementView.model;
+    if (!isContainer(element)) return;
+    resizeContainer(graph, element, false);
+});
+
+// Functions
+
+function isContainer(element) {
+    return element.get("type") === "standard.Rectangle";
+}
+
+function resizeContainer(graph, container, increaseOnly = true, padding = 20) {
+    const embeds = container.getEmbeddedCells();
+    const currentBBox = container.getBBox();
+    let bbox;
+    if (embeds.length === 0) {
+        bbox = new g.Rect(currentBBox.x, currentBBox.y, 200, 100);
+    } else {
+        bbox = graph.getCellsBBox(embeds).inflate(padding);
+        if (increaseOnly) {
+            bbox = bbox.union(currentBBox);
+        }
+    }
+    container.position(bbox.x, bbox.y);
+    container.resize(bbox.width, bbox.height);
+    const parent = container.getParentCell();
+    if (parent) {
+        resizeContainer(graph, parent, increaseOnly, padding);
+    }
+}
+
+function layoutEmbeds(graph, container, gap = 10) {
+    let x = gap;
+    container.getEmbeddedCells().forEach((el) => {
+        el.position(x, gap, { deep: true, parentRelative: true });
+        x += el.size().width + gap;
+    });
+}
+
+function getElementsUnderElement(paper, element) {
+    const { model: graph } = paper;
+    return graph.findModelsUnderElement(element, {
+        searchBy: paper.options.findParentBy
+    });
+}
+
+function getNewEmbeds(elementsUnder, element) {
+    if (element.isEmbedded()) return [];
+    return elementsUnder.filter((el) => {
+        if (el.isEmbedded()) return false;
+        return true;
+    });
+}

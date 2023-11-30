@@ -1,7 +1,9 @@
 const { dia, util } = joint;
 
 class UMLClass extends joint.shapes.standard.Rectangle {
+
     constructor() {
+
         super({
             markup: [
                 {
@@ -20,13 +22,12 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     tagName: 'rect',
                     selector: 'functionsRect'
                 }
-            ],
+            ]
         });
-
+        this.variables = [];
+        this.functions = [];
 
     }
-
-
 
     defaults() {
         let rectWidth = 150; // Width of the class
@@ -67,6 +68,7 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                     'ref-y': headerHeight,
                     'ref-x': 0,
                     ref: 'body',
+
                 },
                 functionsRect: {
                     width: rectWidth,
@@ -79,7 +81,33 @@ class UMLClass extends joint.shapes.standard.Rectangle {
                 }
             }
         }, joint.shapes.standard.Rectangle.prototype.defaults);
+
+
     }
+
+
+
+    // Update the view with the rendered variables and functions
+    updateView() {
+        // Update the view to render variables and functions
+        this.renderVariablesAndFunctions();
+        // Additional logic if required for updating functions
+    }
+
+    addVariable(name) {
+        // Add a variable entry
+        this.variables.push(name);
+        // Update the view with the new entry
+        this.updateView();
+    }
+
+    removeVariable(index) {
+        // Remove a variable entry at a given index
+        this.variables.splice(index, 1);
+        // Update the view after removal
+        this.updateView();
+    }
+
 
 
 }
