@@ -149,4 +149,13 @@ class qtype_uml extends question_type {
 
         parent::delete_question($questionid, $contextid);
     }
+
+    /**
+     * A function that returns whether this question type sometimes requires manual grading.
+     *
+     * @return bool true if this question type sometimes requires manual grading.
+     */
+    public function is_manual_graded() {
+        return true;
+    }
 }
