@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-import { decodeDiagram, encodeDiagram } from './uml-editor-compression.js';
-import { emitDiagramDataChangedEvent } from './uml-editor-change-handler.js';
+import {decodeDiagram, encodeDiagram} from './uml-editor-compression.js';
+import {emitDiagramDataChangedEvent} from './uml-editor-change-handler.js';
 
 const templateHTML = `
 <style>

@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-import { decodeDiagram, encodeDiagram } from 'qtype_uml/uml-editor-compression';
-import { emitDiagramDataChangedEvent } from 'qtype_uml/uml-editor-change-handler';
+import {decodeDiagram, encodeDiagram} from 'qtype_uml/uml-editor-compression';
+import {emitDiagramDataChangedEvent} from 'qtype_uml/uml-editor-change-handler';
 
 const templateHTML = `
 <style>

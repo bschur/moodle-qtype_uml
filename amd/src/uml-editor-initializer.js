@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-import { UmlEditor } from 'qtype_uml/uml-editor';
-import { diagramChangeEventName, setDiagramToReferenceInputField } from 'qtype_uml/uml-editor-change-handler';
+import {UmlEditor} from 'qtype_uml/uml-editor';
+import {diagramChangeEventName, setDiagramToReferenceInputField} from 'qtype_uml/uml-editor-change-handler';
 
 // Setup web-component
 customElements.define('uml-editor', UmlEditor);
