@@ -36,6 +36,15 @@ require_once($CFG->libdir . '/questionlib.php');
  */
 class qtype_uml extends question_type {
 
+    /**
+     * A function that returns whether this question type sometimes requires manual grading.
+     *
+     * @return bool true if this question type sometimes requires manual grading.
+     */
+    public function is_manual_graded() {
+        return true;
+    }
+
     // Override functions as necessary from the parent class located at
     // /question/type/questiontype.php.
 
