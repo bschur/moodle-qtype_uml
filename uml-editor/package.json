@@ -1,11 +1,11 @@
 {
-  "name": "uml-editor-element",
+  "name": "uml-editor",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build:elements": "ng build:elements",
+    "start": "ng serve uml-editor-app",
+    "build:app": "ng build uml-editor-app",
+    "build:elements": "ng build uml-editor-elements",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -30,7 +30,6 @@
     "@angular-devkit/build-angular": "^17.0.5",
     "@angular/cli": "^17.0.5",
     "@angular/compiler-cli": "^17.0.0",
-    "ngx-build-plus": "^17.0.0",
     "@types/backbone": "^1.4.18",
     "@types/jasmine": "~5.1.0",
     "@types/jointjs": "^2.0.0",

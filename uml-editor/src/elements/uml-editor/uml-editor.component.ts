@@ -27,14 +27,14 @@ function initPaper(el: HTMLElement, graphToolBox: Graph, isInteractive: boolean)
 
 
 @Component({
-    selector: 'uml-editor-element',
+    selector: 'uml-editor',
     standalone: true,
     imports: [],
-    templateUrl: './uml-editor-element.component.html',
-    styleUrl: './uml-editor-element.component.scss',
+    templateUrl: './uml-editor.component.html',
+    styleUrl: './uml-editor.component.scss',
     encapsulation: ViewEncapsulation.ShadowDom
 })
-export class UmlEditorElementComponent implements AfterViewInit {
+export class UmlEditorComponent implements AfterViewInit {
     @Input() inputId: string | null = null;
     @Input() diagram: string | null = null;
     @Input() allowEdit = false;

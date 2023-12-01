@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "uml-editor-element": {
+    "uml-editor-app": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -12,7 +12,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/uml-editor-element",
+            "outputPath": "dist/uml-editor-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -56,10 +56,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "uml-editor-element:build:production"
+              "buildTarget": "uml-editor-app:build:production"
             },
             "development": {
-              "buildTarget": "uml-editor-element:build:development"
+              "buildTarget": "uml-editor-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -67,7 +67,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "uml-editor-element:build"
+            "buildTarget": "uml-editor-app:build"
           }
         },
         "test": {
@@ -85,6 +85,47 @@
             ],
             "scripts": []
           }
+        }
+      }
+    },
+    "uml-editor-elements": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/uml-editor-elements",
+            "index": "src/index.html",
+            "browser": "src/main-elements.ts",
+            "tsConfig": "tsconfig.elements.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

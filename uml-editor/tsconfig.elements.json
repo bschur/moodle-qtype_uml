@@ -1,0 +1,14 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/elements",
+    "types": []
+  },
+  "files": [
+    "src/main-elements.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}
