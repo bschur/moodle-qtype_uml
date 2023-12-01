@@ -13,8 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
-import {decodeDiagram, encodeDiagram} from 'qtype_uml/uml-editor-compression';
-import {emitDiagramDataChangedEvent} from 'qtype_uml/uml-editor-change-handler';
+
 import {UMLActor} from 'qtype_uml/Elements/UMLActor';
 import {UMLClass} from 'qtype_uml/Elements/UMLClass';
 
@@ -54,23 +53,6 @@ const templateCode = `
     `;
 
 export class UmlEditor extends HTMLElement {
-    get attributeInputId() {
-        return this.getAttribute('inputId');
-    }
-
-    get attributeDiagram() {
-        const diagram = this.getAttribute('diagram');
-        if (!diagram) {
-            return null;
-        }
-
-        return decodeDiagram(diagram);
-    }
-
-    get attributeAllowEdit() {
-        return this.getAttribute('allowEdit') === '1';
-    }
-
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
@@ -93,11 +75,6 @@ export class UmlEditor extends HTMLElement {
 
         initToolBoxClasses();
 
-        // Initialize with existing diagram if given
-        const diagramFromAttribute = this.attributeDiagram;
-        if (diagramFromAttribute) {
-            this.displayDiagramSchema(diagramFromAttribute);
-        }
 
         /** Events */
         paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
@@ -126,6 +103,7 @@ export class UmlEditor extends HTMLElement {
             });
             cellView.addTools(tools);
         });
+
 
         paperEditor.on('element:pointerdblclick', function (elementView, evt) {
 
@@ -240,10 +218,7 @@ export class UmlEditor extends HTMLElement {
                 interactive: isInteractive
             });
         }
-    }
 
-    emitDiagramChanged() {
-        const diagram = encodeDiagram(this.objects);
-        emitDiagramDataChangedEvent(this.attributeInputId, diagram);
+
     }
 }
