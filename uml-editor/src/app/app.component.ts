@@ -1,5 +1,4 @@
-import {ChangeDetectionStrategy, Component, Injector} from '@angular/core';
-import {createCustomElement} from "@angular/elements";
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {UmlEditorComponent} from "../elements/uml-editor/uml-editor.component";
 
 @Component({
@@ -8,11 +7,7 @@ import {UmlEditorComponent} from "../elements/uml-editor/uml-editor.component";
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [UmlEditorComponent],
     templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
-    constructor(injector: Injector) {
-        const umlEditorElementComponent = createCustomElement(UmlEditorComponent, {injector});
-        // Register the custom element with the browser.
-        customElements.define('uml-editor', umlEditorElementComponent);
-    }
 }
