@@ -50,7 +50,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         let sectionHeight = (rectHeight - headerHeight) / 2; // Height of each section
 
         return util.defaultsDeep({
-            type: 'UmlClass.Class',
+            type: 'UmlClassModel.Class',
             size: {
                 width: rectWidth,
                 height: rectHeight
