@@ -6,6 +6,6 @@ await build({
     minify: true,
     format: 'esm',
     target: 'es2017',
-    logLevel: 'error',
+    platform: 'browser',
     outfile: './editor/dist/uml-editor-initializer.min.js',
 });
