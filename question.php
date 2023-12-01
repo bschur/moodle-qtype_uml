@@ -25,7 +25,11 @@
 /**
  * Class that represents a uml question.
  */
-class qtype_uml_question extends question_graded_automatically_with_countback {
+class qtype_uml_question extends question_with_responses {
+    /**
+     * @var string The correct answer fot the UML question.
+     */
+    public string $correctanswer;
 
     // Definition of properties used in legacy code or tests, for compatibility with PHP 8.2.
     /** @var string Feedback for any correct response. */
@@ -46,72 +50,68 @@ class qtype_uml_question extends question_graded_automatically_with_countback {
     public $graderinfoformat;
 
     /**
-     * Reads the expected data
-     */
-    public function get_expected_data() {
-        // TODO: Implement get_expected_data() method.
-    }
-
-    /**
-     * Gets the correct response
-     */
-    public function get_correct_response() {
-        // TODO: Implement get_correct_response() method.
-    }
-
-    /**
-     * Checks whether the response is complete
+     * Defines the behaviour of the question.
      *
-     * @param array $response the response
+     * @param question_attempt $qa
+     * @param object $preferredbehaviour
+     * @return qbehaviour_missing|question_behaviour
      */
-    public function is_complete_response(array $response) {
-        // TODO: Implement is_complete_response() method.
+    public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
+        return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
     }
 
     /**
-     * Checks if two responses are the same
+     * Returns the expected data for the question.
      *
-     * @param array $prevresponse the previous response
-     * @param array $newresponse the current response to check
+     * @return array
      */
-    public function is_same_response(array $prevresponse, array $newresponse) {
+    public function get_expected_data(): array {
+        return ['answer' => PARAM_RAW];
+    }
+
+    /**
+     * Returns the correct answer for the question.
+     *
+     * @return string[]
+     */
+    public function get_correct_response(): array {
+        return ['answer' => $this->correctanswer];
+    }
+
+    /**
+     * Checks whether the response given is complete.
+     *
+     * @param array $response
+     * @return bool
+     */
+    public function is_complete_response(array $response): bool {
+        return array_key_exists('answer', $response);
+    }
+
+    /**
+     * Check if the response is the same as the previous response.
+     *
+     * @param array $prevresponse
+     * @param array $newresponse
+     * @return bool
+     */
+    public function is_same_response(array $prevresponse, array $newresponse): bool {
         // TODO: Implement is_same_response() method.
+        return false;
     }
 
     /**
-     * Summarizes the response
+     * Summarise the response.
      *
-     * @param array $response the response
+     * @param array $response
+     * @return string
      */
-    public function summarise_response(array $response) {
-        // TODO: Implement summarise_response() method.
-    }
+    public function summarise_response(array $response): string {
+        if (array_key_exists('answer', $response) &&
+                isset($response['answer'])) {
+            return $response['answer'];
+        }
 
-    /**
-     * Gets validation errors
-     *
-     * @param array $response the response
-     */
-    public function get_validation_error(array $response) {
-        // TODO: Implement get_validation_error() method.
-    }
-
-    /**
-     * Generates the grade response
-     *
-     * @param array $response the response
-     */
-    public function grade_response(array $response) {
-        // TODO: Implement grade_response() method.
-    }
-
-    /**
-     * Computes the final grade
-     *
-     * @param array $responses all responses
-     * @param array $totaltries all entries
-     */
-    public function compute_final_grade($responses, $totaltries) {
-        // TODO: Implement compute_final_grade() method.
+        return '';
     }
 }

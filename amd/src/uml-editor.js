@@ -1,4 +1,22 @@
-const templateCode = `
+// This file is part of Moodle - https://moodle.org
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+
+import {decodeDiagram, encodeDiagram} from 'qtype_uml/uml-editor-compression';
+import {emitDiagramDataChangedEvent} from 'qtype_uml/uml-editor-change-handler';
+
+const templateHTML = `
 <style>
     :host {
         display: flex;
@@ -26,25 +44,44 @@ const templateCode = `
 <div class="right">
     <canvas id="canvasEditor"></canvas>
 </div>
-`
+`;
 
-class WebglEditor extends HTMLElement {
+export class UmlEditor extends HTMLElement {
+    canvasEditor = null;
+    ctxEditor = null;
+
+    canvasTool = null;
+    ctxTool = null;
+
+    offsetX = 0;
+    offsetY = 0;
+    draggedObject = null;
+
+    objects = [];
+
+    get attributeInputId() {
+        return this.getAttribute('inputId');
+    }
+
+    get attributeDiagram() {
+        const diagram = this.getAttribute('diagram');
+        if (!diagram) {
+            return null;
+        }
+
+        return decodeDiagram(diagram);
+    }
+
+    get attributeAllowEdit() {
+        return this.getAttribute('allowEdit') === '1';
+    }
+
     constructor() {
         super();
         this.attachShadow({mode: 'open'});
 
         // Create the template for the shadow DOM
-        this.shadowRoot.innerHTML = templateCode;
-
-        // Initialize properties
-        this.objects = [];
-        this.canvasEditor = null;
-        this.ctxEditor = null;
-        this.canvasTool = null;
-        this.ctxTool = null;
-        this.offsetX = 0;
-        this.offsetY = 0;
-        this.draggedObject = null;
+        this.shadowRoot.innerHTML = templateHTML;
     }
 
     connectedCallback() {
@@ -52,11 +89,25 @@ class WebglEditor extends HTMLElement {
         this.initCanvas('canvasEditor', 'ctxEditor');
         this.initCanvas('canvasTool', 'ctxTool');
 
-        // Setup event listeners
-        this.setupListeners();
+        if (this.attributeAllowEdit) {
+            // Initial rendering
+            this.drawObjectTool();
 
-        // Initial rendering
-        this.drawObjectTool();
+            // Setup event listeners
+            this.setupListeners();
+        } else {
+            // Hide toolbox (left part)
+            this.shadowRoot.querySelector('.left').style.display = 'none';
+        }
+
+        const diagramFromAttribute = this.attributeDiagram;
+        if (diagramFromAttribute) {
+            this.displayDiagramSchema(diagramFromAttribute);
+        }
+    }
+
+    detachedCallback() {
+        this.emitDiagramChanged();
     }
 
     initCanvas(canvasId, contextId) {
@@ -68,6 +119,13 @@ class WebglEditor extends HTMLElement {
 
         this[canvasId] = canvas;
         this[contextId] = context;
+    }
+
+    displayDiagramSchema(diagramObjects) {
+        if (diagramObjects) {
+            this.objects = diagramObjects;
+            this.drawObjectEditor();
+        }
     }
 
     drawObjectEditor() {
@@ -119,6 +177,8 @@ class WebglEditor extends HTMLElement {
                 this.draggedObject.x = x - this.offsetX;
                 this.draggedObject.y = y - this.offsetY;
                 this.objects[this.draggedObject.id - 1] = this.draggedObject;
+
+                this.emitDiagramChanged();
                 this.drawObjectEditor();
             }
         });
@@ -131,7 +191,7 @@ class WebglEditor extends HTMLElement {
             }
         });
 
-        // Draw a instance of a clickt object (in Toolbox) on the editor
+        // Draw an instance of a click object (in Toolbox) on the editor
         this.canvasTool.addEventListener('click', (event) => {
             event.preventDefault();
             const obj = {
@@ -143,9 +203,14 @@ class WebglEditor extends HTMLElement {
                 color: 'blue',
             };
             this.objects.push(obj);
+
+            this.emitDiagramChanged();
             this.drawObjectEditor();
         });
     }
-}
 
-customElements.define('webgl-editor', WebglEditor);
+    emitDiagramChanged() {
+        const diagram = encodeDiagram(this.objects);
+        emitDiagramDataChangedEvent(this.attributeInputId, diagram);
+    }
+}
