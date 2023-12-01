@@ -2,11 +2,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/elements",
+    "outDir": "./out-tsc/app",
     "types": []
   },
   "files": [
-    "src/main-elements.ts"
+    "src/main.elements.ts"
   ],
   "include": [
     "src/**/*.d.ts"

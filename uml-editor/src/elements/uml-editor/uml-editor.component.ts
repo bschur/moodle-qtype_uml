@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild, ViewEncapsulation} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild, ViewEncapsulation} from '@angular/core';
 import {encodeDiagram} from "../../utils/uml-editor-compression";
 
 /* TODO enable when everything fixed
@@ -29,6 +29,7 @@ function initPaper(el: HTMLElement, graphToolBox: Graph, isInteractive: boolean)
 @Component({
     selector: 'uml-editor',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [],
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "uml-editor-app": {
+    "uml-editor": {
       "projectType": "application",
       "root": "",
       "sourceRoot": "src",
@@ -12,21 +12,14 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/uml-editor-app",
+            "outputPath": "dist/uml-editor",
             "index": "src/index.html",
-            "browser": "src/main.ts",
+            "browser": "src/main.app.ts",
             "polyfills": [
-              "zone.js",
-              "@webcomponents/custom-elements/src/native-shim",
-              "@webcomponents/custom-elements/custom-elements.min"
+              "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "inlineStyleLanguage": "scss"
           },
           "configurations": {
             "production": {
@@ -56,10 +49,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "uml-editor-app:build:production"
+              "buildTarget": "uml-editor:build:production"
             },
             "development": {
-              "buildTarget": "uml-editor-app:build:development"
+              "buildTarget": "uml-editor:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -67,23 +60,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "uml-editor-app:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "buildTarget": "uml-editor:build"
           }
         }
       }
@@ -99,25 +76,29 @@
           "options": {
             "outputPath": "dist/uml-editor-elements",
             "index": "src/index.html",
-            "browser": "src/main-elements.ts",
+            "browser": "src/main.elements.ts",
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.elements.json",
-            "inlineStyleLanguage": "scss"
+            "inlineStyleLanguage": "scss",
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "500kb",
+                "maximumError": "1mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "2kb",
+                "maximumError": "4kb"
+              }
+            ],
+            "outputHashing": "none"
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
-              "outputHashing": "all"
+
             },
             "development": {
               "optimization": false,
