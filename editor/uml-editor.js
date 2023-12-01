@@ -14,8 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-import {UMLActor} from './Elements/UMLActor.js';
-import {UMLClass} from './Elements/UMLClass.js';
+import {UmlActor} from './elements/uml-actor.js';
+import {UmlClass} from './elements/uml-class.js';
+import {dia, elementTools, linkTools} from 'jointjs';
 
 const templateCode = `
     <style>
@@ -50,7 +51,7 @@ const templateCode = `
     <div class="right">
         <div id="editor"></div>
     </div>
-    `;
+`;
 
 export class UmlEditor extends HTMLElement {
     constructor() {
@@ -65,16 +66,15 @@ export class UmlEditor extends HTMLElement {
         const toolBoxDiv = this.shadowRoot.querySelector('#toolBox');
 
         // Create  instance of  JointJS graph
-        const graphEditor = new joint.dia.Graph();
-        const graphToolBox = new joint.dia.Graph();
+        const graphEditor = new dia.Graph();
+        const graphToolBox = new dia.Graph();
 
         const paperEditor = initPaper(editorDiv, graphEditor, true);
         const paperToolbox = initPaper(toolBoxDiv, graphToolBox, false);
 
-        //const ChildHighlighterView = joint.dia.Highlighter.extend({});
+        //const ChildHighlighterView = dia.Highlighter.extend({});
 
         initToolBoxClasses();
-
 
         /** Events */
         paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
@@ -88,14 +88,14 @@ export class UmlEditor extends HTMLElement {
         // Assuming paper is your JointJS paper
 
         paperEditor.on('cell:mouseenter', function (cellView) {
-            const tools = new joint.dia.ToolsView({
+            const tools = new dia.ToolsView({
                 tools: [
-                    new joint.elementTools.Boundary({
+                    new elementTools.Boundary({
                         padding: 3,
                         rotate: true,
                         useModelGeometry: true,
                     }),
-                    new joint.linkTools.Remove({
+                    new linkTools.Remove({
                         scale: 1.2,
                         distance: 15
                     })
@@ -104,15 +104,12 @@ export class UmlEditor extends HTMLElement {
             cellView.addTools(tools);
         });
 
-
         paperEditor.on('element:pointerdblclick', function (elementView, evt) {
 
             const header = 'headerText';
             const variablesRect = 'variablesRect';
             const functionsRect = 'functionsRect';
             const selectedRect = evt.target.attributes[0].value;
-
-
             switch (selectedRect) {
                 case header:
                     console.log('Header section double-clicked');
@@ -127,13 +124,12 @@ export class UmlEditor extends HTMLElement {
 
                     elementView.model.updateView();
 
-
                     // Render variables
                     let variableYCounter = 0;
                     const position = elementView.model.position();
 
                     // Create and position components for each variable entry
-                    let variableComponent = new joint.shapes.standard.TextBlock({
+                    let variableComponent = new shapes.standard.TextBlock({
                         position: {x: position.x, y: position.y + headerHeight + elementView.model.getcounterVariables()},
                         size: {width: rectWidth, height: 20},
                         text: 'Sample Text', // Text content for the block
@@ -146,21 +142,15 @@ export class UmlEditor extends HTMLElement {
                         'text-anchor': 'middle', // Text alignment
                         'pointer-events': 'none' // To avoid the text block from intercepting events
                     });
-
-
                     var currentAttributes = elementView.model.attr();
                     currentAttributes.body2 = variableComponent;
                     elementView.model.embed(variableComponent);
 
                     // console.log(elementView.model);
-
-
                     //elementView.model.embed(r2)
                     graphEditor.addCell(variableComponent);
                     variableYCounter += 20; // Adjust as needed for spacing
                     elementView.model.counterVariablesUp();
-
-
                     break;
                 case functionsRect:
                     console.log('Functions section double-clicked');
@@ -175,11 +165,10 @@ export class UmlEditor extends HTMLElement {
             cellView.removeTools();
         });
 
-        paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
-
-            /*if (this.from) {
+        /*paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
+            if (this.from) {
                 // If 'from' is set (meaning a previous element was selected), create a link
-                const link = new joint.shapes.standard.Link({
+                const link = new shapes.standard.Link({
                     source: { id: this.from.id },
                     target: { id: cellView.model.id },
                     attrs: {
@@ -192,23 +181,21 @@ export class UmlEditor extends HTMLElement {
                 // Set the 'from' element upon the first click
                 this.from = cellView.model;
 
-            }*/
-        });
+            }
+        });*/
 
         function initToolBoxClasses() {
-            const customActor = new UMLActor();
-            const class1 = new UMLClass();
+            const customActor = new UmlActor();
+            const class1 = new UmlClass();
             customActor.position(20, 120);
             class1.position(20, 20);
 
             graphToolBox.addCell(customActor);
             graphToolBox.addCell(class1);
-
         }
 
-
         function initPaper(el, model, isInteractive) {
-            return new joint.dia.Paper({
+            return new dia.Paper({
                 el: el,
                 model: model,
                 width: '100%',
@@ -218,7 +205,5 @@ export class UmlEditor extends HTMLElement {
                 interactive: isInteractive
             });
         }
-
-
     }
 }

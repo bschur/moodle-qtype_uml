@@ -13,11 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-import {UmlEditor} from 'qtype_uml/uml-editor';
-import {diagramChangeEventName, setDiagramToReferenceInputField} from 'qtype_uml/uml-editor-change-handler';
+// Prepare script tag
+const script = document.createElement('script');
+script.src = '/question/type/uml/editor/dist/uml-editor-initializer.min.js';
+script.type = 'module';
 
-// Setup web-component
-customElements.define('uml-editor', UmlEditor);
-
-// Listen for diagram changes (globally)
-document.addEventListener(diagramChangeEventName, setDiagramToReferenceInputField.bind(null));
+// Append script tag to header
+document.head.appendChild(script);

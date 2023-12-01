@@ -47,19 +47,9 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 
 ## Build JavaScript Editor for Moodle ##
 
-Moodle uses grunt to build plugin specific javascript files.  
-This grunt configurations doesn't allow the modern `es6 modules` import syntax (ending with `.js`).  
-So in order to let moodle transform our plugin into it's grunt build process we first need to transform our files.
-We used a really simple approach for that:
-
-1. Create `./amd` directory if not already present. (This is the directory where moodle expects the build files).
-2. Clear all files from `./amd`.
-3. Copy files from `./editor` and replace all imports ending with `.js` to the old import syntax.
-4. Output the files into the `./amd/src` folder.
-5. Let moodle do its build process.
-
-The build process can be executed by running the following command in the root directory of the project:
+The project uses esbuild to bundle the JavaScript editor. To build the editor
+run  
+```npm install```  
 ```npm run build```
 
-More information about the moodle javascript build process can be found
-here [https://moodledev.io/docs/guides/javascript/modules](https://moodledev.io/docs/guides/javascript/modules)
+This will create a `dist` directory withing `./editor` with the bundled editor.

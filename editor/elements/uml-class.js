@@ -1,8 +1,21 @@
 /* eslint-disable */
-const {util} = joint;
+// This file is part of Moodle - https://moodle.org
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+import {shapes, util} from 'jointjs';
 
-export class UMLClass extends joint.shapes.standard.Rectangle {
-
+export class UmlClass extends shapes.standard.Rectangle {
     constructor() {
 
         super({
@@ -37,7 +50,7 @@ export class UMLClass extends joint.shapes.standard.Rectangle {
         let sectionHeight = (rectHeight - headerHeight) / 2; // Height of each section
 
         return util.defaultsDeep({
-            type: 'UMLClass.Class',
+            type: 'UmlClass.Class',
             size: {
                 width: rectWidth,
                 height: rectHeight
@@ -83,22 +96,17 @@ export class UMLClass extends joint.shapes.standard.Rectangle {
                     ref: 'body',
                 }
             }
-        }, joint.shapes.standard.Rectangle.prototype.defaults);
+        }, shapes.standard.Rectangle.prototype.defaults);
     }
-
 
     // Update the view with the rendered variables and functions
     updateView() {
-
         var attributes = this.attributes;
 
         const height = attributes.attrs.variablesRect.height + 20;
         attributes.attrs.variablesRect.height = height;
         this.attr(attributes.attrs);
-
-
         this.resize(this.attributes.size.width, this.attributes.size.height + 20);
-
     }
 
     counterVariablesUp() {
@@ -115,6 +123,4 @@ export class UMLClass extends joint.shapes.standard.Rectangle {
         // Update the view after removal
         this.updateView();
     }
-
-
 }

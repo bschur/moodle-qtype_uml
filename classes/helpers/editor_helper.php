@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $PAGE;
-$PAGE->requires->js_call_amd('qtype_uml/uml-editor-initializer');
+$PAGE->requires->js(new moodle_url('/question/type/uml/editor/moodle/uml-editor-loader.js'), true);
 
 /**
  * Helper functions for the editor loading
