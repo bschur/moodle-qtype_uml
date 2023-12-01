@@ -1,3 +1,4 @@
+/* eslint-disable */
 // This file is part of Moodle - https://moodle.org
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -12,53 +13,47 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
-
 import {decodeDiagram, encodeDiagram} from 'qtype_uml/uml-editor-compression';
 import {emitDiagramDataChangedEvent} from 'qtype_uml/uml-editor-change-handler';
+import {UMLActor} from 'qtype_uml/Elements/UMLActor';
+import {UMLClass} from 'qtype_uml/Elements/UMLClass';
 
-const templateHTML = `
-<style>
-    :host {
-        display: flex;
-        flex-direction: row;
-        height: 100%;
-        width: 100%;
-        gap: 2px;
-        padding: 4px;
-    }
+const templateCode = `
+    <style>
+        :host {
+            display: flex;
+            flex-direction: row;
+            height: 100%;
+            width: 100%;
+            gap: 2px;
+            padding: 4px;
+        }
+        
+        .left {
+            width: 30%;
+            background-color: grey;
+        }
+        
+        .right {
+            width: 100%;
+        }
     
-    .left {
-        width: 30%;
-        background-color: grey;
-    }
+        #editor {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+        }
+    </style>
     
-    .right {
-        width: 100%;
-        background-color: grey;
-    }
-</style>
-    
-<div class="left">
-    <canvas id="canvasTool"></canvas>
-</div>
-<div class="right">
-    <canvas id="canvasEditor"></canvas>
-</div>
-`;
+    <div class="left">
+        <div id="toolBox"></div>
+    </div>
+    <div class="right">
+        <div id="editor"></div>
+    </div>
+    `;
 
 export class UmlEditor extends HTMLElement {
-    canvasEditor = null;
-    ctxEditor = null;
-
-    canvasTool = null;
-    ctxTool = null;
-
-    offsetX = 0;
-    offsetY = 0;
-    draggedObject = null;
-
-    objects = [];
-
     get attributeInputId() {
         return this.getAttribute('inputId');
     }
@@ -81,132 +76,170 @@ export class UmlEditor extends HTMLElement {
         this.attachShadow({mode: 'open'});
 
         // Create the template for the shadow DOM
-        this.shadowRoot.innerHTML = templateHTML;
-    }
+        this.shadowRoot.innerHTML = templateCode;
 
-    connectedCallback() {
-        // Initialize canvas elements and contexts
-        this.initCanvas('canvasEditor', 'ctxEditor');
-        this.initCanvas('canvasTool', 'ctxTool');
+        // Create the JointJS diagram
+        const editorDiv = this.shadowRoot.querySelector('#editor');
+        const toolBoxDiv = this.shadowRoot.querySelector('#toolBox');
 
-        if (this.attributeAllowEdit) {
-            // Initial rendering
-            this.drawObjectTool();
+        // Create  instance of  JointJS graph
+        const graphEditor = new joint.dia.Graph();
+        const graphToolBox = new joint.dia.Graph();
 
-            // Setup event listeners
-            this.setupListeners();
-        } else {
-            // Hide toolbox (left part)
-            this.shadowRoot.querySelector('.left').style.display = 'none';
-        }
+        const paperEditor = initPaper(editorDiv, graphEditor, true);
+        const paperToolbox = initPaper(toolBoxDiv, graphToolBox, false);
 
+        //const ChildHighlighterView = joint.dia.Highlighter.extend({});
+
+        initToolBoxClasses();
+
+        // Initialize with existing diagram if given
         const diagramFromAttribute = this.attributeDiagram;
         if (diagramFromAttribute) {
             this.displayDiagramSchema(diagramFromAttribute);
         }
-    }
 
-    detachedCallback() {
-        this.emitDiagramChanged();
-    }
+        /** Events */
+        paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
+            const clickedClass = cellView.model.clone();
+            let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20;
+            let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20;
+            clickedClass.position(tmpX, tmpY);
+            graphEditor.addCell(clickedClass);
+        });
 
-    initCanvas(canvasId, contextId) {
-        const canvas = this.shadowRoot.getElementById(canvasId);
-        const context = canvas.getContext('2d');
+        // Assuming paper is your JointJS paper
 
-        canvas.width = canvas.parentElement.clientWidth;
-        canvas.height = canvas.parentElement.clientHeight;
+        paperEditor.on('cell:mouseenter', function (cellView) {
+            const tools = new joint.dia.ToolsView({
+                tools: [
+                    new joint.elementTools.Boundary({
+                        padding: 3,
+                        rotate: true,
+                        useModelGeometry: true,
+                    }),
+                    new joint.linkTools.Remove({
+                        scale: 1.2,
+                        distance: 15
+                    })
+                ]
+            });
+            cellView.addTools(tools);
+        });
 
-        this[canvasId] = canvas;
-        this[contextId] = context;
-    }
+        paperEditor.on('element:pointerdblclick', function (elementView, evt) {
 
-    displayDiagramSchema(diagramObjects) {
-        if (diagramObjects) {
-            this.objects = diagramObjects;
-            this.drawObjectEditor();
+            const header = 'headerText';
+            const variablesRect = 'variablesRect';
+            const functionsRect = 'functionsRect';
+            const selectedRect = evt.target.attributes[0].value;
+
+
+            switch (selectedRect) {
+                case header:
+                    console.log('Header section double-clicked');
+                    break;
+                case variablesRect:
+
+                    const variables = ['test'];
+                    let rectWidth = 150; // Width of the class
+                    let rectHeight = 100; // Height of the class
+                    let headerHeight = 20; // Height of the header section
+                    let sectionHeight = (rectHeight - headerHeight) / 2; // Height of each section
+
+                    elementView.model.updateView();
+
+
+                    // Render variables
+                    let variableYCounter = 0;
+                    const position = elementView.model.position();
+
+                    // Create and position components for each variable entry
+                    let variableComponent = new joint.shapes.standard.TextBlock({
+                        position: {x: position.x, y: position.y + headerHeight + elementView.model.getcounterVariables()},
+                        size: {width: rectWidth, height: 20},
+                        text: 'Sample Text', // Text content for the block
+                        fill: 'black', // Color of the text
+                        fontSize: 10, // Font size of the text
+                        fontFamily: 'Arial, helvetica, sans-serif', // Font family
+                        'ref-y': headerHeight, // Vertical position within the section
+                        'ref-x': 0,
+                        ref: 'variablesRect', // Reference to the parent rectangle (change this as needed)
+                        'text-anchor': 'middle', // Text alignment
+                        'pointer-events': 'none' // To avoid the text block from intercepting events
+                    });
+
+
+                    var currentAttributes = elementView.model.attr();
+                    currentAttributes.body2 = variableComponent;
+                    elementView.model.embed(variableComponent);
+
+                    // console.log(elementView.model);
+
+
+                    //elementView.model.embed(r2)
+                    graphEditor.addCell(variableComponent);
+                    variableYCounter += 20; // Adjust as needed for spacing
+                    elementView.model.counterVariablesUp();
+
+
+                    break;
+                case functionsRect:
+                    console.log('Functions section double-clicked');
+                    break;
+                default:
+                    console.log('Clicked outside the sections');
+                    break;
+            }
+        });
+
+        paperEditor.on('cell:mouseleave', function (cellView) {
+            cellView.removeTools();
+        });
+
+        paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
+
+            /*if (this.from) {
+                // If 'from' is set (meaning a previous element was selected), create a link
+                const link = new joint.shapes.standard.Link({
+                    source: { id: this.from.id },
+                    target: { id: cellView.model.id },
+                    attrs: {
+                        // Define link styles here if needed
+                    }
+                });
+                graphEditor.addCell(link);
+                this.from = null; // Reset 'from' to enable selecting a new 'from' element
+            } else {
+                // Set the 'from' element upon the first click
+                this.from = cellView.model;
+
+            }*/
+        });
+
+        function initToolBoxClasses() {
+            const customActor = new UMLActor();
+            const class1 = new UMLClass();
+            customActor.position(20, 120);
+            class1.position(20, 20);
+
+            graphToolBox.addCell(customActor);
+            graphToolBox.addCell(class1);
+
         }
-    }
 
-    drawObjectEditor() {
-        // Clear the editor canvas and draw objects
-        this.ctxEditor.clearRect(0, 0, this.canvasEditor.width, this.canvasEditor.height);
-        for (const obj of this.objects) {
-            this.ctxEditor.fillStyle = obj.color;
-            this.ctxEditor.fillRect(obj.x, obj.y, obj.width, obj.height);
+
+        function initPaper(el, model, isInteractive) {
+            return new joint.dia.Paper({
+                el: el,
+                model: model,
+                width: '100%',
+                height: '100%',
+                gridSize: 10,
+                drawGrid: true,
+                interactive: isInteractive
+            });
         }
-    }
-
-    drawObjectTool() {
-        // Clear the tool canvas and draw a sample object
-        this.ctxTool.clearRect(0, 0, this.canvasTool.width, this.canvasTool.height);
-        this.ctxTool.fillStyle = 'blue';
-        this.ctxTool.fillRect(100, 100, 50, 50);
-    }
-
-    findTopObject(x, y) {
-        // Find the top object at the given coordinates
-        for (let i = this.objects.length - 1; i >= 0; i--) {
-            const obj = this.objects[i];
-            if (x >= obj.x && x <= obj.x + obj.width && y >= obj.y && y <= obj.y + obj.height) {
-                return obj;
-            }
-        }
-        return null; // No object found
-    }
-
-    setupListeners() {
-        // Save dragged object
-        this.canvasEditor.addEventListener('mousedown', (event) => {
-            const x = event.clientX - this.canvasEditor.getBoundingClientRect().left;
-            const y = event.clientY - this.canvasEditor.getBoundingClientRect().top;
-
-            this.draggedObject = this.findTopObject(x, y);
-
-            if (this.draggedObject) {
-                this.offsetX = x - this.draggedObject.x;
-                this.offsetY = y - this.draggedObject.y;
-            }
-        });
-
-        // Refresh Editor for every mousemove
-        this.canvasEditor.addEventListener('mousemove', (event) => {
-            if (this.draggedObject) {
-                const x = event.clientX - this.canvasEditor.getBoundingClientRect().left;
-                const y = event.clientY - this.canvasEditor.getBoundingClientRect().top;
-                this.draggedObject.x = x - this.offsetX;
-                this.draggedObject.y = y - this.offsetY;
-                this.objects[this.draggedObject.id - 1] = this.draggedObject;
-
-                this.emitDiagramChanged();
-                this.drawObjectEditor();
-            }
-        });
-
-        // Save location of dragged object
-        this.canvasEditor.addEventListener('mouseup', () => {
-            if (this.draggedObject) {
-                this.objects[this.draggedObject.id - 1] = this.draggedObject;
-                this.draggedObject = null;
-            }
-        });
-
-        // Draw an instance of a click object (in Toolbox) on the editor
-        this.canvasTool.addEventListener('click', (event) => {
-            event.preventDefault();
-            const obj = {
-                id: this.objects.length + 1,
-                x: 100,
-                y: 100,
-                width: 50,
-                height: 50,
-                color: 'blue',
-            };
-            this.objects.push(obj);
-
-            this.emitDiagramChanged();
-            this.drawObjectEditor();
-        });
     }
 
     emitDiagramChanged() {
