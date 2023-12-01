@@ -7,6 +7,9 @@
     "replace:jsending": "replace \".js'\" \"'\" ./amd/src -r",
     "replace:addmoodlenamespace": "replace \"from './\" \"from 'qtype_uml/\" ./amd/src -r"
   },
+  "dependencies": {
+    "jointjs": "^3.3.1"
+  },
   "devDependencies": {
     "replace": "^1.2.2"
   }
