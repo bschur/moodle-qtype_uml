@@ -22,36 +22,28 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
+global $PAGE;
+$PAGE->requires->js_call_amd('qtype_uml/uml-editor-initializer');
+
 /**
  * Helper functions for the editor loading
  */
 class EditorHelper {
+
     /**
-     * Loads the editor html with the given display options
+     * Loads the editor html with the given display options.
      *
-     * @param question_display_options|null $options
-     * @return false|string|void
+     * @param string $bindelementid The id of the input field which holds the diagram.
+     * @param bool $iseditmode Whether the editor should be editable or not.
+     * @param string|null $diagram The diagram to load.
+     * @return string The editor html.
      */
-    public static function load_editor_html(question_display_options $options = null) {
-        // Load the web component script.
-        $webcomponentfilepath = dirname(__FILE__) . '/../../editor/webgl-editor.js';
-        $webcomponentfile = fopen($webcomponentfilepath, "r");
-        if (!$webcomponentfile) {
-            die();
-        }
-        $webcomponentscript = fread($webcomponentfile, filesize($webcomponentfilepath));
-        fclose($webcomponentfile);
-
+    public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
+            string $diagram = null): string {
         // Wrap the script inside a html script tag and use the web component directly.
-        $editorcontent = '<script>' . $webcomponentscript . '</script><webgl-editor/>';
-
-        if (isset($options)) {
-            if ($options->readonly) {
-                // TODO handle readonly.
-                $editorcontent .= ' [readonly]';
-            }
-        }
-
-        return $editorcontent;
+        return '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
+                '\'></uml-editor>';
     }
 }

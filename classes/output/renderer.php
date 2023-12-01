@@ -36,7 +36,7 @@ class qtype_uml_renderer extends qtype_renderer {
 
     /**
      * Generates the display of the formulation part of the question. This is the
-     * area that contains the quetsion text, and the controls for students to
+     * area that contains the question text, and the controls for students to
      * input their answers. Some question types also embed bits of feedback, for
      * example ticks and crosses, in this area.
      *
@@ -44,14 +44,26 @@ class qtype_uml_renderer extends qtype_renderer {
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
      */
-    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-        syslog(LOG_INFO, 'formulation_and_controls called');
-
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
         $result = parent::formulation_and_controls($qa, $options);
 
-        $result .= EditorHelper::load_editor_html($options);
+        $answerdiagram = $qa->get_last_qt_var('answer', '');
 
-        return $result;
+        // Generate the input field.
+        $answerattributes = [
+                'type' => 'hidden',
+                'id' => uniqid('diagramInput'),
+                'name' => $qa->get_qt_field_name('answer'),
+                'value' => $answerdiagram,
+        ];
+        if ($options->readonly) {
+            $answerattributes['disabled'] = 'disabled';
+        }
+
+        $answerinput = html_writer::empty_tag('input', $answerattributes);
+
+        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $answerdiagram) .
+                $answerinput;
     }
 
     /**
@@ -62,7 +74,7 @@ class qtype_uml_renderer extends qtype_renderer {
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
-    protected function specific_feedback(question_attempt $qa) {
+    protected function specific_feedback(question_attempt $qa): string {
         syslog(LOG_INFO, 'question_attempt called');
         return parent::specific_feedback($qa);
     }
@@ -74,9 +86,14 @@ class qtype_uml_renderer extends qtype_renderer {
      *
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
+     * @throws coding_exception
      */
-    protected function correct_response(question_attempt $qa) {
-        syslog(LOG_INFO, 'correct_response called');
-        return parent::correct_response($qa);
+    protected function correct_response(question_attempt $qa): string {
+        $question = $qa->get_question();
+        if (!$question instanceof qtype_uml_question) {
+            throw new coding_exception('Question is not a uml question');
+        }
+
+        return $question->correctanswer;
     }
 }

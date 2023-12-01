@@ -1,5 +1,4 @@
-<?php
-// This file is part of Moodle - https://moodle.org/
+// This file is part of Moodle - https://moodle.org
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,19 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Plugin version and other meta-data are defined here.
- *
- * @package     qtype_uml
- * @copyright   copy
- * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+import {UmlEditor} from './uml-editor.js';
+import {diagramChangeEventName, setDiagramToReferenceInputField} from './uml-editor-change-handler.js';
 
-defined('MOODLE_INTERNAL') || die();
+// Setup web-component
+customElements.define('uml-editor', UmlEditor);
 
-$plugin->component = 'qtype_uml';
-$plugin->release = '0.1.0';
-$plugin->version = 2023112300;
-$plugin->requires = 2022112800;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->supported = [401, 403];
+// Listen for diagram changes (globally)
+document.addEventListener(diagramChangeEventName, setDiagramToReferenceInputField.bind(null));
