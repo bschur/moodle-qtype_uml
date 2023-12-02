@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {UmlEditorComponent} from "../elements/uml-editor/uml-editor.component";
+import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
 
 @Component({
     selector: 'app-root',

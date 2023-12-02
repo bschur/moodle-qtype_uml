@@ -72,14 +72,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "ngx-build-plus:build",
           "options": {
             "outputPath": "dist/uml-editor-elements",
             "index": "src/index.html",
-            "browser": "src/main.elements.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "main": "src/main.elements.ts",
+            "singleBundle": true,
             "tsConfig": "tsconfig.elements.json",
             "inlineStyleLanguage": "scss",
             "budgets": [

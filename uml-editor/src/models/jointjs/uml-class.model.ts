@@ -1,8 +1,8 @@
-import {shapes, util} from "jointjs";
+import { shapes, util } from 'jointjs'
 
 export class UmlClass extends shapes.standard.Rectangle {
-    private variablesCounter = 0;
-    private variables = [];
+    private variablesCounter = 0
+    private variables = []
 
     constructor() {
         super({
@@ -24,14 +24,14 @@ export class UmlClass extends shapes.standard.Rectangle {
                     selector: 'functionsRect'
                 }
             ]
-        });
+        })
     }
 
     override defaults() {
-        const rectWidth = 150; // Width of the class
-        const rectHeight = 100; // Height of the class
-        const headerHeight = 20; // Height of the header section
-        const sectionHeight = (rectHeight - headerHeight) / 2; // Height of each section
+        const rectWidth = 150 // Width of the class
+        const rectHeight = 100 // Height of the class
+        const headerHeight = 20 // Height of the header section
+        const sectionHeight = (rectHeight - headerHeight) / 2 // Height of each section
 
         return util.defaultsDeep({
             type: 'UmlClassModel.Class',
@@ -45,7 +45,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                     rx: 5,
                     ry: 5,
                     strokeWidth: 2,
-                    stroke: 'black',
+                    stroke: 'black'
                 },
                 headerText: {
                     width: rectWidth,
@@ -67,7 +67,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                     stroke: 'black',
                     'ref-y': headerHeight,
                     'ref-x': 0,
-                    ref: 'body',
+                    ref: 'body'
 
                 },
                 functionsRect: {
@@ -77,35 +77,35 @@ export class UmlClass extends shapes.standard.Rectangle {
                     stroke: 'black',
                     'ref-y': rectHeight - sectionHeight,
                     'ref-x': 0,
-                    ref: 'body',
+                    ref: 'body'
                 }
             }
-        }, shapes.standard.Rectangle.prototype.defaults);
+        }, shapes.standard.Rectangle.prototype.defaults)
     }
 
     // Update the view with the rendered variables and functions
     updateView() {
-        const attributes = this.attributes;
+        const attributes = this.attributes
 
         // @ts-ignore
-        attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.["variablesRect"]?.height?.toString() || '0') + 20;
+        attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.['variablesRect']?.height?.toString() || '0') + 20
         // @ts-ignore
-        this.attr(attributes.attrs);
-        this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20);
+        this.attr(attributes.attrs)
+        this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
     }
 
     counterVariablesUp() {
-        this.variablesCounter += 20;
+        this.variablesCounter += 20
     }
 
     getcounterVariables() {
-        return this.variablesCounter;
+        return this.variablesCounter
     }
 
     removeVariable(index: number) {
         // Remove a variable entry at a given index
-        this.variables.splice(index, 1);
+        this.variables.splice(index, 1)
         // Update the view after removal
-        this.updateView();
+        this.updateView()
     }
 }
