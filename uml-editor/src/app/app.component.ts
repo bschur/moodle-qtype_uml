@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core'
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject, Injector } from '@angular/core'
+import { setupCustomElementWithInjector } from '../utils/bootstrap-element.function'
 import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
 
 @Component({
@@ -7,7 +8,13 @@ import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [UmlEditorComponent],
     templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+    styleUrl: './app.component.scss',
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppComponent {
+    private readonly injector = inject(Injector)
+
+    constructor() {
+        setupCustomElementWithInjector('uml-editor', UmlEditorComponent, this.injector)
+    }
 }
