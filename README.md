@@ -45,11 +45,6 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 this program. If not, see <https://www.gnu.org/licenses/>.
 
-## Build JavaScript Editor for Moodle ##
+## Angular Project UML Editor ##
 
-The project uses esbuild to bundle the JavaScript editor. To build the editor
-run  
-```npm install```  
-```npm run build```
-
-This will create a `dist` directory withing `./editor` with the bundled editor.
+The UML editor is an Angular project located in `./uml-editor`. See the [README](./uml-editor/README.md) for more information.
