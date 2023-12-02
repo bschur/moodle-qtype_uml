@@ -30,8 +30,7 @@ $PAGE->requires->js(new moodle_url('/question/type/uml/dist/loader.js'), true);
 /**
  * Helper functions for the editor loading
  */
-class EditorHelper
-{
+class EditorHelper {
 
     /**
      * Loads the editor html with the given display options.
@@ -42,10 +41,9 @@ class EditorHelper
      * @return string The editor html.
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
-                                                   string $diagram = null): string
-    {
+            string $diagram = null): string {
         // Wrap the script inside a html script tag and use the web component directly.
         return '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
-            '\'></uml-editor>';
+                '\'></uml-editor>';
     }
 }
