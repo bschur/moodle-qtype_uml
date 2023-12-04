@@ -5,13 +5,13 @@
  * @returns {String} Compressed string
  */
 function compressString(input: string): string {
-  return encodeURIComponent(input)
-    .replace(/%20/g, ' ') // Replace %20 with space
-    .replace(/%21/g, '!') // Replace %21 with !
-    .replace(/%23/g, '#') // Replace %23 with #
-    .replace(/%24/g, '$') // Replace %24 with $
-    // Add more replacements as needed
-    .replace(/%25/g, '%'); // Replace %25 with %
+    return encodeURIComponent(input)
+        .replace(/%20/g, ' ') // Replace %20 with space
+        .replace(/%21/g, '!') // Replace %21 with !
+        .replace(/%23/g, '#') // Replace %23 with #
+        .replace(/%24/g, '$') // Replace %24 with $
+        // Add more replacements as needed
+        .replace(/%25/g, '%') // Replace %25 with %
 }
 
 /**
@@ -21,13 +21,13 @@ function compressString(input: string): string {
  * @returns {String} Decompressed string
  */
 function decompressString(input: string): string {
-  return decodeURIComponent(input)
-    .replace(/ /g, '%20') // Replace space with %20
-    .replace(/!/g, '%21') // Replace ! with %21
-    .replace(/#/g, '%23') // Replace # with %23
-    .replace(/\$/g, '%24') // Replace $ with %24
-    // Add more replacements as needed
-    .replace(/%/g, '%25'); // Replace % with %25
+    return decodeURIComponent(input)
+        .replace(/ /g, '%20') // Replace space with %20
+        .replace(/!/g, '%21') // Replace ! with %21
+        .replace(/#/g, '%23') // Replace # with %23
+        .replace(/\$/g, '%24') // Replace $ with %24
+        // Add more replacements as needed
+        .replace(/%/g, '%25') // Replace % with %25
 }
 
 /**
@@ -37,9 +37,9 @@ function decompressString(input: string): string {
  * @returns {Array} Array of objects
  */
 export function decodeDiagram(diagram: string): any[] {
-  const diagramContent = decodeURIComponent(diagram);
-  const diagramJson = decompressString(diagramContent);
-  return JSON.parse(diagramJson);
+    const diagramContent = decodeURIComponent(diagram)
+    const diagramJson = decompressString(diagramContent)
+    return JSON.parse(diagramJson)
 }
 
 /**
@@ -49,7 +49,7 @@ export function decodeDiagram(diagram: string): any[] {
  * @returns {String} Encoded diagram
  */
 export function encodeDiagram(diagramObjects: any[]): string {
-  const diagramContent = JSON.stringify(diagramObjects);
-  const diagramEscaped = encodeURIComponent(diagramContent);
-  return compressString(diagramEscaped);
+    const diagramContent = JSON.stringify(diagramObjects)
+    const diagramEscaped = encodeURIComponent(diagramContent)
+    return compressString(diagramEscaped)
 }

@@ -10,6 +10,9 @@
     <LanguageOptions name="PHP">
       <option name="block" value="false" />
     </LanguageOptions>
+    <LanguageOptions name="TypeScript">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
     <LanguageOptions name="__TEMPLATE__">
       <option name="addBlankAfter" value="false" />
       <option name="block" value="false" />

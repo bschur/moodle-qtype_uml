@@ -1,8 +1,8 @@
-import {dia, util} from 'jointjs';
+import { dia, util } from 'jointjs'
 
-const legsY = 0.7;
-const bodyY = 0.3;
-const headY = 0.15;
+const legsY = 0.7
+const bodyY = 0.3
+const headY = 0.15
 
 const COLORS = [
     '#3f84e5',
@@ -13,7 +13,7 @@ const COLORS = [
     '#ede9e9',
     '#b2a29f',
     '#392F2D'
-];
+]
 
 export class UmlActor extends dia.Element {
     override defaults() {
@@ -58,17 +58,17 @@ export class UmlActor extends dia.Element {
                     }
                 }
             }
-        };
+        }
     }
 
     override preinitialize(...args: any[]) {
-        super.preinitialize(...args);
+        super.preinitialize(...args)
         // noinspection AngularInvalidAnimationTriggerAssignment
         this.markup = util.svg`
             <rect @selector="background" />
             <path @selector="body" />
             <circle @selector="head" />
             <text @selector="label" />
-        `;
+        `
     }
 }

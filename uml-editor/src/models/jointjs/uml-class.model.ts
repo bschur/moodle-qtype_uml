@@ -8,9 +8,6 @@ export class UmlClass extends shapes.standard.Rectangle {
     private headerHeight; // Height of the header section
     private sectionHeight;  // Height of each section
 
-
-
-
     constructor() {
        super({
             markup: [
@@ -31,6 +28,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                     selector: 'functionsRect'
                 }
             ]
+
         });
         this.rectWidth = 150; // Width of the class
         this.rectHeight = 100; // Height of the class
@@ -44,6 +42,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.rectHeight = 100; // Height of the class
         this.headerHeight = 20; // Height of the header section
         this.sectionHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
+
         return util.defaultsDeep({
             type: 'UmlClassModel.Class',
             size: {
@@ -56,7 +55,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                     rx: 5,
                     ry: 5,
                     strokeWidth: 2,
-                    stroke: 'black',
+                    stroke: 'black'
                 },
                 headerText: {
                     width: this.rectWidth,
@@ -78,7 +77,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                     stroke: 'black',
                     'ref-y': this.headerHeight,
                     'ref-x': 0,
-                    ref: 'body',
+                    ref: 'body'
 
                 },
                 functionsRect: {
@@ -89,26 +88,24 @@ export class UmlClass extends shapes.standard.Rectangle {
                     'ref-dy': -this.sectionHeight,
                     'ref-x': 0,
                     ref: 'body',
-
                 }
             }
-        }, shapes.standard.Rectangle.prototype.defaults);
+        }, shapes.standard.Rectangle.prototype.defaults)
     }
 
     // Update the view with the rendered variables and functions
     updateView() {
-        const attributes = this.attributes;
+        const attributes = this.attributes
 
         // @ts-ignore
         attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.["variablesRect"]?.height?.toString() || '0') + 20;
         //attributes.attrs.functionsRect.height = parseInt(attributes.attrs?.["functionsRect"]?.height?.toString() || '0');
 
+
         // @ts-ignore
-        this.attr(attributes.attrs);
-        this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20);
+        this.attr(attributes.attrs)
+        this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
     }
-
-
 
 createVariableComponent(ref:string, positionY:number) {
     return new shapes.standard.TextBlock({
@@ -125,7 +122,6 @@ createVariableComponent(ref:string, positionY:number) {
         'pointer-events': 'none'
     });
 }
-
 
   userInput(evt: dia.Event) {
         const header = 'headerText';

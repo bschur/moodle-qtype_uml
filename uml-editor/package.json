@@ -4,8 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve uml-editor",
-    "build": "ng build uml-editor",
-    "build:elements": "ng build uml-editor-elements"
+    "build": "npm run build:clean && ng build uml-editor",
+    "build:elements": "npm run build:clean && ng build uml-editor-elements",
+    "build:elements:moodle": "npm run build:elements && cp -r ./dist/uml-editor-elements/main.js ../dist",
+    "build:clean": "rm -rf dist/"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +24,7 @@
     "zone.js": "~0.14.2"
   },
   "devDependencies": {
+    "ngx-build-plus": "^17.0.0",
     "@angular-devkit/build-angular": "^17.0.5",
     "@angular/cli": "^17.0.5",
     "@angular/compiler-cli": "^17.0.5",
