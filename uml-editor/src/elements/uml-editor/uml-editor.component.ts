@@ -68,7 +68,6 @@ export class UmlEditorComponent implements AfterViewInit {
         })
 
         paperEditor.on('element:pointerdblclick', function (elementView, evt) {
-<<<<<<< HEAD
 
             if(!(elementView.model instanceof UmlClass)) {
                 throw new Error('elementView.model is not instanceof UmlClass');
@@ -81,66 +80,6 @@ export class UmlEditorComponent implements AfterViewInit {
 
 
         });
-=======
-            const header = 'headerText'
-            const variablesRect = 'variablesRect'
-            const functionsRect = 'functionsRect'
-            const selectedRect = evt.target.attributes[0].value
-            switch (selectedRect) {
-                case header:
-                    console.log('Header section double-clicked')
-                    break
-                case variablesRect:
-
-                    const variables = ['test']
-                    let rectWidth = 150 // Width of the class
-                    let rectHeight = 100 // Height of the class
-                    let headerHeight = 20 // Height of the header section
-                    let sectionHeight = (rectHeight - headerHeight) / 2 // Height of each section
-
-                    if (!(elementView.model instanceof UmlClass)) {
-                        throw new Error('elementView.model is not instanceof UmlClass')
-                    }
-
-                    elementView.model.updateView()
-
-                    // Render variables
-                    let variableYCounter = 0
-                    const position = elementView.model.position()
-
-                    // Create and position components for each variable entry
-                    let variableComponent = new shapes.standard.TextBlock({
-                        position: {x: position.x, y: position.y + headerHeight + elementView.model.getcounterVariables()},
-                        size: {width: rectWidth, height: 20},
-                        text: 'Sample Text', // Text content for the block
-                        fill: 'black', // Color of the text
-                        fontSize: 10, // Font size of the text
-                        fontFamily: 'Arial, helvetica, sans-serif', // Font family
-                        'ref-y': headerHeight, // Vertical position within the section
-                        'ref-x': 0,
-                        ref: 'variablesRect', // Reference to the parent rectangle (change this as needed)
-                        'text-anchor': 'middle', // Text alignment
-                        'pointer-events': 'none' // To avoid the text block from intercepting events
-                    })
-                    var currentAttributes = elementView.model.attr()
-                    currentAttributes.body2 = variableComponent
-                    elementView.model.embed(variableComponent)
-
-                    // console.log(elementView.model);
-                    //elementView.model.embed(r2)
-                    graphEditor.addCell(variableComponent)
-                    variableYCounter += 20 // Adjust as needed for spacing
-                    elementView.model.counterVariablesUp()
-                    break
-                case functionsRect:
-                    console.log('Functions section double-clicked')
-                    break
-                default:
-                    console.log('Clicked outside the sections')
-                    break
-            }
-        })
->>>>>>> cb4e83090caccccf28d3b2ad11261865b01bd5e1
 
         paperEditor.on('cell:mouseleave', function (cellView) {
             cellView.removeTools()

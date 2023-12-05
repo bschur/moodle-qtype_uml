@@ -6,7 +6,10 @@ export class UmlClass extends shapes.standard.Rectangle {
     private rectWidth:number; // Width of the class
     private rectHeight; // Height of the class
     private headerHeight; // Height of the header section
-    private sectionHeight;  // Height of each section
+    private rectVariablesHeight;
+    private rectFunctionsHeight;
+    private variablesComponents: shapes.standard.TextBlock[] = [];
+    private functionComponents: shapes.standard.TextBlock[] = [];
 
     constructor() {
        super({
@@ -33,7 +36,8 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.rectWidth = 150; // Width of the class
         this.rectHeight = 100; // Height of the class
         this.headerHeight = 20; // Height of the header section
-        this.sectionHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
+        this.rectVariablesHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
+        this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2;  // Height of each section
     }
 
     override defaults() {
@@ -41,7 +45,8 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.rectWidth = 150; // Width of the class
         this.rectHeight = 100; // Height of the class
         this.headerHeight = 20; // Height of the header section
-        this.sectionHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
+        this.rectVariablesHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
+        this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2;  // Height of each section
 
         return util.defaultsDeep({
             type: 'UmlClassModel.Class',
@@ -51,16 +56,14 @@ export class UmlClass extends shapes.standard.Rectangle {
             },
             attrs: {
                 body: {
-                    fill: '#2ECC71',
-                    rx: 5,
-                    ry: 5,
+                    rx: 0,
+                    ry: 0,
                     strokeWidth: 2,
                     stroke: 'black'
                 },
                 headerText: {
                     width: this.rectWidth,
-                    height: 40,
-                    text: 'Class',
+                    height: this.headerHeight,
                     //fill: 'black',
                     fontSize: 12,
                     fontWeight: 'bold',
@@ -72,7 +75,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                 },
                 variablesRect: {
                     width: this.rectWidth,
-                    height: this.sectionHeight,
+                    height: this.rectVariablesHeight,
                     fill: '#3498db',
                     stroke: 'black',
                     'ref-y': this.headerHeight,
@@ -82,10 +85,10 @@ export class UmlClass extends shapes.standard.Rectangle {
                 },
                 functionsRect: {
                     width: this.rectWidth,
-                    height: this.sectionHeight,
+                    height: this.rectFunctionsHeight,
                     fill: '#9b59b6',
                     stroke: 'black',
-                    'ref-dy': -this.sectionHeight,
+                    'ref-dy': -this.rectFunctionsHeight,
                     'ref-x': 0,
                     ref: 'body',
                 }
@@ -140,26 +143,48 @@ createVariableComponent(ref:string, positionY:number) {
             case variablesRect:
                 this.updateView();
                 positionY = this.position().y + this.headerHeight + this.variablesCounter;
+
                 variableComponent = this.createVariableComponent('variablesRect', positionY);
                 currentAttributes = this.attr();
+                this.variablesComponents.push(variableComponent);
                 currentAttributes.body2 = variableComponent;
                 this.embed(variableComponent);
-                this.variablesCounter += 20; // Adjust as needed for spacing
-                return variableComponent;
 
+                this.variablesCounter += 20; // Adjust as needed for spacing
+                this.rectVariablesHeight += 20;
+                this.rectHeight += 20;
+                this.functionComponents.forEach(component => {
+                    let p = component.position();
+                    component.position(p.x, p.y +20);
+                })
+                return variableComponent;
             case functionsRect:
                 this.updateView();
-                positionY = this.position().y + this.headerHeight + this.rectHeight + this.funcCounter -40;
-                variableComponent = this.createVariableComponent('variablesRect', positionY);
+                positionY = this.position().y + this.rectHeight - this.rectFunctionsHeight + this.funcCounter + 20;
+
+                variableComponent = this.createVariableComponent('functionsRect', positionY);
                 currentAttributes = this.attr();
+                this.functionComponents.push(variableComponent);
                 currentAttributes.body2 = variableComponent;
                 this.embed(variableComponent);
+
                 this.funcCounter += 20; // Adjust as needed for spacing
+                this.adjustSize(this.rectFunctionsHeight);
                 return variableComponent;
             default:
                 console.log('Clicked outside the sections');
                 break;
         }
         return null;
+    }
+
+    adjustSize(subRec:number) {
+        this.rectHeight += 20;
+        this.rectFunctionsHeight += 20;
+
+        this.attr('size/height', this.rectHeight);
+
+
+
     }
 }
