@@ -8,7 +8,6 @@ export class UmlClass extends shapes.standard.Rectangle {
     private headerHeight; // Height of the header section
     private rectVariablesHeight;
     private rectFunctionsHeight;
-    private variablesComponents: shapes.standard.TextBlock[] = [];
     private functionComponents: shapes.standard.TextBlock[] = [];
 
     constructor() {
@@ -104,26 +103,33 @@ export class UmlClass extends shapes.standard.Rectangle {
         attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.["variablesRect"]?.height?.toString() || '0') + 20;
         //attributes.attrs.functionsRect.height = parseInt(attributes.attrs?.["functionsRect"]?.height?.toString() || '0');
 
-
         // @ts-ignore
         this.attr(attributes.attrs)
         this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
     }
 
 createVariableComponent(ref:string, positionY:number) {
-    return new shapes.standard.TextBlock({
-        position: {x: this.position().x, y: positionY},
-        size: {width: this.rectWidth, height: 20},
-        text: 'Sample Text',
-        fill: 'black',
-        fontSize: 10,
-        fontFamily: 'Arial, helvetica, sans-serif',
-        'ref-y': this.headerHeight,
-        'ref-x': 0,
-        ref: ref,
-        'text-anchor': 'middle',
-        'pointer-events': 'none'
-    });
+        let variableComponent = new shapes.standard.TextBlock({
+            position: {x: this.position().x, y: positionY},
+            size: {width: this.rectWidth, height: 20},
+            'ref-y': this.headerHeight,
+            'ref-x': 0,
+            ref: ref,
+            placeholder: "",
+            attrs: {
+                label: {
+                    text: 'sample text',
+                    style: {
+                        fontFamily: 'Arial, helvetica, sans-serif',
+                    }
+                }
+            }
+
+        });
+    let currentAttributes = this.attr();
+    currentAttributes.body2 = variableComponent;
+    this.embed(variableComponent);
+    return variableComponent;
 }
 
   userInput(evt: dia.Event) {
@@ -134,7 +140,6 @@ createVariableComponent(ref:string, positionY:number) {
 
       let variableComponent;
       let positionY;
-      let  currentAttributes;
 
         switch (selectedRect) {
             case header:
@@ -143,13 +148,7 @@ createVariableComponent(ref:string, positionY:number) {
             case variablesRect:
                 this.updateView();
                 positionY = this.position().y + this.headerHeight + this.variablesCounter;
-
                 variableComponent = this.createVariableComponent('variablesRect', positionY);
-                currentAttributes = this.attr();
-                this.variablesComponents.push(variableComponent);
-                currentAttributes.body2 = variableComponent;
-                this.embed(variableComponent);
-
                 this.variablesCounter += 20; // Adjust as needed for spacing
                 this.rectVariablesHeight += 20;
                 this.rectHeight += 20;
@@ -161,13 +160,8 @@ createVariableComponent(ref:string, positionY:number) {
             case functionsRect:
                 this.updateView();
                 positionY = this.position().y + this.rectHeight - this.rectFunctionsHeight + this.funcCounter + 20;
-
                 variableComponent = this.createVariableComponent('functionsRect', positionY);
-                currentAttributes = this.attr();
                 this.functionComponents.push(variableComponent);
-                currentAttributes.body2 = variableComponent;
-                this.embed(variableComponent);
-
                 this.funcCounter += 20; // Adjust as needed for spacing
                 this.adjustSize(this.rectFunctionsHeight);
                 return variableComponent;
@@ -181,7 +175,6 @@ createVariableComponent(ref:string, positionY:number) {
     adjustSize(subRec:number) {
         this.rectHeight += 20;
         this.rectFunctionsHeight += 20;
-
         this.attr('size/height', this.rectHeight);
 
 

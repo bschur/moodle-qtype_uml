@@ -5,7 +5,7 @@ import { dia } from 'jointjs'
 export function initToolBoxClasses(graphToolBox: dia.Graph): void {
     const customActor = new UmlActor()
     const class1 = new UmlClass()
-    customActor.position(20, 120)
+    customActor.position(20, 150)
     class1.position(20, 20)
 
     graphToolBox.addCell(customActor)
