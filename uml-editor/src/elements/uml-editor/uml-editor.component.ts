@@ -1,46 +1,83 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild, ViewEncapsulation } from '@angular/core'
-import { encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import { dia, elementTools, linkTools, shapes } from 'jointjs'
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
+import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
+import { dia, elementTools, linkTools } from 'jointjs'
 import { initPaper, initToolBoxClasses } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
+import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion'
+import { toObservable } from '@angular/core/rxjs-interop'
+import { debounceTime, distinctUntilChanged } from 'rxjs'
 
 @Component({
     selector: 'uml-editor',
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [],
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',
     encapsulation: ViewEncapsulation.ShadowDom
 })
 export class UmlEditorComponent implements AfterViewInit {
-    @Input() inputId: string | null = null
+    @Input() inputid: string | null = null
     @Input() diagram: string | null = null
-    @Input() allowEdit = false
 
-    @ViewChild('editor', {static: true}) editorRef!: ElementRef<HTMLElement>
-    @ViewChild('toolBox', {static: true}) toolBoxRef!: ElementRef<HTMLElement>
+    @Input() set allowedit(value: BooleanInput) {
+        this._allowEdit = coerceBooleanProperty(value)
+    }
 
-    @Output() diagramChanged = new EventEmitter<string>()
+    get allowedit(): boolean {
+        return this._allowEdit
+    }
+
+    @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
+    @ViewChild('toolbox', { static: true }) toolBoxRef!: ElementRef<HTMLDivElement>
+
+    @Output() readonly diagramchanged = new EventEmitter<{ inputid: string, diagram: string }>()
+
+    private readonly currentDiagram = signal<any>(null)
+    private readonly graphEditor = new dia.Graph()
+    private readonly graphToolBox = new dia.Graph()
+
+    private paperEditor: dia.Paper | null = null
+    private paperToolbox: dia.Paper | null = null
+
+    private _allowEdit = false
+
+    constructor() {
+        // listen for changes and emit diagram-changed event
+        toObservable(this.currentDiagram)
+            .pipe(
+                distinctUntilChanged(),
+                debounceTime(200),
+                distinctUntilChanged()
+            ).subscribe(this.emitDiagramChanged.bind(this))
+    }
 
     ngAfterViewInit() {
         this.setupJointJs()
     }
 
     private setupJointJs() {
-        // Create  instance of  JointJS graph
-        const graphEditor = new dia.Graph()
-        const graphToolBox = new dia.Graph()
+        this.paperEditor = initPaper(this.editorRef.nativeElement, this.graphEditor, true)
+        if (this.allowedit) {
+            this.paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.graphToolBox, false)
+        } else {
+            this.toolBoxRef.nativeElement.style.display = 'none'
+        }
 
-        const paperEditor = initPaper(this.editorRef.nativeElement, graphEditor, true)
-        const paperToolbox = initPaper(this.toolBoxRef.nativeElement, graphToolBox, false)
+        initToolBoxClasses(this.graphToolBox)
 
-        //const ChildHighlighterView = dia.Highlighter.extend({});
+        // load existing diagram if present
+        if (this.diagram) {
+            const decoded = decodeDiagram(this.diagram)
+            this.graphEditor.fromJSON(decoded)
+        }
 
-        initToolBoxClasses(graphToolBox)
+        this.subscribeToEvents(this.paperEditor, this.paperToolbox, this.graphEditor)
+    }
+
+    private subscribeToEvents(paperEditor: dia.Paper, paperToolbox: dia.Paper | null, graphEditor: dia.Graph) {
+        graphEditor.on('change', () => this.currentDiagram.set(graphEditor.toJSON()))
 
         /** Events */
-        paperToolbox.on('element:pointerup', (cellView, evt, x, y) => {
+        paperToolbox?.on('element:pointerup', (cellView, evt, x, y) => {
             const clickedClass = cellView.model.clone()
             let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
             let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20
@@ -68,47 +105,39 @@ export class UmlEditorComponent implements AfterViewInit {
         })
 
         paperEditor.on('element:pointerdblclick', function (elementView, evt) {
-
-            if(!(elementView.model instanceof UmlClass)) {
-                throw new Error('elementView.model is not instanceof UmlClass');
+            if (!(elementView.model instanceof UmlClass)) {
+                throw new Error('elementView.model is not instanceof UmlClass')
             }
-            const class1 = elementView.model;
-            const x = class1.userInput(evt);
-           if (x != null) {
-               graphEditor.addCell(x);
-           }
-
-
-        });
+            const class1 = elementView.model
+            const x = class1.userInput(evt)
+            if (x != null) {
+                graphEditor.addCell(x)
+            }
+        })
 
         paperEditor.on('cell:mouseleave', function (cellView) {
             cellView.removeTools()
         })
-
-        /*paperEditor.on('cell:pointerup', (cellView, evt, x, y) => {
-            if (this.from) {
-                // If 'from' is set (meaning a previous element was selected), create a link
-                const link = new shapes.standard.Link({
-                    source: { id: this.from.id },
-                    target: { id: cellView.model.id },
-                    attrs: {
-                        // Define link styles here if needed
-                    }
-                });
-                graphEditor.addCell(link);
-                this.from = null; // Reset 'from' to enable selecting a new 'from' element
-            } else {
-                // Set the 'from' element upon the first click
-                this.from = cellView.model;
-
-            }
-        });*/
     }
 
     private emitDiagramChanged() {
-        // TODO read diagram and decode
-        const diagram = [{name: 'test'}]
-        const encoded = encodeDiagram(diagram)
-        this.diagramChanged.emit(encoded)
+        if (!this.inputid) {
+            console.warn('inputid is not set')
+            return
+        }
+
+        const diagramJson = this.graphEditor.toJSON()
+        const encoded = encodeDiagram(diagramJson)
+
+        if (encoded === this.diagram) {
+            console.debug('diagram not changed')
+            return
+        }
+
+        console.debug('diagram changed', encoded)
+        this.diagramchanged.emit({
+            inputid: this.inputid,
+            diagram: encoded
+        })
     }
 }

@@ -6,7 +6,6 @@ import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
     selector: 'app-root',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [UmlEditorComponent],
     templateUrl: './app.component.html',
     styleUrl: './app.component.scss',
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

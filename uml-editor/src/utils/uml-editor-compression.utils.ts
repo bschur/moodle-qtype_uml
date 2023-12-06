@@ -1,8 +1,8 @@
 /**
  * Compress string to be used in Editor
  *
- * @param {String} input String to compress
- * @returns {String} Compressed string
+ * @param input String to compress
+ * @returns Compressed string
  */
 function compressString(input: string): string {
     return encodeURIComponent(input)
@@ -17,8 +17,8 @@ function compressString(input: string): string {
 /**
  * Decompress string encoded by Editor
  *
- * @param {String} input String to decompress
- * @returns {String} Decompressed string
+ * @param input String to decompress
+ * @returns Decompressed string
  */
 function decompressString(input: string): string {
     return decodeURIComponent(input)
@@ -33,10 +33,10 @@ function decompressString(input: string): string {
 /**
  * Decode diagram string encoded by Editor
  *
- * @param {String} diagram Diagram string
- * @returns {Array} Array of objects
+ * @param diagram Diagram string
+ * @returns diagram as object
  */
-export function decodeDiagram(diagram: string): any[] {
+export function decodeDiagram(diagram: string): any {
     const diagramContent = decodeURIComponent(diagram)
     const diagramJson = decompressString(diagramContent)
     return JSON.parse(diagramJson)
@@ -45,11 +45,11 @@ export function decodeDiagram(diagram: string): any[] {
 /**
  * Encode diagram to be used in Editor
  *
- * @param {Array} diagramObjects Array of objects
- * @returns {String} Encoded diagram
+ * @param diagram The diagram object
+ * @returns Encoded diagram
  */
-export function encodeDiagram(diagramObjects: any[]): string {
-    const diagramContent = JSON.stringify(diagramObjects)
+export function encodeDiagram(diagram: any): string {
+    const diagramContent = JSON.stringify(diagram)
     const diagramEscaped = encodeURIComponent(diagramContent)
     return compressString(diagramEscaped)
 }
