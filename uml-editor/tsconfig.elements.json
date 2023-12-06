@@ -3,13 +3,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "target": "ES5",
-    "module": "commonjs",
-    "types": [
-      "backbone",
-      "jointjs",
-      "jquery"
-    ]
+    "types": []
   },
   "files": [
     "src/main.elements.ts"

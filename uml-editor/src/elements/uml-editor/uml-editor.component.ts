@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { dia, elementTools, linkTools } from 'jointjs'
 import { initPaper, initToolBoxClasses } from '../../utils/jointjs-drawer.utils'
@@ -14,22 +14,22 @@ import { debounceTime, distinctUntilChanged } from 'rxjs'
     styleUrl: './uml-editor.component.scss',
     encapsulation: ViewEncapsulation.ShadowDom
 })
-export class UmlEditorComponent implements AfterViewInit {
-    @Input() inputid: string | null = null
+export class UmlEditorComponent implements AfterViewInit, AfterViewChecked {
+    @Input() inputId: string | null = null
     @Input() diagram: string | null = null
 
-    @Input() set allowedit(value: BooleanInput) {
+    @Input() set allowEdit(value: BooleanInput) {
         this._allowEdit = coerceBooleanProperty(value)
     }
 
-    get allowedit(): boolean {
+    get allowEdit(): boolean {
         return this._allowEdit
     }
 
     @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
     @ViewChild('toolbox', { static: true }) toolBoxRef!: ElementRef<HTMLDivElement>
 
-    @Output() readonly diagramchanged = new EventEmitter<{ inputid: string, diagram: string }>()
+    @Output() readonly diagramChanged = new EventEmitter<{ inputid: string, diagram: string }>()
 
     private readonly currentDiagram = signal<any>(null)
     private readonly graphEditor = new dia.Graph()
@@ -51,12 +51,8 @@ export class UmlEditorComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.setupJointJs()
-    }
-
-    private setupJointJs() {
         this.paperEditor = initPaper(this.editorRef.nativeElement, this.graphEditor, true)
-        if (this.allowedit) {
+        if (this.allowEdit) {
             this.paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.graphToolBox, false)
         } else {
             this.toolBoxRef.nativeElement.style.display = 'none'
@@ -64,13 +60,15 @@ export class UmlEditorComponent implements AfterViewInit {
 
         initToolBoxClasses(this.graphToolBox)
 
+        this.subscribeToEvents(this.paperEditor, this.paperToolbox, this.graphEditor)
+    }
+
+    ngAfterViewChecked() {
         // load existing diagram if present
         if (this.diagram) {
             const decoded = decodeDiagram(this.diagram)
             this.graphEditor.fromJSON(decoded)
         }
-
-        this.subscribeToEvents(this.paperEditor, this.paperToolbox, this.graphEditor)
     }
 
     private subscribeToEvents(paperEditor: dia.Paper, paperToolbox: dia.Paper | null, graphEditor: dia.Graph) {
@@ -121,7 +119,7 @@ export class UmlEditorComponent implements AfterViewInit {
     }
 
     private emitDiagramChanged() {
-        if (!this.inputid) {
+        if (!this.inputId) {
             console.warn('inputid is not set')
             return
         }
@@ -130,13 +128,12 @@ export class UmlEditorComponent implements AfterViewInit {
         const encoded = encodeDiagram(diagramJson)
 
         if (encoded === this.diagram) {
-            console.debug('diagram not changed')
+            console.warn('diagram not changed')
             return
         }
 
-        console.debug('diagram changed', encoded)
-        this.diagramchanged.emit({
-            inputid: this.inputid,
+        this.diagramChanged.emit({
+            inputid: this.inputId,
             diagram: encoded
         })
     }

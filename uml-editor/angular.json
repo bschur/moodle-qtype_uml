@@ -72,25 +72,14 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "ngx-build-plus:build",
           "options": {
             "outputPath": "dist/uml-editor-elements",
             "index": "src/index.html",
-            "browser": "src/main.elements.ts",
+            "main": "src/main.elements.ts",
+            "singleBundle": true,
             "tsConfig": "tsconfig.elements.json",
             "inlineStyleLanguage": "scss",
-            "budgets": [
-              {
-                "type": "initial",
-                "maximumWarning": "500kb",
-                "maximumError": "1mb"
-              },
-              {
-                "type": "anyComponentStyle",
-                "maximumWarning": "2kb",
-                "maximumError": "4kb"
-              }
-            ],
             "outputHashing": "none"
           }
         }
