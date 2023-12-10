@@ -37,8 +37,7 @@ function decompressString(input: string): string {
  * @returns diagram as object
  */
 export function decodeDiagram(diagram: string): any {
-    const diagramContent = decodeURIComponent(diagram)
-    const diagramJson = decompressString(diagramContent)
+    const diagramJson = decompressString(diagram)
     return JSON.parse(diagramJson)
 }
 
@@ -50,6 +49,5 @@ export function decodeDiagram(diagram: string): any {
  */
 export function encodeDiagram(diagram: any): string {
     const diagramContent = JSON.stringify(diagram)
-    const diagramEscaped = encodeURIComponent(diagramContent)
-    return compressString(diagramEscaped)
+    return compressString(diagramContent)
 }

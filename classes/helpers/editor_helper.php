@@ -43,7 +43,6 @@ class EditorHelper {
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
         // Wrap the script inside a html script tag and use the web component directly.
-        return '<umleditor input-id=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allow-edit=\'' . $iseditmode .
-                '\'></umleditor>';
+        return '<umleditor input-id=\'' . $bindelementid . '\' allow-edit=\'' . $iseditmode . '\' diagram=\'' . $diagram . '\'/>';
     }
 }
