@@ -1,23 +1,27 @@
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
+import { AfterViewInit, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { dia, elementTools, highlighters, linkTools } from 'jointjs'
-import { initPaper, initToolBoxClasses } from '../../utils/jointjs-drawer.utils'
+import { initEditorGraph, initPaper, initToolBoxGraph } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion'
-import { toObservable } from '@angular/core/rxjs-interop'
-import { debounceTime, distinctUntilChanged } from 'rxjs'
+import { NgIf } from '@angular/common'
 import { CustomTextBlock } from '../../models/jointjs/custom-TextBlock'
+
 
 @Component({
     selector: 'uml-editor',
     standalone: true,
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',
+    imports: [
+        NgIf
+    ],
     encapsulation: ViewEncapsulation.ShadowDom
 })
-export class UmlEditorComponent implements AfterViewInit, AfterViewChecked {
-    @Input() inputId: string | null = null
-    @Input() diagram: string | null = null
+export class UmlEditorComponent implements AfterViewInit {
+    @Input() set inputId(value: string | null) {
+        this._inputId.set(value)
+    }
 
     @Input() set allowEdit(value: BooleanInput) {
         this._allowEdit = coerceBooleanProperty(value)
@@ -27,53 +31,77 @@ export class UmlEditorComponent implements AfterViewInit, AfterViewChecked {
         return this._allowEdit
     }
 
+    @Input() set diagram(value: string | null) {
+        this._inputDiagram.set(value)
+    }
+
     @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
-    @ViewChild('toolbox', { static: true }) toolBoxRef!: ElementRef<HTMLDivElement>
+    @ViewChild('toolbox') toolBoxRef?: ElementRef<HTMLDivElement>
 
-    @Output() readonly diagramChanged = new EventEmitter<{ inputid: string, diagram: string }>()
+    @Output() readonly diagramChanged = new EventEmitter<{ inputId: string, diagram: string }>()
 
-    private readonly currentDiagram = signal<any>(null)
-    private readonly graphEditor = new dia.Graph()
-    private readonly graphToolBox = new dia.Graph()
+    private readonly _inputId = signal<string | null>(null)
+    private readonly _inputDiagram = signal<string | null>(null)
+    private readonly _diagram = signal<any>(null)
 
-    private paperEditor: dia.Paper | null = null
-    private paperToolbox: dia.Paper | null = null
+    private readonly graphEditor = initEditorGraph()
+    private readonly graphToolBox = initToolBoxGraph()
+    private readonly _jointJsPapers = signal<{ paperEditor: dia.Paper, paperToolbox: dia.Paper | null } | null>(null)
 
     private _allowEdit = false
 
     constructor() {
-        // listen for changes and emit diagram-changed event
-        toObservable(this.currentDiagram)
-            .pipe(
-                distinctUntilChanged(),
-                debounceTime(200),
-                distinctUntilChanged()
-            ).subscribe(this.emitDiagramChanged.bind(this))
+        // listen to diagram input and draw it on editor
+        effect(() => {
+            const inputDiagram = this._inputDiagram()
+            if (!inputDiagram) {
+                return
+            }
+
+            const decoded = decodeDiagram(inputDiagram)
+            this.graphEditor.fromJSON(decoded)
+        })
+
+        // listen to diagram changes and emit value
+        effect(() => {
+            const diagram = this._diagram()
+            const inputId = this._inputId()
+            if (!inputId || !diagram) {
+                console.warn('inputId or diagram not set')
+                return
+            }
+
+            const encodedDiagram = encodeDiagram(diagram)
+            if (encodedDiagram === this._inputDiagram()) {
+                console.warn('diagram not changed')
+                return
+            }
+
+            this.diagramChanged.emit({
+                inputId,
+                diagram
+            })
+        })
     }
 
     ngAfterViewInit() {
-        this.paperEditor = initPaper(this.editorRef.nativeElement, this.graphEditor, true)
-        if (this.allowEdit) {
-            this.paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.graphToolBox, false)
-        } else {
-            this.toolBoxRef.nativeElement.style.display = 'none'
+        const paperEditor = initPaper(this.editorRef.nativeElement, this.graphEditor, true)
+
+        let paperToolbox: dia.Paper | null = null
+        if (this.toolBoxRef) {
+            paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.graphToolBox, false)
         }
 
-        initToolBoxClasses(this.graphToolBox)
+        this.subscribeToEvents(paperEditor, paperToolbox, this.graphEditor)
 
-        this.subscribeToEvents(this.paperEditor, this.paperToolbox, this.graphEditor)
-    }
-
-    ngAfterViewChecked() {
-        // load existing diagram if present
-        if (this.diagram) {
-            const decoded = decodeDiagram(this.diagram)
-            this.graphEditor.fromJSON(decoded)
-        }
+        this._jointJsPapers.set({
+            paperEditor,
+            paperToolbox
+        })
     }
 
     private subscribeToEvents(paperEditor: dia.Paper, paperToolbox: dia.Paper | null, graphEditor: dia.Graph) {
-        graphEditor.on('change', () => this.currentDiagram.set(graphEditor.toJSON()))
+        graphEditor.on('change', () => this._diagram.set(graphEditor.toJSON()))
 
         /** Events */
         paperToolbox?.on('element:pointerup', (cellView, evt, x, y) => {
@@ -150,26 +178,6 @@ export class UmlEditorComponent implements AfterViewInit, AfterViewChecked {
 
         paperEditor.on('cell:mouseleave', function (cellView) {
             cellView.removeTools()
-        })
-    }
-
-    private emitDiagramChanged() {
-        if (!this.inputId) {
-            console.warn('inputid is not set')
-            return
-        }
-
-        const diagramJson = this.graphEditor.toJSON()
-        const encoded = encodeDiagram(diagramJson)
-
-        if (encoded === this.diagram) {
-            console.warn('diagram not changed')
-            return
-        }
-
-        this.diagramChanged.emit({
-            inputid: this.inputId,
-            diagram: encoded
         })
     }
 }
