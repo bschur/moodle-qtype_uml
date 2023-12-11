@@ -1,11 +1,12 @@
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import { dia, elementTools, linkTools } from 'jointjs'
+import { dia, elementTools, highlighters, linkTools } from 'jointjs'
 import { initPaper, initToolBoxClasses } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion'
 import { toObservable } from '@angular/core/rxjs-interop'
 import { debounceTime, distinctUntilChanged } from 'rxjs'
+import { CustomTextBlock } from '../../models/jointjs/custom-TextBlock'
 
 @Component({
     selector: 'uml-editor',
@@ -103,14 +104,48 @@ export class UmlEditorComponent implements AfterViewInit, AfterViewChecked {
         })
 
         paperEditor.on('element:pointerdblclick', function (elementView, evt) {
-            if (!(elementView.model instanceof UmlClass)) {
+            if (elementView.model instanceof UmlClass) {
+                const class1 = elementView.model
+                const x = class1.userInput(evt, paperEditor)
+                if (x != null) {
+                    graphEditor.addCell(x)
+                }
+            }
+            else if (elementView.model instanceof CustomTextBlock) {
+                //const customTextBlock = elementView.model;
+                const cell = elementView.model;
+                const textarea = document.createElement('textarea');
+                textarea.style.position = 'absolute';
+                textarea.style.width ='200px';
+                textarea.style.height = '100px';
+                textarea.style.left = '50%';
+                // @ts-ignore
+                textarea.style.top = `${paperEditor.options.height / 2}px`;
+                textarea.style.transform = 'translate(-50%, -50%)';
+                textarea.style.padding = '5px';
+                textarea.style.resize = 'none';
+                textarea.style.boxShadow = '10px 10px 5px rgba(0, 0, 0, 0.5)';
+                //textarea.value = cell.prop(textPath) || '';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.setSelectionRange(0, textarea.value.length);
+
+                //elementView.model.paper.el.style.filter = 'blur(0.5px) grayscale(1)';
+                //elementView.model.paper.el.style.pointerEvents = 'none';
+
+                const highlighter = highlighters.mask.add(elementView, 'root', 'selection', {
+                    layer: dia.Paper.Layers.FRONT,
+                    deep: true
+                });
+
+
+
+               // console.log(customTextBlock)
+               // const x = customTextBlock.createVariableComponent();
+            } else {
                 throw new Error('elementView.model is not instanceof UmlClass')
             }
-            const class1 = elementView.model
-            const x = class1.userInput(evt)
-            if (x != null) {
-                graphEditor.addCell(x)
-            }
+
         })
 
         paperEditor.on('cell:mouseleave', function (cellView) {

@@ -1,4 +1,6 @@
 import { dia, shapes, util } from 'jointjs'
+import Paper = dia.Paper
+import { CustomTextBlock } from './custom-TextBlock'
 
 export class UmlClass extends shapes.standard.Rectangle {
     private variablesCounter = 0;
@@ -108,35 +110,13 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
     }
 
-createVariableComponent(ref:string, positionY:number) {
-        let variableComponent = new shapes.standard.TextBlock({
-            position: {x: this.position().x, y: positionY},
-            size: {width: this.rectWidth, height: 20},
-            'ref-y': this.headerHeight,
-            'ref-x': 0,
-            ref: ref,
-            placeholder: "",
-            attrs: {
-                label: {
-                    text: 'sample text',
-                    style: {
-                        fontFamily: 'Arial, helvetica, sans-serif',
-                    }
-                }
-            }
-
-        });
-    let currentAttributes = this.attr();
-    currentAttributes.body2 = variableComponent;
-    this.embed(variableComponent);
-    return variableComponent;
-}
-
-  userInput(evt: dia.Event) {
+  userInput(evt: dia.Event, paper:Paper) {
         const header = 'headerText';
         const variablesRect = 'variablesRect';
         const functionsRect = 'functionsRect';
         const selectedRect = evt.target.attributes[0].value;
+        let ctb = new CustomTextBlock();
+        let currentAttributes;
 
       let variableComponent;
       let positionY;
@@ -148,7 +128,7 @@ createVariableComponent(ref:string, positionY:number) {
             case variablesRect:
                 this.updateView();
                 positionY = this.position().y + this.headerHeight + this.variablesCounter;
-                variableComponent = this.createVariableComponent('variablesRect', positionY);
+                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x,positionY, paper, this.rectWidth, this.headerHeight);
                 this.variablesCounter += 20; // Adjust as needed for spacing
                 this.rectVariablesHeight += 20;
                 this.rectHeight += 20;
@@ -156,14 +136,20 @@ createVariableComponent(ref:string, positionY:number) {
                     let p = component.position();
                     component.position(p.x, p.y +20);
                 })
+                currentAttributes = this.attr();
+                currentAttributes.body2 = variableComponent;
+                this.embed(variableComponent);
                 return variableComponent;
             case functionsRect:
                 this.updateView();
                 positionY = this.position().y + this.rectHeight - this.rectFunctionsHeight + this.funcCounter + 20;
-                variableComponent = this.createVariableComponent('functionsRect', positionY);
+                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, paper, this.rectWidth, this.headerHeight);
                 this.functionComponents.push(variableComponent);
                 this.funcCounter += 20; // Adjust as needed for spacing
                 this.adjustSize(this.rectFunctionsHeight);
+                currentAttributes = this.attr();
+                currentAttributes.body2 = variableComponent;
+                this.embed(variableComponent);
                 return variableComponent;
             default:
                 console.log('Clicked outside the sections');
