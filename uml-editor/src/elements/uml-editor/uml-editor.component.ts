@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import { dia, elementTools, highlighters, linkTools } from 'jointjs'
+import { dia, elementTools, highlighters, linkTools, util } from 'jointjs'
 import { initEditorGraph, initPaper, initToolBoxGraph } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion'
 import { NgIf } from '@angular/common'
 import { CustomTextBlock } from '../../models/jointjs/custom-TextBlock'
+import setAttributesBySelector = util.setAttributesBySelector
 
 
 @Component({
@@ -140,36 +141,15 @@ export class UmlEditorComponent implements AfterViewInit {
                 }
             }
             else if (elementView.model instanceof CustomTextBlock) {
-                //const customTextBlock = elementView.model;
+                const customTextBlock = elementView.model;
                 const cell = elementView.model;
-                const textarea = document.createElement('textarea');
-                textarea.style.position = 'absolute';
-                textarea.style.width ='200px';
-                textarea.style.height = '100px';
-                textarea.style.left = '50%';
-                // @ts-ignore
-                textarea.style.top = `${paperEditor.options.height / 2}px`;
-                textarea.style.transform = 'translate(-50%, -50%)';
-                textarea.style.padding = '5px';
-                textarea.style.resize = 'none';
-                textarea.style.boxShadow = '10px 10px 5px rgba(0, 0, 0, 0.5)';
-                //textarea.value = cell.prop(textPath) || '';
-                document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.setSelectionRange(0, textarea.value.length);
 
-                //elementView.model.paper.el.style.filter = 'blur(0.5px) grayscale(1)';
-                //elementView.model.paper.el.style.pointerEvents = 'none';
-
-                const highlighter = highlighters.mask.add(elementView, 'root', 'selection', {
-                    layer: dia.Paper.Layers.FRONT,
-                    deep: true
-                });
+               // customTextBlock.createVariableComponent();
+                const element = elementView.el;
 
 
 
-               // console.log(customTextBlock)
-               // const x = customTextBlock.createVariableComponent();
+
             } else {
                 throw new Error('elementView.model is not instanceof UmlClass')
             }
