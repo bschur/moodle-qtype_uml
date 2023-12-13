@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  gap: 2px;
+
+  .left {
+    width: 30% !important;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+  }
+
+  .right {
+    width: 70% !important;
+  }
+}

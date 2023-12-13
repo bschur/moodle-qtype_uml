@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $PAGE;
-$PAGE->requires->js_call_amd('qtype_uml/uml-editor-initializer');
+$PAGE->requires->js(new moodle_url('/question/type/uml/dist/loader.js'), true);
 
 /**
  * Helper functions for the editor loading
@@ -43,7 +43,6 @@ class EditorHelper {
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
         // Wrap the script inside a html script tag and use the web component directly.
-        return '<uml-editor inputId=\'' . $bindelementid . '\' diagram=\'' . $diagram . '\' allowEdit=\'' . $iseditmode .
-                '\'></uml-editor>';
+        return '<umleditor input-id=\'' . $bindelementid . '\' allow-edit=\'' . $iseditmode . '\' diagram=\'' . $diagram . '\'/>';
     }
 }
