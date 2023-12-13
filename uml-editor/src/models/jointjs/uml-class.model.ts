@@ -1,56 +1,47 @@
 import { dia, shapes, util } from 'jointjs'
+import { CustomTextBlock } from './custom-text-block.model'
+import { CustomElementAttributes } from './custom-element-attributes.type'
 import Paper = dia.Paper
-import { CustomTextBlock } from './custom-TextBlock'
 
 export class UmlClass extends shapes.standard.Rectangle {
-    private variablesCounter = 0;
-    private funcCounter = 0;
-    private rectWidth:number; // Width of the class
-    private rectHeight; // Height of the class
-    private headerHeight; // Height of the header section
-    private rectVariablesHeight;
-    private rectFunctionsHeight;
-    private functionComponents: shapes.standard.TextBlock[] = [];
+    private variablesCounter = 0
+    private funcCounter = 0
+    private rectWidth = 150 // Width of the class
+    private rectHeight = 100 // Height of the class
+    private headerHeight = 20 // Height of the header section
+    private rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
+    private rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
+    private functionComponents: shapes.standard.TextBlock[] = []
 
-    constructor() {
-       super({
-            markup: [
-                {
-                    tagName: 'rect',
-                    selector: 'body'
-                },
-                {
-                    tagName: 'rect',
-                    selector: 'headerText'
-                },
-                {
-                    tagName: 'rect',
-                    selector: 'variablesRect'
-                },
-                {
-                    tagName: 'rect',
-                    selector: 'functionsRect'
-                }
-            ]
-
-        });
-        this.rectWidth = 150; // Width of the class
-        this.rectHeight = 100; // Height of the class
-        this.headerHeight = 20; // Height of the header section
-        this.rectVariablesHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
-        this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2;  // Height of each section
-    }
+    override markup = [
+        {
+            tagName: 'rect',
+            selector: 'body'
+        },
+        {
+            tagName: 'rect',
+            selector: 'headerText'
+        },
+        {
+            tagName: 'rect',
+            selector: 'variablesRect'
+        },
+        {
+            tagName: 'rect',
+            selector: 'functionsRect'
+        }
+    ]
 
     override defaults() {
         //todo check how to initialize
-        this.rectWidth = 150; // Width of the class
-        this.rectHeight = 100; // Height of the class
-        this.headerHeight = 20; // Height of the header section
-        this.rectVariablesHeight= (this.rectHeight - this.headerHeight) / 2;  // Height of each section
-        this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2;  // Height of each section
+        this.rectWidth = 150 // Width of the class
+        this.rectHeight = 100 // Height of the class
+        this.headerHeight = 20 // Height of the header section
+        this.rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
+        this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
 
-        return util.defaultsDeep({
-            type: 'UmlClassModel.Class',
+        const elementAttributes: CustomElementAttributes<shapes.standard.RectangleAttributes> = {
+            type: 'custom.uml.Classifier',
             size: {
                 width: this.rectWidth,
                 height: this.rectHeight
@@ -91,10 +82,13 @@ export class UmlClass extends shapes.standard.Rectangle {
                     stroke: 'black',
                     'ref-dy': -this.rectFunctionsHeight,
                     'ref-x': 0,
-                    ref: 'body',
+                    ref: 'body'
                 }
             }
-        }, shapes.standard.Rectangle.prototype.defaults)
+        }
+
+        util.defaultsDeep(elementAttributes, super.defaults)
+        return elementAttributes
     }
 
     // Update the view with the rendered variables and functions
@@ -102,7 +96,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         const attributes = this.attributes
 
         // @ts-ignore
-        attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.["variablesRect"]?.height?.toString() || '0') + 20;
+        attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.['variablesRect']?.height?.toString() || '0') + 20
         //attributes.attrs.functionsRect.height = parseInt(attributes.attrs?.["functionsRect"]?.height?.toString() || '0');
 
         // @ts-ignore
@@ -110,60 +104,57 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
     }
 
-  userInput(evt: dia.Event, paper:Paper) {
-        const header = 'headerText';
-        const variablesRect = 'variablesRect';
-        const functionsRect = 'functionsRect';
-        const selectedRect = evt.target.attributes[0].value;
-        let ctb = new CustomTextBlock();
-        let currentAttributes;
+    userInput(evt: dia.Event, paper: Paper) {
+        const header = 'headerText'
+        const variablesRect = 'variablesRect'
+        const functionsRect = 'functionsRect'
+        const selectedRect = evt.target.attributes[0].value
+        let ctb = new CustomTextBlock()
+        let currentAttributes
 
-      let variableComponent;
-      let positionY;
+        let variableComponent
+        let positionY
 
         switch (selectedRect) {
             case header:
-                console.log('Header section double-clicked');
-                break;
+                console.log('Header section double-clicked')
+                break
             case variablesRect:
-                this.updateView();
-                positionY = this.position().y + this.headerHeight + this.variablesCounter;
-                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x,positionY, paper, this.rectWidth, this.headerHeight);
-                this.variablesCounter += 20; // Adjust as needed for spacing
-                this.rectVariablesHeight += 20;
-                this.rectHeight += 20;
+                this.updateView()
+                positionY = this.position().y + this.headerHeight + this.variablesCounter
+                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x, positionY, paper, this.rectWidth, this.headerHeight)
+                this.variablesCounter += 20 // Adjust as needed for spacing
+                this.rectVariablesHeight += 20
+                this.rectHeight += 20
                 this.functionComponents.forEach(component => {
-                    let p = component.position();
-                    component.position(p.x, p.y +20);
+                    let p = component.position()
+                    component.position(p.x, p.y + 20)
                 })
-                currentAttributes = this.attr();
-                currentAttributes.body2 = variableComponent;
-                this.embed(variableComponent);
-                return variableComponent;
+                currentAttributes = this.attr()
+                currentAttributes.body2 = variableComponent
+                this.embed(variableComponent)
+                return variableComponent
             case functionsRect:
-                this.updateView();
-                positionY = this.position().y + this.rectHeight - this.rectFunctionsHeight + this.funcCounter + 20;
-                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, paper, this.rectWidth, this.headerHeight);
-                this.functionComponents.push(variableComponent);
-                this.funcCounter += 20; // Adjust as needed for spacing
-                this.adjustSize(this.rectFunctionsHeight);
-                currentAttributes = this.attr();
-                currentAttributes.body2 = variableComponent;
-                this.embed(variableComponent);
-                return variableComponent;
+                this.updateView()
+                positionY = this.position().y + this.rectHeight - this.rectFunctionsHeight + this.funcCounter + 20
+                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, paper, this.rectWidth, this.headerHeight)
+                this.functionComponents.push(variableComponent)
+                this.funcCounter += 20 // Adjust as needed for spacing
+                this.adjustSize(this.rectFunctionsHeight)
+                currentAttributes = this.attr()
+                currentAttributes.body2 = variableComponent
+                this.embed(variableComponent)
+                return variableComponent
             default:
-                console.log('Clicked outside the sections');
-                break;
+                console.log('Clicked outside the sections')
+                break
         }
-        return null;
+        return null
     }
 
-    adjustSize(subRec:number) {
-        this.rectHeight += 20;
-        this.rectFunctionsHeight += 20;
-        this.attr('size/height', this.rectHeight);
-
-
-
+    adjustSize(subRec: number) {
+        this.rectHeight += 20
+        this.rectFunctionsHeight += 20
+        this.attr('size/height', this.rectHeight)
     }
 }

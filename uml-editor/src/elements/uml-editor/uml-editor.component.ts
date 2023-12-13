@@ -1,17 +1,16 @@
-import { AfterViewInit, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import { dia, elementTools, highlighters, linkTools, util } from 'jointjs'
-import { initEditorGraph, initPaper, initToolBoxGraph } from '../../utils/jointjs-drawer.utils'
+import { dia, elementTools, linkTools } from 'jointjs'
+import { initEditorGraph, initPaper, initToolBoxGraph, jointJSCustomNameSpace } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion'
+import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import { NgIf } from '@angular/common'
-import { CustomTextBlock } from '../../models/jointjs/custom-TextBlock'
-import setAttributesBySelector = util.setAttributesBySelector
-
+import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
 
 @Component({
     selector: 'uml-editor',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',
     imports: [
@@ -24,13 +23,7 @@ export class UmlEditorComponent implements AfterViewInit {
         this._inputId.set(value)
     }
 
-    @Input() set allowEdit(value: BooleanInput) {
-        this._allowEdit = coerceBooleanProperty(value)
-    }
-
-    get allowEdit(): boolean {
-        return this._allowEdit
-    }
+    @Input({ transform: coerceBooleanProperty }) allowEdit = false
 
     @Input() set diagram(value: string | null) {
         this._inputDiagram.set(value)
@@ -44,23 +37,26 @@ export class UmlEditorComponent implements AfterViewInit {
     private readonly _inputId = signal<string | null>(null)
     private readonly _inputDiagram = signal<string | null>(null)
     private readonly _diagram = signal<any>(null)
-
-    private readonly graphEditor = initEditorGraph()
-    private readonly graphToolBox = initToolBoxGraph()
     private readonly _jointJsPapers = signal<{ paperEditor: dia.Paper, paperToolbox: dia.Paper | null } | null>(null)
 
-    private _allowEdit = false
+    private readonly jointJsNameSpace = jointJSCustomNameSpace()
 
     constructor() {
         // listen to diagram input and draw it on editor
         effect(() => {
             const inputDiagram = this._inputDiagram()
-            if (!inputDiagram) {
+            const papers = this._jointJsPapers()
+            if (!inputDiagram || !papers) {
                 return
             }
 
             const decoded = decodeDiagram(inputDiagram)
-            this.graphEditor.fromJSON(decoded)
+            try {
+                papers.paperEditor.model.fromJSON(decoded)
+            } catch (err) {
+                console.error('error while decoding diagram', err, inputDiagram)
+                papers.paperEditor.model.clear()
+            }
         })
 
         // listen to diagram changes and emit value
@@ -80,20 +76,20 @@ export class UmlEditorComponent implements AfterViewInit {
 
             this.diagramChanged.emit({
                 inputId,
-                diagram
+                diagram: encodedDiagram
             })
         })
     }
 
     ngAfterViewInit() {
-        const paperEditor = initPaper(this.editorRef.nativeElement, this.graphEditor, true)
+        const paperEditor = initPaper(this.editorRef.nativeElement, this.jointJsNameSpace, initEditorGraph, true)
 
         let paperToolbox: dia.Paper | null = null
         if (this.toolBoxRef) {
-            paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.graphToolBox, false)
+            paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.jointJsNameSpace, initToolBoxGraph, false)
         }
 
-        this.subscribeToEvents(paperEditor, paperToolbox, this.graphEditor)
+        this.subscribeToEvents(paperEditor, paperToolbox)
 
         this._jointJsPapers.set({
             paperEditor,
@@ -101,8 +97,10 @@ export class UmlEditorComponent implements AfterViewInit {
         })
     }
 
-    private subscribeToEvents(paperEditor: dia.Paper, paperToolbox: dia.Paper | null, graphEditor: dia.Graph) {
-        graphEditor.on('change', () => this._diagram.set(graphEditor.toJSON()))
+    private subscribeToEvents(paperEditor: dia.Paper, paperToolbox: dia.Paper | null) {
+        paperEditor.model.on('change', () => {
+            this._diagram.set(paperEditor.model.toJSON())
+        })
 
         /** Events */
         paperToolbox?.on('element:pointerup', (cellView, evt, x, y) => {
@@ -110,7 +108,7 @@ export class UmlEditorComponent implements AfterViewInit {
             let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
             let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20
             clickedClass.position(tmpX, tmpY)
-            graphEditor.addCell(clickedClass)
+            paperEditor.model.addCell(clickedClass)
         })
 
         // Assuming paper is your JointJS paper
@@ -137,23 +135,17 @@ export class UmlEditorComponent implements AfterViewInit {
                 const class1 = elementView.model
                 const x = class1.userInput(evt, paperEditor)
                 if (x != null) {
-                    graphEditor.addCell(x)
+                    paperEditor.model.addCell(x)
                 }
-            }
-            else if (elementView.model instanceof CustomTextBlock) {
-                const customTextBlock = elementView.model;
-                const cell = elementView.model;
+            } else if (elementView.model instanceof CustomTextBlock) {
+                const customTextBlock = elementView.model
+                const cell = elementView.model
 
-               // customTextBlock.createVariableComponent();
-                const element = elementView.el;
-
-
-
-
+                // customTextBlock.createVariableComponent();
+                const element = elementView.el
             } else {
                 throw new Error('elementView.model is not instanceof UmlClass')
             }
-
         })
 
         paperEditor.on('cell:mouseleave', function (cellView) {

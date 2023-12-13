@@ -1,4 +1,5 @@
 import { dia, util } from 'jointjs'
+import { CustomElementAttributes } from './custom-element-attributes.type'
 
 const legsY = 0.7
 const bodyY = 0.3
@@ -16,10 +17,28 @@ const COLORS = [
 ]
 
 export class UmlActor extends dia.Element {
+    override markup = [
+        {
+            tagName: 'rect',
+            selector: 'background'
+        },
+        {
+            tagName: 'path',
+            selector: 'body'
+        },
+        {
+            tagName: 'circle',
+            selector: 'head'
+        },
+        {
+            tagName: 'text',
+            selector: 'label'
+        }
+    ]
+
     override defaults() {
-        return {
-            ...super.defaults,
-            type: 'Actor',
+        const elementAttributes: CustomElementAttributes<dia.Element.Attributes> = {
+            type: 'custom.uml.Actor',
             size: {
                 width: 40,
                 height: 80
@@ -59,16 +78,8 @@ export class UmlActor extends dia.Element {
                 }
             }
         }
-    }
 
-    override preinitialize(...args: any[]) {
-        super.preinitialize(...args)
-        // noinspection AngularInvalidAnimationTriggerAssignment
-        this.markup = util.svg`
-            <rect @selector="background" />
-            <path @selector="body" />
-            <circle @selector="head" />
-            <text @selector="label" />
-        `
+        util.defaultsDeep(elementAttributes, super.defaults)
+        return elementAttributes
     }
 }
