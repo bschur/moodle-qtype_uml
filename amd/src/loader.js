@@ -30,7 +30,7 @@ function setDiagramToReferenceInputField(event) {
  *
  * @param {String} basePath path to the dist folder of the uml-element
  */
-// eslint-disable-next-line no-unused-vars
+// Eslint-disable-next-line no-unused-vars
 export const init = (basePath) => {
     // create script and style tag for custom elements
     const mainScript = document.createElement('script');
