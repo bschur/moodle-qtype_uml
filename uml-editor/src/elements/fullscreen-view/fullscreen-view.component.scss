@@ -8,14 +8,16 @@
 
   background-color: white;
 
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+
   &.--open {
-    position: fixed !important;
-    overflow: auto !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    top: 0 !important;
-    left: 0 !important;
-    z-index: 9999 !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
   }
 
   .fullscreen-view__fab-section {

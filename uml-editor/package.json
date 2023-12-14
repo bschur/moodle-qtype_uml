@@ -6,7 +6,7 @@
     "start": "ng serve uml-editor",
     "build": "npm run build:clean && ng build uml-editor",
     "build:elements": "npm run build:clean && ng build uml-editor-elements",
-    "build:elements:moodle": "npm run build:elements && cp -r ./dist/uml-editor-elements/main.js ../dist",
+    "build:elements:moodle": "npm run build:elements && cp -r ./dist/uml-editor-elements/* ../dist",
     "build:clean": "rm -rf dist/"
   },
   "private": true,
