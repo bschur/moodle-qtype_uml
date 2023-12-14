@@ -8,15 +8,14 @@ import { NgIf } from '@angular/common'
 import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
 
 @Component({
-    selector: 'uml-editor',
+    selector: 'app-uml-editor',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',
     imports: [
         NgIf
-    ],
-    encapsulation: ViewEncapsulation.ShadowDom
+    ]
 })
 export class UmlEditorComponent implements AfterViewInit {
     @Input() set inputId(value: string | null) {
