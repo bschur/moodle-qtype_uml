@@ -1,10 +1,10 @@
 <div class="fullscreen-view__fab-section">
-    @if (isOpen()) {
-        <button mat-fab color="primary" (click)="toggleFullscreen()">
+    @if (inFullScreen()) {
+        <button type="button" mat-fab color="primary" (click)="toggleFullscreen()">
             <mat-icon>fullscreen_exit</mat-icon>
         </button>
     } @else {
-        <button mat-fab color="primary" (click)="toggleFullscreen()">
+        <button type="button" mat-fab color="primary" (click)="toggleFullscreen()">
             <mat-icon>fullscreen</mat-icon>
         </button>
     }

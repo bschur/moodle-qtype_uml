@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, HostListener, Signal, signal, ViewEncapsulation } from '@angular/core'
+import { ChangeDetectionStrategy, Component, HostListener, Input, Signal, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { coerceBooleanProperty } from '@angular/cdk/coercion'
 
 @Component({
     selector: 'app-fullscreen-view',
@@ -9,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon'
     templateUrl: './fullscreen-view.component.html',
     styleUrl: './fullscreen-view.component.scss',
     host: {
-        '[class.--open]': 'isOpen()'
+        '[class.--fullscreen]': 'inFullScreen()'
     },
     imports: [
         MatButtonModule,
@@ -17,22 +18,26 @@ import { MatIconModule } from '@angular/material/icon'
     ]
 })
 export class FullscreenViewComponent {
-    readonly isOpen: Signal<boolean>
+    readonly inFullScreen: Signal<boolean>
 
-    private readonly _isOpen = signal(false)
+    @Input({ transform: coerceBooleanProperty }) set fullscreen(value: boolean) {
+        this._inFullScreen.set(value)
+    }
+
+    private readonly _inFullScreen = signal(false)
 
     constructor() {
-        this.isOpen = this._isOpen.asReadonly()
+        this.inFullScreen = this._inFullScreen.asReadonly()
     }
 
     toggleFullscreen() {
-        this._isOpen.set(!this._isOpen())
+        this._inFullScreen.set(!this._inFullScreen())
     }
 
     @HostListener('document:keydown.escape', ['$event'])
     closeFullscreen(event: KeyboardEvent) {
-        if (this._isOpen()) {
-            this._isOpen.set(false)
+        if (this._inFullScreen()) {
+            this._inFullScreen.set(false)
             event.preventDefault()
         }
     }
