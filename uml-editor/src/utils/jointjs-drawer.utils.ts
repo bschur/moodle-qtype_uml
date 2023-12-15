@@ -19,7 +19,8 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
 }
 
 export const jointJSCustomNameSpace = (): object => {
-    const defaultNameSpace = { ...shapes }
+    const defaultNameSpace = { ...shapes, ...dia }
+
     assignValueToObject(defaultNameSpace, new UmlActor().defaults().type, UmlActor)
     assignValueToObject(defaultNameSpace, new UmlClass().defaults().type, UmlClass)
     assignValueToObject(defaultNameSpace, new CustomTextBlock().defaults().type, CustomTextBlock)
