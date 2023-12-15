@@ -3,6 +3,16 @@ import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
 import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
 
+const resizePaperObserver = (paper: dia.Paper) => new ResizeObserver(() => {
+    paper.transformToFitContent({
+        padding: 10,
+        minScale: 0.1,
+        maxScale: 1,
+        horizontalAlign: 'middle',
+        verticalAlign: 'middle',
+    })
+})
+
 function assignValueToObject(existingObject: any, inputString: string, value: any) {
     const parts = inputString.split('.')
     let currentObject = existingObject
@@ -47,7 +57,7 @@ export const initToolBoxGraph = (customNameSpace: object): dia.Graph => {
 }
 
 export const initPaper = (el: HTMLElement, customNameSpace: object, createGraph: (customNameSpace: object) => dia.Graph, isInteractive: boolean): dia.Paper => {
-    return new dia.Paper({
+    const paper = new dia.Paper({
         el: el,
         model: createGraph(customNameSpace),
         width: '100%',
@@ -57,4 +67,8 @@ export const initPaper = (el: HTMLElement, customNameSpace: object, createGraph:
         interactive: isInteractive,
         cellViewNamespace: customNameSpace
     })
+
+    resizePaperObserver(paper).observe(el)
+
+    return paper
 }

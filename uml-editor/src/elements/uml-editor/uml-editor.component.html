@@ -1,5 +1,5 @@
 <mat-drawer-container class="uml-editor" autosize>
-    <mat-drawer #drawer class="uml-editor__menu" mode="side">
+    <mat-drawer #drawer class="uml-editor__menu" mode="side" [opened]="allowEdit">
         <div *ngIf="allowEdit" #toolbox></div>
     </mat-drawer>
 
