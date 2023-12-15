@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, HostListener, Input, Signal, signal } from '@angular/core'
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { coerceBooleanProperty } from '@angular/cdk/coercion'
+import { DOCUMENT } from '@angular/common'
 
 @Component({
     selector: 'app-fullscreen-view',
@@ -9,36 +9,27 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion'
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './fullscreen-view.component.html',
     styleUrl: './fullscreen-view.component.scss',
-    host: {
-        '[class.--fullscreen]': 'inFullScreen()'
-    },
     imports: [
         MatButtonModule,
         MatIconModule
     ]
 })
 export class FullscreenViewComponent {
-    readonly inFullScreen: Signal<boolean>
+    readonly inFullScreen = signal(false)
+    readonly document = inject(DOCUMENT)
 
-    @Input({ transform: coerceBooleanProperty }) set fullscreen(value: boolean) {
-        this._inFullScreen.set(value)
-    }
+    private readonly elementRef: ElementRef<HTMLElement> = inject(ElementRef)
 
-    private readonly _inFullScreen = signal(false)
-
-    constructor() {
-        this.inFullScreen = this._inFullScreen.asReadonly()
-    }
-
-    toggleFullscreen() {
-        this._inFullScreen.set(!this._inFullScreen())
-    }
-
-    @HostListener('document:keydown.escape', ['$event'])
-    closeFullscreen(event: KeyboardEvent) {
-        if (this._inFullScreen()) {
-            this._inFullScreen.set(false)
-            event.preventDefault()
+    toggleFullscreen(fullscreen?: boolean) {
+        if (!this.document.fullscreenElement || fullscreen) {
+            void this.elementRef.nativeElement.requestFullscreen()
+        } else if (this.document.exitFullscreen) {
+            void this.document.exitFullscreen()
         }
+    }
+
+    @HostListener('document:fullscreenchange', ['$event'])
+    fullscreenChangeHandler() {
+        this.inFullScreen.set(!!this.document.fullscreenElement)
     }
 }

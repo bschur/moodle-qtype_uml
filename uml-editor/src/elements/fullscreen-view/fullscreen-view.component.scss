@@ -10,15 +10,6 @@
   border: 1px solid rgba(0, 0, 0, 0.08);
   transition: all .08s ease-in-out !important;
 
-  &.--fullscreen {
-    width: 100% !important;
-    height: 100% !important;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 9999;
-  }
-
   .fullscreen-view__fab-section {
     position: absolute;
     bottom: 16px;
