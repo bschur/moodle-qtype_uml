@@ -6,10 +6,9 @@
   position: relative;
   overflow: hidden;
 
-  background-color: white;
-
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all .08s ease-in-out !important;
 
   &.--fullscreen {
     width: 100% !important;
