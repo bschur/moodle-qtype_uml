@@ -32,7 +32,7 @@ function setDiagramToReferenceInputField(event) {
  */
 // Eslint-disable-next-line no-unused-vars
 export const init = (basePath) => {
-    // create script and style tag for custom elements
+    // Create script and style tag for custom elements
     const mainScript = document.createElement('script');
     mainScript.src = `${basePath}/main.js`;
     mainScript.type = 'module';
@@ -42,15 +42,15 @@ export const init = (basePath) => {
     mainStyle.href = `${basePath}/styles.css`;
     mainStyle.rel = 'stylesheet';
 
-    // used for angular initialization
+    // Used for angular initialization
     const umlEditorLoader = document.createElement('uml-elements');
     document.body.appendChild(umlEditorLoader);
 
-    // load script and style tag for custom elements
+    // Load script and style tag for custom elements
     document.head.appendChild(mainScript);
     document.head.appendChild(mainStyle);
 
-    // listen for dom changes to detect when the editor is loaded
+    // Listen for dom changes to detect when the editor is loaded
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
