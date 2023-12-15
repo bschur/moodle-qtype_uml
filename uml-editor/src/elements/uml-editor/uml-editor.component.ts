@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild, ViewEncapsulation } from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { dia, elementTools, linkTools } from 'jointjs'
 import { initEditorGraph, initPaper, initToolBoxGraph, jointJSCustomNameSpace } from '../../utils/jointjs-drawer.utils'
@@ -6,17 +6,22 @@ import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import { NgIf } from '@angular/common'
 import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
 
 @Component({
-    selector: 'uml-editor',
+    selector: 'app-uml-editor',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',
     imports: [
-        NgIf
-    ],
-    encapsulation: ViewEncapsulation.ShadowDom
+        NgIf,
+        MatSidenavModule,
+        MatButtonModule,
+        MatIconModule
+    ]
 })
 export class UmlEditorComponent implements AfterViewInit {
     @Input() set inputId(value: string | null) {

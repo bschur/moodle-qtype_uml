@@ -19,7 +19,10 @@
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
-            "inlineStyleLanguage": "scss"
+            "inlineStyleLanguage": "scss",
+            "styles": [
+              "src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -80,7 +83,10 @@
             "singleBundle": true,
             "tsConfig": "tsconfig.elements.json",
             "inlineStyleLanguage": "scss",
-            "outputHashing": "none"
+            "outputHashing": "none",
+            "styles": [
+              "src/styles.scss"
+            ]
           }
         }
       }

@@ -1,2 +1,11 @@
-<div *ngIf="allowEdit" #toolbox class="left"></div>
-<div #editor class="right"></div>
+<mat-drawer-container class="uml-editor" autosize>
+    <mat-drawer #drawer class="uml-editor__menu" mode="side">
+        <div *ngIf="allowEdit" #toolbox></div>
+    </mat-drawer>
+
+    <button *ngIf="allowEdit" type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle">
+        <mat-icon>{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
+    </button>
+
+    <div #editor class="uml-editor__canvas"></div>
+</mat-drawer-container>
