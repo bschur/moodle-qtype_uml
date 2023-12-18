@@ -41,6 +41,8 @@ export class UmlEditorComponent implements AfterViewInit {
 
     private readonly jointJsNameSpace = jointJSCustomNameSpace()
 
+
+
     constructor() {
         // listen to diagram input and draw it on editor
         effect(() => {
@@ -79,6 +81,9 @@ export class UmlEditorComponent implements AfterViewInit {
                 diagram: encodedDiagram
             })
         })
+
+
+
     }
 
     ngAfterViewInit() {
@@ -114,6 +119,18 @@ export class UmlEditorComponent implements AfterViewInit {
         // Assuming paper is your JointJS paper
 
         paperEditor.on('cell:mouseenter', function (cellView) {
+           const ResizeTool = elementTools.Control.extend({
+                getPosition: function (view:any) {
+                    const model = view.model;
+                    const { width, height } = model.size();
+                    return { x: width, y: height };
+                },
+                setPosition: function (view:any, coordinates:any) {
+                    const model = view.model;
+                    model.resize(Math.max(coordinates.x, 1), Math.max(coordinates.y, 1));
+                }
+            });
+
             const tools = new dia.ToolsView({
                 tools: [
                     new elementTools.Boundary({
@@ -123,8 +140,27 @@ export class UmlEditorComponent implements AfterViewInit {
                     }),
                     new linkTools.Remove({
                         scale: 1.2,
-                        distance: 15
+                        distance: 15,
+                        action: function(evt, elementView, toolView) {
+                            const parent = elementView.model.getParentCell();
+                            if (elementView.model instanceof CustomTextBlock &&  parent) {
+                                let ref = elementView.model.attr('ref');
+                                let posY = elementView.model.position().y;
+                                console.log(parent)
+                                // @ts-ignore
+                                parent.adjustByDelete(ref, posY);
+
+                            }
+                            elementView.model.remove({ ui: true, tool: toolView.cid });
+                        }
+                    }),
+                    new ResizeTool({
+                        selector: "body",
+                        handleAttributes: {
+                            fill: "#4666E5"
+                        }
                     })
+
                 ]
             })
             cellView.addTools(tools)

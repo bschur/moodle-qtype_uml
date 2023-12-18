@@ -7,11 +7,16 @@ export class UmlClass extends shapes.standard.Rectangle {
     private variablesCounter = 0
     private funcCounter = 0
     private rectWidth = 150 // Width of the class
-    private rectHeight = 100 // Height of the class
+    private rectHeight = 100;
     private headerHeight = 20 // Height of the header section
     private rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
     private rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
-    private functionComponents: shapes.standard.TextBlock[] = []
+    private functionComponents: shapes.standard.TextBlock[] = [];
+    private variableComponents: shapes.standard.TextBlock[] = [];
+
+    private header = 'header'
+    private variablesRect = 'variablesRect'
+    private functionsRect = 'functionsRect'
 
     override markup = [
         {
@@ -20,7 +25,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         },
         {
             tagName: 'rect',
-            selector: 'headerText'
+            selector: 'header'
         },
         {
             tagName: 'rect',
@@ -39,6 +44,9 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.headerHeight = 20 // Height of the header section
         this.rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
         this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
+        this.header = 'header'
+        this.variablesRect = 'variablesRect'
+        this.functionsRect = 'functionsRect'
 
         const elementAttributes: CustomElementAttributes<shapes.standard.RectangleAttributes> = {
             type: 'custom.uml.Classifier',
@@ -50,39 +58,44 @@ export class UmlClass extends shapes.standard.Rectangle {
                 body: {
                     rx: 0,
                     ry: 0,
-                    strokeWidth: 2,
+                    strokeWidth: 4,
                     stroke: 'black'
+
                 },
-                headerText: {
+                header: {
                     width: this.rectWidth,
                     height: this.headerHeight,
-                    //fill: 'black',
                     fontSize: 12,
                     fontWeight: 'bold',
                     fontFamily: 'Arial, helvetica, sans-serif',
                     'ref-y': 0,
                     'ref-x': 0,
                     ref: 'body',
-                    'text-anchor': 'middle'
+                    'text-anchor': 'middle',
+                    stroke: 'black',
+                    strokeWidth: 3,
+                    fill: 'white'
                 },
                 variablesRect: {
                     width: this.rectWidth,
                     height: this.rectVariablesHeight,
-                    fill: '#3498db',
                     stroke: 'black',
+                    strokeWidth: 3,
                     'ref-y': this.headerHeight,
                     'ref-x': 0,
-                    ref: 'body'
+                    ref: 'body',
+                    fill: 'white'
 
                 },
                 functionsRect: {
                     width: this.rectWidth,
                     height: this.rectFunctionsHeight,
-                    fill: '#9b59b6',
                     stroke: 'black',
+                    strokeWidth: 3,
                     'ref-dy': -this.rectFunctionsHeight,
                     'ref-x': 0,
-                    ref: 'body'
+                    ref: 'body',
+                    fill: 'white'
                 }
             }
         }
@@ -91,24 +104,10 @@ export class UmlClass extends shapes.standard.Rectangle {
         return elementAttributes
     }
 
-    // Update the view with the rendered variables and functions
-    updateView() {
-        const attributes = this.attributes
-
-        // @ts-ignore
-        attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.['variablesRect']?.height?.toString() || '0') + 20
-        //attributes.attrs.functionsRect.height = parseInt(attributes.attrs?.["functionsRect"]?.height?.toString() || '0');
-
-        // @ts-ignore
-        this.attr(attributes.attrs)
-        this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
-    }
-
     userInput(evt: dia.Event, paper: Paper) {
-        const header = 'headerText'
-        const variablesRect = 'variablesRect'
-        const functionsRect = 'functionsRect'
+
         const selectedRect = evt.target.attributes[0].value
+        console.log(selectedRect)
         let ctb = new CustomTextBlock()
         let currentAttributes
 
@@ -116,16 +115,17 @@ export class UmlClass extends shapes.standard.Rectangle {
         let positionY
 
         switch (selectedRect) {
-            case header:
-                console.log('Header section double-clicked')
-                break
-            case variablesRect:
-                this.updateView()
-                positionY = this.position().y + this.headerHeight + this.variablesCounter
-                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x, positionY, paper, this.rectWidth, this.headerHeight)
-                this.variablesCounter += 20 // Adjust as needed for spacing
-                this.rectVariablesHeight += 20
-                this.rectHeight += 20
+            case this.header:
+                variableComponent = ctb.createVariableComponent('header', this.position().x, this.position().y, this.rectWidth, this.headerHeight)
+                currentAttributes = this.attr()
+                currentAttributes.body2 = variableComponent
+                this.embed(variableComponent)
+                return variableComponent
+            case this.variablesRect:
+                positionY = this.position().y + this.headerHeight + this.variablesCounter;
+                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x, positionY, this.rectWidth, this.headerHeight)
+                this.variableComponents.push(variableComponent);
+                this.adjustVariableSize(1);
                 this.functionComponents.forEach(component => {
                     let p = component.position()
                     component.position(p.x, p.y + 20)
@@ -134,13 +134,12 @@ export class UmlClass extends shapes.standard.Rectangle {
                 currentAttributes.body2 = variableComponent
                 this.embed(variableComponent)
                 return variableComponent
-            case functionsRect:
-                this.updateView()
-                positionY = this.position().y + this.rectHeight - this.rectFunctionsHeight + this.funcCounter + 20
-                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, paper, this.rectWidth, this.headerHeight)
+            case this.functionsRect:
+                positionY = this.position().y + this.size().height - this.rectFunctionsHeight + this.funcCounter
+                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, this.rectWidth, this.headerHeight)
                 this.functionComponents.push(variableComponent)
-                this.funcCounter += 20 // Adjust as needed for spacing
-                this.adjustSize(this.rectFunctionsHeight)
+
+                this.adjustFuncSize(1)
                 currentAttributes = this.attr()
                 currentAttributes.body2 = variableComponent
                 this.embed(variableComponent)
@@ -152,9 +151,74 @@ export class UmlClass extends shapes.standard.Rectangle {
         return null
     }
 
-    adjustSize(subRec: number) {
-        this.rectHeight += 20
-        this.rectFunctionsHeight += 20
-        this.attr('size/height', this.rectHeight)
+    adjustFuncSize(direction: number) {
+        this.resize(this.size().width, this.size().height += 20 * direction);
+        this.size().height += 20 * direction;
+        this.rectFunctionsHeight += 20 * direction;
+        this.funcCounter += 20 * direction;
     }
+
+    adjustVariableSize(direction: number) {
+        this.resize(this.size().width, this.size().height += 20 * direction);
+        this.rectVariablesHeight += 20 * direction;
+        this.variablesCounter += 20 * direction;
+        this.attr(this.variablesRect + "/height", this.rectVariablesHeight)
+    }
+
+    adjustByDelete(selectedRect:string, posY:number) {
+        let indexOfComponentToRemove:any;
+
+        switch (selectedRect) {
+            case this.variablesRect:
+                indexOfComponentToRemove = this.variableComponents.findIndex(component => component.position().y === posY);
+
+                if (indexOfComponentToRemove !== -1) {
+                    // Remove the component from the array
+                    this.variableComponents.splice(indexOfComponentToRemove, 1);
+
+                    // Adjust the position of subsequent components
+                    this.variableComponents.forEach((component, index) => {
+                        if (index >= indexOfComponentToRemove) {
+                            let p = component.position();
+                            component.position(p.x, p.y - 20);
+                        }
+                    });
+                    this.shrinkFuncY(0);
+                } else {
+                    console.log('Component not found');
+                }
+
+                this.adjustVariableSize(-1);
+
+                break;
+            case this.functionsRect:
+
+                indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY);
+
+                if (indexOfComponentToRemove !== -1) {
+                    // Remove the component from the array
+                    this.functionComponents.splice(indexOfComponentToRemove, 1);
+
+                    // Adjust the position of subsequent components
+                    this.shrinkFuncY(indexOfComponentToRemove);
+                } else {
+                    console.log('Component not found');
+                }
+
+                this.adjustFuncSize(-1)
+                break;
+        }
+
+    }
+
+    shrinkFuncY(indexOfComponentToRemove:number) {
+        this.functionComponents.forEach((component, index) => {
+            if (index >= indexOfComponentToRemove) {
+                let p = component.position();
+                component.position(p.x, p.y - 20);
+            }
+        });
+    }
+
+
 }

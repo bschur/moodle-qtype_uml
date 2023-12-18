@@ -16,15 +16,15 @@ export class CustomTextBlock extends dia.Element {
             markup: util.svg/* xml */`
                 <foreignObject @selector="foreignObject">
                     <div
-                        xmlns="http://www.w3.org/1999/xhtml"
-                        style="background:white;border: 1px solid black;width:calc(100% - 2px);height:calc(100% - 2px);display:flex;flex-direction:column;justify-content:center;align-items:center;"
-                    >
+                           xmlns="http://www.w3.org/1999/xhtml"
+                        
+                        >
                         <input 
                             @selector="name" 
                             type="text" 
                             name="name" 
                             placeholder="Type something"
-                            style="border-radius:5px;width:170px;height:30px;margin-bottom:2px;"
+                            
                         />
                     </div>
                 </foreignObject>
@@ -49,12 +49,13 @@ export class CustomTextBlock extends dia.Element {
     }
 
     // Method to create the variable component
-    public createVariableComponent(ref: string, x: number, y: number, paper: dia.Paper, rectWidth: number, headerHeight: number) {
+    public createVariableComponent(ref: string, x: number, y: number, rectWidth: number, headerHeight: number) {
         // Define a new custom form element
         // Create an instance of the custom form element
         const form = this;
-        form.position(x, y);
-        form.resize(rectWidth, headerHeight);
+        form.position(x + 2, y + 1);
+        form.resize(rectWidth - 4, headerHeight - 1);
+        form.attr('ref', ref);
 
         // Define the handleInput method
 
