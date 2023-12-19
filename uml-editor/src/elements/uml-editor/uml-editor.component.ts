@@ -119,7 +119,7 @@ export class UmlEditorComponent implements AfterViewInit {
         // Assuming paper is your JointJS paper
 
         paperEditor.on('cell:mouseenter', function (cellView) {
-           const ResizeTool = elementTools.Control.extend({
+            const ResizeTool = elementTools.Control.extend({
                 getPosition: function (view:any) {
                     const model = view.model;
                     const { width, height } = model.size();
@@ -127,9 +127,32 @@ export class UmlEditorComponent implements AfterViewInit {
                 },
                 setPosition: function (view:any, coordinates:any) {
                     const model = view.model;
-                    model.resize(Math.max(coordinates.x, 1), Math.max(coordinates.y, 1));
+                    const newWidth = Math.max(coordinates.x, 1);
+                    const newHeight = Math.max(coordinates.y, 1);
+
+                    model.resize(newWidth, newHeight);
+
+                    // Assuming header height remains constant
+                    const headerHeight = model.attr('header/height');
+                    const remainingHeight = newHeight - headerHeight;
+                    const variablesHeight = remainingHeight / 2;
+                    const functionsHeight = remainingHeight / 2;
+
+                    // Update subelements
+                    model.attr('header/width', newWidth);
+                    model.attr('variablesRect', {
+                        width: newWidth,
+                        height: variablesHeight,
+                        'ref-y': headerHeight
+                    });
+                    model.attr('functionsRect', {
+                        width: newWidth,
+                        height: functionsHeight,
+                        'ref-dy': -functionsHeight
+                    });
                 }
             });
+
 
             const tools = new dia.ToolsView({
                 tools: [
@@ -155,7 +178,7 @@ export class UmlEditorComponent implements AfterViewInit {
                         }
                     }),
                     new ResizeTool({
-                        selector: "body",
+
                         handleAttributes: {
                             fill: "#4666E5"
                         }
