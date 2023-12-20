@@ -96,7 +96,7 @@ export class UmlEditorComponent implements AfterViewInit {
     }
 
     addItemFromToolboxToEditor(itemType: string) {
-        const clickedClass = jointJsCustomUmlItems.find((item) => item.defaults.type === itemType)?.createEmpty()
+        const clickedClass = jointJsCustomUmlItems.find((item) => item.defaults.type === itemType)?.instance.clone()
         if (!clickedClass) {
             throw new Error(`itemType ${itemType} not found`)
         }

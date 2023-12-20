@@ -1,6 +1,6 @@
 import { dia, shapes, util } from 'jointjs'
 import { CustomTextBlock } from './custom-text-block.model'
-import { CustomElementAttributes } from './custom-element.model'
+import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import Paper = dia.Paper
 
 export class UmlClass extends shapes.standard.Rectangle {
@@ -40,7 +40,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
         this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
 
-        const elementAttributes: CustomElementAttributes<shapes.standard.RectangleAttributes> = {
+        const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
             type: 'custom.uml.Classifier',
             size: {
                 width: this.rectWidth,

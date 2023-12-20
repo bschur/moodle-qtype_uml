@@ -1,3 +1,4 @@
+import { NgForOf } from '@angular/common'
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, OnDestroy, Output, QueryList, signal, ViewChildren } from '@angular/core'
 import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
@@ -6,13 +7,14 @@ import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from
 import { MatInputModule } from '@angular/material/input'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
 import { debounceTime, map, startWith, Subject, takeUntil } from 'rxjs'
-import { CustomElement } from '../../models/jointjs/custom-element.model'
+import { CustomJointJSElement } from '../../models/jointjs/custom-jointjs-element.model'
 
 @Component({
     selector: 'app-uml-editor-toolbox',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        NgForOf,
         MatListModule,
         MatIconModule,
         MatButtonModule,
@@ -28,7 +30,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit, OnDestroy {
     @ViewChildren('listItemsIcon') listItemsIcon!: QueryList<ElementRef<HTMLDivElement>>
 
     readonly searchControl = new FormControl<string>('')
-    readonly items = signal<CustomElement[]>([])
+    readonly items = signal<CustomJointJSElement[]>([])
 
     private readonly onDestroy = new Subject<void>()
     private readonly _toolboxItems = jointJsCustomUmlItems.filter(item => item.inToolbox).sort((a, b) => a.name.localeCompare(b.name))
@@ -40,7 +42,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit, OnDestroy {
                 takeUntil(this.onDestroy),
                 startWith(this.searchControl.value),
                 map((value) => value?.trim().toLowerCase() || ''),
-                debounceTime(100)
+                debounceTime(200)
             )
             .subscribe(this.filterItems)
 
@@ -79,7 +81,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit, OnDestroy {
         }
 
         const graph = initCustomNamespaceGraph()
-        graph.addCell(itemByType.createEmpty())
+        graph.addCell(itemByType.instance.clone())
         initCustomPaper(listItemIconRef.nativeElement, graph, false)
     }
 }

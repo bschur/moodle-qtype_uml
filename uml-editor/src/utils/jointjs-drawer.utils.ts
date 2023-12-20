@@ -2,7 +2,8 @@ import { dia, shapes } from 'jointjs'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
 import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
-import { CustomElement } from '../models/jointjs/custom-element.model'
+import { CustomJointJSElement } from '../models/jointjs/custom-jointjs-element.model'
+import { createCustomJointJSElement } from './create-custom-jointjs-element.function'
 
 const resizePaperObserver = (paper: dia.Paper) => new ResizeObserver(() => {
     paper.transformToFitContent({
@@ -29,28 +30,10 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
     return existingObject
 }
 
-export const jointJsCustomUmlItems: CustomElement[] = [
-    {
-        clazz: UmlActor,
-        defaults: new UmlActor().defaults(),
-        name: 'Actor',
-        inToolbox: true,
-        createEmpty: () => new UmlActor()
-    },
-    {
-        clazz: UmlClass,
-        defaults: new UmlClass().defaults(),
-        name: 'Classifier',
-        inToolbox: true,
-        createEmpty: () => new UmlClass()
-    },
-    {
-        clazz: CustomTextBlock,
-        defaults: new CustomTextBlock().defaults(),
-        name: 'Textblock',
-        inToolbox: false,
-        createEmpty: () => new CustomTextBlock()
-    }
+export const jointJsCustomUmlItems: CustomJointJSElement[] = [
+    createCustomJointJSElement(UmlActor, 'Actor', true),
+    createCustomJointJSElement(UmlClass, 'Classifier', true),
+    createCustomJointJSElement(CustomTextBlock, 'Text-block', false)
 ]
 
 const jointjsCustomNamespace: any = {
