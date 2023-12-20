@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^17.0.7",
+    "material-icons": "^1.13.12",
     "@angular/cli": "^17.0.7",
     "@angular/compiler-cli": "^17.0.7",
     "@types/backbone": "^1.4.18",
