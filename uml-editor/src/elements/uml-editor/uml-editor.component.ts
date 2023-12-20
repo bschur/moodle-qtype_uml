@@ -68,8 +68,8 @@ export class UmlEditorComponent implements AfterViewInit {
         // listen to diagram input and draw it on editor
         effect(() => {
             const diagram = this._inputDiagram()
-            this.setDiagramToEditor(diagram)
-        }, { allowSignalWrites: true })
+            this.setDiagramToEditor(diagram, { emitEvent: false })
+        })
 
         // listen to diagram changes and emit value
         this.diagramControl.valueChanges.pipe(
@@ -154,7 +154,10 @@ export class UmlEditorComponent implements AfterViewInit {
         })
     }
 
-    private readonly setDiagramToEditor = (diagramValue: string | null) => {
+    private readonly setDiagramToEditor = (diagramValue: string | null, options?: {
+        onlySelf?: boolean;
+        emitEvent?: boolean;
+    }) => {
         const paperEditor = this._paperEditor()
         if (!diagramValue || !paperEditor) {
             return
@@ -163,7 +166,7 @@ export class UmlEditorComponent implements AfterViewInit {
         const decoded = decodeDiagram(diagramValue)
         try {
             paperEditor.model.fromJSON(decoded)
-            this.diagramControl.reset(decoded)
+            this.diagramControl.reset(decoded, options)
         } catch (err) {
             console.error('error while decoding diagram', err, diagramValue)
             paperEditor.model.clear()
