@@ -1,5 +1,5 @@
 import { dia, shapes, util } from 'jointjs'
-import { CustomElementAttributes } from './custom-element-attributes.type'
+import { CustomElementAttributes } from './custom-element.model'
 
 export class CustomTextBlock extends shapes.standard.Rectangle {
     override markup = []

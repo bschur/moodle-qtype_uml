@@ -1,6 +1,6 @@
 import { dia, shapes, util } from 'jointjs'
 import { CustomTextBlock } from './custom-text-block.model'
-import { CustomElementAttributes } from './custom-element-attributes.type'
+import { CustomElementAttributes } from './custom-element.model'
 import Paper = dia.Paper
 
 export class UmlClass extends shapes.standard.Rectangle {

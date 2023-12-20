@@ -2,7 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmi
 import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUMLItemsInstance } from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
 
 @Component({
     selector: 'app-uml-editor-toolbox',
@@ -17,7 +17,7 @@ import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUMLItemsInstanc
     styleUrl: './uml-editor-toolbox.component.scss'
 })
 export class UmlEditorToolboxComponent implements AfterViewInit {
-    readonly items: { type: string, name: string }[] = Object.keys(jointJsCustomUMLItemsInstance).map((type) => ({ type, name: type.split('.').slice(-1)[0] }))
+    readonly items = jointJsCustomUmlItems.filter(item => item.inToolbox)
 
     @Output() readonly itemSelected = new EventEmitter<string>()
 
@@ -25,8 +25,18 @@ export class UmlEditorToolboxComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.listItemsIcon?.forEach((listItemIcon, index) => {
+            const itemTypeAttributeValue = listItemIcon.nativeElement.attributes.getNamedItem('data-item-type')?.value
+            if (!itemTypeAttributeValue) {
+                throw new Error('data-item-type attribute is missing')
+            }
+
+            const itemByType = jointJsCustomUmlItems.find(item => item.defaults.type === itemTypeAttributeValue)
+            if (!itemByType) {
+                throw new Error(`Item with type ${itemTypeAttributeValue} not found`)
+            }
+
             const graph = initCustomNamespaceGraph()
-            graph.addCell(Object.values(jointJsCustomUMLItemsInstance)[index].clone())
+            graph.addCell(itemByType.createEmpty())
             initCustomPaper(listItemIcon.nativeElement, graph, false)
         })
     }

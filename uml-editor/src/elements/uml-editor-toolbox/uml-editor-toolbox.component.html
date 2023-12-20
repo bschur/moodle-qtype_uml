@@ -1,8 +1,8 @@
 <mat-selection-list [multiple]="false" [hideSingleSelectionIndicator]="true">
     @for (item of items;track item) {
-        <mat-list-option (click)="selectItem(item.type)">
+        <mat-list-option (click)="selectItem(item.defaults.type)">
             <div matListItemIcon>
-                <div #listItemsIcon></div>
+                <div #listItemsIcon [attr.data-item-type]="item.defaults.type"></div>
             </div>
             <div matListItemTitle>{{ item.name }}</div>
         </mat-list-option>

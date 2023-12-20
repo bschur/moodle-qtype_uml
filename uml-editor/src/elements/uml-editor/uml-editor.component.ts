@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { dia, elementTools, linkTools } from 'jointjs'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUMLItemsInstance } from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import { NgIf } from '@angular/common'
@@ -96,10 +96,15 @@ export class UmlEditorComponent implements AfterViewInit {
     }
 
     addItemFromToolboxToEditor(itemType: string) {
-        const clickedClass = jointJsCustomUMLItemsInstance[itemType].clone()
+        const clickedClass = jointJsCustomUmlItems.find((item) => item.defaults.type === itemType)?.createEmpty()
+        if (!clickedClass) {
+            throw new Error(`itemType ${itemType} not found`)
+        }
+
         let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
         let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20
         clickedClass.position(tmpX, tmpY)
+
         this._paperEditor()?.model.addCell(clickedClass)
     }
 

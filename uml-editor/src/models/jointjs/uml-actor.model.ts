@@ -1,5 +1,5 @@
 import { dia, util } from 'jointjs'
-import { CustomElementAttributes } from './custom-element-attributes.type'
+import { CustomElementAttributes } from './custom-element.model'
 
 const legsY = 0.7
 const bodyY = 0.3

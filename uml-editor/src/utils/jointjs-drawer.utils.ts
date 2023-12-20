@@ -2,6 +2,7 @@ import { dia, shapes } from 'jointjs'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
 import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
+import { CustomElement } from '../models/jointjs/custom-element.model'
 
 const resizePaperObserver = (paper: dia.Paper) => new ResizeObserver(() => {
     paper.transformToFitContent({
@@ -28,21 +29,37 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
     return existingObject
 }
 
-const jointJsCustomUmlItems = [
-    [UmlActor, new UmlActor()],
-    [UmlClass, new UmlClass()],
-    [CustomTextBlock, new CustomTextBlock()]
-] as const
+export const jointJsCustomUmlItems: CustomElement[] = [
+    {
+        clazz: UmlActor,
+        defaults: new UmlActor().defaults(),
+        name: 'Actor',
+        inToolbox: true,
+        createEmpty: () => new UmlActor()
+    },
+    {
+        clazz: UmlClass,
+        defaults: new UmlClass().defaults(),
+        name: 'Classifier',
+        inToolbox: true,
+        createEmpty: () => new UmlClass()
+    },
+    {
+        clazz: CustomTextBlock,
+        defaults: new CustomTextBlock().defaults(),
+        name: 'Textblock',
+        inToolbox: false,
+        createEmpty: () => new CustomTextBlock()
+    }
+]
 
 const jointjsCustomNamespace: any = {
     ...shapes,
-    ...jointJsCustomUmlItems.reduce((acc, [clazz, instance]) => {
-        assignValueToObject(acc, instance.defaults().type, clazz)
+    ...jointJsCustomUmlItems.reduce((acc, item) => {
+        assignValueToObject(acc, item.defaults.type, item.clazz)
         return acc
     }, {})
 }
-
-export const jointJsCustomUMLItemsInstance = Object.fromEntries(jointJsCustomUmlItems.map(([_, instance]) => [instance.defaults().type, instance]))
 
 export const initCustomNamespaceGraph = (): dia.Graph => {
     return new dia.Graph({}, { cellNamespace: jointjsCustomNamespace })
