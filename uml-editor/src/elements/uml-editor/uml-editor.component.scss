@@ -23,4 +23,8 @@
   .uml-editor__menu {
     width: 300px;
   }
+
+  ::ng-deep .mat-drawer-content {
+    overflow: hidden !important;
+  }
 }
