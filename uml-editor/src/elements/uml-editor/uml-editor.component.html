@@ -1,6 +1,6 @@
 <mat-drawer-container class="uml-editor" autosize>
     <mat-drawer #drawer class="uml-editor__menu" mode="side" [opened]="allowEdit">
-        <div *ngIf="allowEdit" #toolbox></div>
+        <uml-editor-toolbox #toolbox></uml-editor-toolbox>
     </mat-drawer>
 
     <button *ngIf="allowEdit" type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle">

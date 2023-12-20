@@ -1,7 +1,7 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild } from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild } from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { dia, elementTools, linkTools } from 'jointjs'
-import { initEditorGraph, initPaper, initToolBoxGraph, jointJSCustomNameSpace } from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUMLItemsInstance } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import { NgIf } from '@angular/common'
@@ -21,7 +21,8 @@ import { MatIconModule } from '@angular/material/icon'
         MatSidenavModule,
         MatButtonModule,
         MatIconModule
-    ]
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class UmlEditorComponent implements AfterViewInit {
     @Input() set inputId(value: string | null) {
@@ -35,32 +36,30 @@ export class UmlEditorComponent implements AfterViewInit {
     }
 
     @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
-    @ViewChild('toolbox') toolBoxRef?: ElementRef<HTMLDivElement>
+    @ViewChild('toolbox', { static: true }) toolboxRef!: ElementRef<HTMLDivElement>
 
     @Output() readonly diagramChanged = new EventEmitter<{ inputId: string, diagram: string }>()
 
     private readonly _inputId = signal<string | null>(null)
     private readonly _inputDiagram = signal<string | null>(null)
     private readonly _diagram = signal<any>(null)
-    private readonly _jointJsPapers = signal<{ paperEditor: dia.Paper, paperToolbox: dia.Paper | null } | null>(null)
-
-    private readonly jointJsNameSpace = jointJSCustomNameSpace()
+    private readonly _paperEditor = signal<dia.Paper | null>(null)
 
     constructor() {
         // listen to diagram input and draw it on editor
         effect(() => {
             const inputDiagram = this._inputDiagram()
-            const papers = this._jointJsPapers()
-            if (!inputDiagram || !papers) {
+            const paperEditor = this._paperEditor()
+            if (!inputDiagram || !paperEditor) {
                 return
             }
 
             const decoded = decodeDiagram(inputDiagram)
             try {
-                papers.paperEditor.model.fromJSON(decoded)
+                paperEditor.model.fromJSON(decoded)
             } catch (err) {
                 console.error('error while decoding diagram', err, inputDiagram)
-                papers.paperEditor.model.clear()
+                paperEditor.model.clear()
             }
         })
 
@@ -87,33 +86,26 @@ export class UmlEditorComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        const paperEditor = initPaper(this.editorRef.nativeElement, this.jointJsNameSpace, initEditorGraph, true)
+        const paperEditor = initCustomPaper(this.editorRef.nativeElement, initCustomNamespaceGraph(), true)
 
-        let paperToolbox: dia.Paper | null = null
-        if (this.toolBoxRef) {
-            paperToolbox = initPaper(this.toolBoxRef.nativeElement, this.jointJsNameSpace, initToolBoxGraph, false)
-        }
+        this.subscribeToEvents(paperEditor)
 
-        this.subscribeToEvents(paperEditor, paperToolbox)
+        this._paperEditor.set(paperEditor)
 
-        this._jointJsPapers.set({
-            paperEditor,
-            paperToolbox
-        })
+        this.toolboxRef.nativeElement.addEventListener('itemSelected', <EventListenerOrEventListenerObject>((event: CustomEvent) => this.addItemFromToolboxToEditor(event.detail)))
     }
 
-    private subscribeToEvents(paperEditor: dia.Paper, paperToolbox: dia.Paper | null) {
+    addItemFromToolboxToEditor(itemType: string) {
+        const clickedClass = jointJsCustomUMLItemsInstance[itemType].clone()
+        let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
+        let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20
+        clickedClass.position(tmpX, tmpY)
+        this._paperEditor()?.model.addCell(clickedClass)
+    }
+
+    private subscribeToEvents(paperEditor: dia.Paper) {
         paperEditor.model.on('change', () => {
             this._diagram.set(paperEditor.model.toJSON())
-        })
-
-        /** Events */
-        paperToolbox?.on('element:pointerup', (cellView, evt, x, y) => {
-            const clickedClass = cellView.model.clone()
-            let tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
-            let tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20
-            clickedClass.position(tmpX, tmpY)
-            paperEditor.model.addCell(clickedClass)
         })
 
         // Assuming paper is your JointJS paper

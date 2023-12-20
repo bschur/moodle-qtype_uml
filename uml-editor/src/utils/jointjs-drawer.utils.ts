@@ -9,7 +9,7 @@ const resizePaperObserver = (paper: dia.Paper) => new ResizeObserver(() => {
         minScale: 0.1,
         maxScale: 1,
         horizontalAlign: 'middle',
-        verticalAlign: 'middle',
+        verticalAlign: 'middle'
     })
 })
 
@@ -28,44 +28,36 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
     return existingObject
 }
 
-export const jointJSCustomNameSpace = (): object => {
-    const defaultNameSpace = { ...shapes }
-    assignValueToObject(defaultNameSpace, new UmlActor().defaults().type, UmlActor)
-    assignValueToObject(defaultNameSpace, new UmlClass().defaults().type, UmlClass)
-    assignValueToObject(defaultNameSpace, new CustomTextBlock().defaults().type, CustomTextBlock)
-    return defaultNameSpace
+const jointJsCustomUmlItems = [
+    [UmlActor, new UmlActor()],
+    [UmlClass, new UmlClass()],
+    [CustomTextBlock, new CustomTextBlock()]
+] as const
+
+const jointjsCustomNamespace: any = {
+    ...shapes,
+    ...jointJsCustomUmlItems.reduce((acc, [clazz, instance]) => {
+        assignValueToObject(acc, instance.defaults().type, clazz)
+        return acc
+    }, {})
 }
 
-export const initEditorGraph = (customNameSpace: object): dia.Graph => {
-    return new dia.Graph({}, { cellNamespace: customNameSpace })
+export const jointJsCustomUMLItemsInstance = Object.fromEntries(jointJsCustomUmlItems.map(([_, instance]) => [instance.defaults().type, instance]))
+
+export const initCustomNamespaceGraph = (): dia.Graph => {
+    return new dia.Graph({}, { cellNamespace: jointjsCustomNamespace })
 }
 
-export const initToolBoxGraph = (customNameSpace: object): dia.Graph => {
-    const graphToolBox = new dia.Graph({}, { cellNamespace: customNameSpace })
-
-    let initialY = 100
-    const addToToolBox = (cell: dia.Cell.JSON | dia.Cell) => {
-        initialY += 150
-        cell.position(50, initialY)
-        graphToolBox.addCell(cell)
-    }
-
-    addToToolBox(new UmlActor())
-    addToToolBox(new UmlClass())
-
-    return graphToolBox
-}
-
-export const initPaper = (el: HTMLElement, customNameSpace: object, createGraph: (customNameSpace: object) => dia.Graph, isInteractive: boolean): dia.Paper => {
+export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive: boolean): dia.Paper => {
     const paper = new dia.Paper({
         el: el,
-        model: createGraph(customNameSpace),
+        model: graph,
         width: '100%',
         height: '100%',
         gridSize: 10,
         drawGrid: true,
         interactive: isInteractive,
-        cellViewNamespace: customNameSpace
+        cellViewNamespace: jointjsCustomNamespace
     })
 
     resizePaperObserver(paper).observe(el)

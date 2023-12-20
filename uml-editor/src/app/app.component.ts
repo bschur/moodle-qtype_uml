@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject, Inj
 import { setupCustomElementWithInjector } from '../utils/bootstrap-element.function'
 import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
 import { FullscreenViewComponent } from '../elements/fullscreen-view/fullscreen-view.component'
+import { UmlEditorToolboxComponent } from '../elements/uml-editor-toolbox/uml-editor-toolbox.component'
 
 /**
  * This component is used to bootstrap all the custom elements
@@ -24,6 +25,7 @@ export class AppComponent {
 
     constructor() {
         setupCustomElementWithInjector('fullscreen-view', FullscreenViewComponent, this.injector)
+        setupCustomElementWithInjector('uml-editor-toolbox', UmlEditorToolboxComponent, this.injector)
         setupCustomElementWithInjector('uml-editor', UmlEditorComponent, this.injector)
     }
 }
