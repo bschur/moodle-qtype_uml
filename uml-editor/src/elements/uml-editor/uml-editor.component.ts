@@ -1,14 +1,30 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, effect, ElementRef, EventEmitter, Input, Output, signal, ViewChild } from '@angular/core'
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    CUSTOM_ELEMENTS_SCHEMA,
+    DestroyRef,
+    effect,
+    ElementRef,
+    EventEmitter,
+    inject,
+    Input,
+    Output,
+    signal,
+    ViewChild
+} from '@angular/core'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { dia, elementTools, linkTools } from 'jointjs'
 import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
-import { NgIf } from '@angular/common'
 import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { FormControl } from '@angular/forms'
+import { debounceTime, map } from 'rxjs'
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
 
 @Component({
     selector: 'app-uml-editor',
@@ -17,7 +33,6 @@ import { MatIconModule } from '@angular/material/icon'
     templateUrl: './uml-editor.component.html',
     styleUrl: './uml-editor.component.scss',
     imports: [
-        NgIf,
         MatSidenavModule,
         MatButtonModule,
         MatIconModule
@@ -25,6 +40,9 @@ import { MatIconModule } from '@angular/material/icon'
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class UmlEditorComponent implements AfterViewInit {
+    readonly diagramControl = new FormControl<{ cells: any[] }>({ cells: [] }, { nonNullable: true })
+    readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
+
     @Input() set inputId(value: string | null) {
         this._inputId.set(value)
     }
@@ -40,49 +58,24 @@ export class UmlEditorComponent implements AfterViewInit {
 
     @Output() readonly diagramChanged = new EventEmitter<{ inputId: string, diagram: string }>()
 
+    private readonly destroyRef = inject(DestroyRef)
+
     private readonly _inputId = signal<string | null>(null)
     private readonly _inputDiagram = signal<string | null>(null)
-    private readonly _diagram = signal<any>(null)
     private readonly _paperEditor = signal<dia.Paper | null>(null)
 
     constructor() {
         // listen to diagram input and draw it on editor
         effect(() => {
-            const inputDiagram = this._inputDiagram()
-            const paperEditor = this._paperEditor()
-            if (!inputDiagram || !paperEditor) {
-                return
-            }
-
-            const decoded = decodeDiagram(inputDiagram)
-            try {
-                paperEditor.model.fromJSON(decoded)
-            } catch (err) {
-                console.error('error while decoding diagram', err, inputDiagram)
-                paperEditor.model.clear()
-            }
-        })
+            const diagram = this._inputDiagram()
+            this.setDiagramToEditor(diagram)
+        }, { allowSignalWrites: true })
 
         // listen to diagram changes and emit value
-        effect(() => {
-            const diagram = this._diagram()
-            const inputId = this._inputId()
-            if (!inputId || !diagram) {
-                console.warn('inputId or diagram not set')
-                return
-            }
-
-            const encodedDiagram = encodeDiagram(diagram)
-            if (encodedDiagram === this._inputDiagram()) {
-                console.warn('diagram not changed')
-                return
-            }
-
-            this.diagramChanged.emit({
-                inputId,
-                diagram: encodedDiagram
-            })
-        })
+        this.diagramControl.valueChanges.pipe(
+            takeUntilDestroyed(this.destroyRef),
+            debounceTime(200)
+        ).subscribe(this.encodeAndEmitDiagram)
     }
 
     ngAfterViewInit() {
@@ -108,9 +101,15 @@ export class UmlEditorComponent implements AfterViewInit {
         this._paperEditor()?.model.addCell(clickedClass)
     }
 
+    resetDiagram() {
+        const resetValue = this._inputDiagram()
+        this.setDiagramToEditor(resetValue)
+    }
+
     private subscribeToEvents(paperEditor: dia.Paper) {
         paperEditor.model.on('change', () => {
-            this._diagram.set(paperEditor.model.toJSON())
+            this.diagramControl.setValue(paperEditor.model.toJSON())
+            this.diagramControl.markAsDirty()
         })
 
         // Assuming paper is your JointJS paper
@@ -152,6 +151,39 @@ export class UmlEditorComponent implements AfterViewInit {
 
         paperEditor.on('cell:mouseleave', function (cellView) {
             cellView.removeTools()
+        })
+    }
+
+    private readonly setDiagramToEditor = (diagramValue: string | null) => {
+        const paperEditor = this._paperEditor()
+        if (!diagramValue || !paperEditor) {
+            return
+        }
+
+        const decoded = decodeDiagram(diagramValue)
+        try {
+            paperEditor.model.fromJSON(decoded)
+            this.diagramControl.reset(decoded)
+        } catch (err) {
+            console.error('error while decoding diagram', err, diagramValue)
+            paperEditor.model.clear()
+        }
+    }
+
+    private readonly encodeAndEmitDiagram = (diagram: { cells: any[] }) => {
+        // the value was changed
+        const inputId = this._inputId()
+        if (!inputId || !diagram) {
+            console.warn('inputId or diagram not set')
+            return
+        }
+
+        const encodedDiagram = encodeDiagram(diagram)
+        console.debug('diagram changed', inputId, encodedDiagram)
+
+        this.diagramChanged.emit({
+            inputId,
+            diagram: encodedDiagram
         })
     }
 }

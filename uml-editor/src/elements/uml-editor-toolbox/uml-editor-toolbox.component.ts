@@ -1,13 +1,14 @@
 import { NgForOf } from '@angular/common'
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, OnDestroy, Output, QueryList, signal, ViewChildren } from '@angular/core'
+import { AfterViewInit, ChangeDetectionStrategy, Component, DestroyRef, ElementRef, EventEmitter, inject, Output, QueryList, signal, ViewChildren } from '@angular/core'
 import { MatListModule } from '@angular/material/list'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
 import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
 import { MatInputModule } from '@angular/material/input'
 import { FormControl, ReactiveFormsModule } from '@angular/forms'
-import { debounceTime, map, startWith, Subject, takeUntil } from 'rxjs'
+import { debounceTime, map, startWith } from 'rxjs'
 import { CustomJointJSElement } from '../../models/jointjs/custom-jointjs-element.model'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 
 @Component({
     selector: 'app-uml-editor-toolbox',
@@ -24,7 +25,7 @@ import { CustomJointJSElement } from '../../models/jointjs/custom-jointjs-elemen
     templateUrl: './uml-editor-toolbox.component.html',
     styleUrl: './uml-editor-toolbox.component.scss'
 })
-export class UmlEditorToolboxComponent implements AfterViewInit, OnDestroy {
+export class UmlEditorToolboxComponent implements AfterViewInit {
     @Output() readonly itemSelected = new EventEmitter<string>()
 
     @ViewChildren('listItemsIcon') listItemsIcon!: QueryList<ElementRef<HTMLDivElement>>
@@ -32,31 +33,28 @@ export class UmlEditorToolboxComponent implements AfterViewInit, OnDestroy {
     readonly searchControl = new FormControl<string>('')
     readonly items = signal<CustomJointJSElement[]>([])
 
-    private readonly onDestroy = new Subject<void>()
+    private readonly destroyRef = inject(DestroyRef)
+
     private readonly _toolboxItems = jointJsCustomUmlItems.filter(item => item.inToolbox).sort((a, b) => a.name.localeCompare(b.name))
 
-    ngAfterViewInit() {
+    constructor() {
         // filter items by search input
-        this.searchControl.valueChanges
-            .pipe(
-                takeUntil(this.onDestroy),
-                startWith(this.searchControl.value),
-                map((value) => value?.trim().toLowerCase() || ''),
-                debounceTime(200)
-            )
-            .subscribe(this.filterItems)
+        this.searchControl.valueChanges.pipe(
+            takeUntilDestroyed(this.destroyRef),
+            startWith(this.searchControl.value),
+            map((value) => value?.trim().toLowerCase() || ''),
+            debounceTime(200)
+        ).subscribe(this.filterItems)
+    }
 
+
+    ngAfterViewInit() {
         // draw list item graph
-        this.listItemsIcon.changes.pipe(takeUntil(this.onDestroy)).subscribe((elements) => elements.forEach(this.drawListItemGraph))
+        this.listItemsIcon.changes.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((elements) => elements.forEach(this.drawListItemGraph))
     }
 
     selectItem(itemType: string) {
         this.itemSelected.emit(itemType)
-    }
-
-    ngOnDestroy() {
-        this.onDestroy.next()
-        this.onDestroy.complete()
     }
 
     private readonly filterItems = (search: string | null | undefined) => {

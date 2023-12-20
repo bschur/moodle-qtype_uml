@@ -3,9 +3,17 @@
         <uml-editor-toolbox #toolbox></uml-editor-toolbox>
     </mat-drawer>
 
-    <button *ngIf="allowEdit" type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle">
-        <mat-icon>{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
-    </button>
+    @if (allowEdit) {
+        <button type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle">
+            <mat-icon>{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
+        </button>
+    }
+
+    @if (isDirty()) {
+        <button type="button" mat-fab color="warn" (click)="resetDiagram()" class="uml-editor__reset">
+            <mat-icon>undo</mat-icon>
+        </button>
+    }
 
     <div #editor class="uml-editor__canvas"></div>
 </mat-drawer-container>
