@@ -1,20 +1,22 @@
-import { dia, shapes } from 'jointjs'
-import { UmlActor } from '../models/jointjs/uml-actor.model'
-import { UmlClass } from '../models/jointjs/uml-class.model'
-import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
-import { CustomJointJSElement } from '../models/jointjs/custom-jointjs-element.model'
-import { createCustomJointJSElement } from './create-custom-jointjs-element.function'
+import { dia, shapes } from 'jointjs';
+import { UmlActor } from '../models/jointjs/uml-actor.model';
+import { UmlClass } from '../models/jointjs/uml-class.model';
+import { CustomTextBlock } from '../models/jointjs/custom-text-block.model';
+import { CustomJointJSElement } from '../models/jointjs/custom-jointjs-element.model';
+import { createCustomJointJSElement } from './create-custom-jointjs-element.function';
 
-const resizePaperObserver = (paper: dia.Paper) => new ResizeObserver(() => {
+const resizePaperObserver = (paper: dia.Paper) =>
+  new ResizeObserver(() => {
     paper.transformToFitContent({
-        padding: 10,
-        minScale: 0.1,
-        maxScale: 1,
-        horizontalAlign: 'middle',
-        verticalAlign: 'middle'
-    })
-})
+      padding: 10,
+      minScale: 0.1,
+      maxScale: 1,
+      horizontalAlign: 'middle',
+      verticalAlign: 'middle',
+    });
+  });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assignValueToObject(existingObject: any, inputString: string, value: any) {
     const parts = inputString.split('.')
     let currentObject = existingObject
@@ -36,6 +38,7 @@ export const jointJsCustomUmlItems: CustomJointJSElement[] = [
     createCustomJointJSElement(CustomTextBlock, 'Text-block', false)
 ]
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
     ...shapes,
     ...jointJsCustomUmlItems.reduce((acc, item) => {

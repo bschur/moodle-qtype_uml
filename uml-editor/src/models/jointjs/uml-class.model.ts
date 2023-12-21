@@ -1,7 +1,7 @@
-import { dia, shapes, util } from 'jointjs'
-import { CustomTextBlock } from './custom-text-block.model'
-import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import Paper = dia.Paper
+import { dia, shapes, util } from 'jointjs';
+import { CustomTextBlock } from './custom-text-block.model';
+import { CustomJointJSElementAttributes } from './custom-jointjs-element.model';
+import Paper = dia.Paper;
 
 export class UmlClass extends shapes.standard.Rectangle {
     private variablesCounter = 0
@@ -93,15 +93,23 @@ export class UmlClass extends shapes.standard.Rectangle {
 
     // Update the view with the rendered variables and functions
     updateView() {
-        const attributes = this.attributes
+      const attributes = this.attributes;
 
-        // @ts-ignore
-        attributes.attrs.variablesRect.height = parseInt(attributes.attrs?.['variablesRect']?.height?.toString() || '0') + 20
-        //attributes.attrs.functionsRect.height = parseInt(attributes.attrs?.["functionsRect"]?.height?.toString() || '0');
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      attributes.attrs.variablesRect.height =
+        parseInt(
+          attributes.attrs?.['variablesRect']?.height?.toString() || '0'
+        ) + 20;
+      //attributes.attrs.functionsRect.height = parseInt(attributes.attrs?.["functionsRect"]?.height?.toString() || '0');
 
-        // @ts-ignore
-        this.attr(attributes.attrs)
-        this.resize(this.attributes.size?.width || 0, (this.attributes.size?.height || 0) + 20)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      this.attr(attributes.attrs);
+      this.resize(
+        this.attributes.size?.width || 0,
+        (this.attributes.size?.height || 0) + 20
+      );
     }
 
     userInput(evt: dia.Event, paper: Paper) {
@@ -109,7 +117,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         const variablesRect = 'variablesRect'
         const functionsRect = 'functionsRect'
         const selectedRect = evt.target.attributes[0].value
-        let ctb = new CustomTextBlock()
+        const ctb = new CustomTextBlock()
         let currentAttributes
 
         let variableComponent
@@ -127,7 +135,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                 this.rectVariablesHeight += 20
                 this.rectHeight += 20
                 this.functionComponents.forEach(component => {
-                    let p = component.position()
+                    const p = component.position()
                     component.position(p.x, p.y + 20)
                 })
                 currentAttributes = this.attr()
@@ -152,6 +160,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         return null
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     adjustSize(subRec: number) {
         this.rectHeight += 20
         this.rectFunctionsHeight += 20
