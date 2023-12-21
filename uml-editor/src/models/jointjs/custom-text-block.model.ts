@@ -17,14 +17,14 @@ export class CustomTextBlock extends dia.Element {
                 <foreignObject @selector="foreignObject">
                     <div
                            xmlns="http://www.w3.org/1999/xhtml"
-                        
+                        style="width: 100%; height: 100%;"
                         >
                         <input 
                             @selector="name" 
                             type="text" 
                             name="name" 
                             placeholder="Type something"
-                            
+                            style="width: 100%; height: 100%;"
                         />
                     </div>
                 </foreignObject>
@@ -49,12 +49,13 @@ export class CustomTextBlock extends dia.Element {
     }
 
     // Method to create the variable component
-    public createVariableComponent(ref: string, x: number, y: number, rectWidth: number, headerHeight: number) {
+    public createVariableComponent(ref: string, x: number, y: number, textBlockSize:any) {
         // Define a new custom form element
         // Create an instance of the custom form element
+        console.log(textBlockSize)
         const form = this;
-        form.position(x + 2, y + 1);
-        form.resize(rectWidth - 4, headerHeight - 1);
+        form.position(x, y);
+        form.resize(textBlockSize.width, textBlockSize.height);
         form.attr('ref', ref);
 
         // Define the handleInput method

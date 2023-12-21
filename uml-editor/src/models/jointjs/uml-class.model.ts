@@ -13,6 +13,13 @@ export class UmlClass extends shapes.standard.Rectangle {
     private rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2  // Height of each section
     private functionComponents: shapes.standard.TextBlock[] = [];
     private variableComponents: shapes.standard.TextBlock[] = [];
+    private headerComponent:any;
+    private textBlockSize = {
+        //height: this.variableComponents.length === 0 ?  this.rectVariablesHeight * 0.8 : this.rectVariablesHeight / this.variableComponents.length - 5,
+       height: 20,
+        width: this.rectWidth - 5
+    }
+
 
     private header = 'header'
     private variablesRect = 'variablesRect'
@@ -116,14 +123,15 @@ export class UmlClass extends shapes.standard.Rectangle {
 
         switch (selectedRect) {
             case this.header:
-                variableComponent = ctb.createVariableComponent('header', this.position().x, this.position().y, this.rectWidth, this.headerHeight)
+                variableComponent = ctb.createVariableComponent('header', this.position().x, this.position().y, this.textBlockSize)
+                this.headerComponent = variableComponent;
                 currentAttributes = this.attr()
                 currentAttributes.body2 = variableComponent
                 this.embed(variableComponent)
                 return variableComponent
             case this.variablesRect:
                 positionY = this.position().y + this.headerHeight + this.variablesCounter;
-                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x, positionY, this.rectWidth, this.headerHeight)
+                variableComponent = ctb.createVariableComponent('variablesRect', this.position().x, positionY, this.textBlockSize)
                 this.variableComponents.push(variableComponent);
                 this.adjustVariableSize(1);
                 this.functionComponents.forEach(component => {
@@ -136,7 +144,7 @@ export class UmlClass extends shapes.standard.Rectangle {
                 return variableComponent
             case this.functionsRect:
                 positionY = this.position().y + this.size().height - this.rectFunctionsHeight + this.funcCounter
-                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, this.rectWidth, this.headerHeight)
+                variableComponent = ctb.createVariableComponent('functionsRect', this.position().x, positionY, this.textBlockSize)
                 this.functionComponents.push(variableComponent)
 
                 this.adjustFuncSize(1)
@@ -154,6 +162,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     adjustFuncSize(direction: number) {
         this.resize(this.size().width, this.size().height += 20 * direction);
         this.size().height += 20 * direction;
+        this.rectHeight += 20 * direction;
         this.rectFunctionsHeight += 20 * direction;
         this.funcCounter += 20 * direction;
     }
@@ -161,6 +170,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     adjustVariableSize(direction: number) {
         this.resize(this.size().width, this.size().height += 20 * direction);
         this.rectVariablesHeight += 20 * direction;
+        this.rectHeight += 20 * direction;
         this.variablesCounter += 20 * direction;
         this.attr(this.variablesRect + "/height", this.rectVariablesHeight)
     }
@@ -218,6 +228,54 @@ export class UmlClass extends shapes.standard.Rectangle {
                 component.position(p.x, p.y - 20);
             }
         });
+    }
+
+    resizeOnPaper(view:any, coordinates:any) {
+        const diffY = this.rectHeight - Math.max(coordinates.y, 1);
+
+        this.rectWidth = Math.max(coordinates.x, 1);
+        this.rectHeight = Math.max(coordinates.y, 1);
+
+        this.resize( this.rectWidth, this.rectHeight);
+
+        // Assuming header height remains constant
+        const headerHeight = this.attr('header/height');
+        const remainingHeight = this.rectHeight - headerHeight;
+        this.rectVariablesHeight = remainingHeight / 2;
+        this.rectFunctionsHeight = remainingHeight / 2;
+
+        // Update subelements
+        this.attr('header/width',  this.rectWidth);
+        this.attr('variablesRect', {
+            width:  this.rectWidth,
+            height: this.rectVariablesHeight,
+            'ref-y': headerHeight
+        });
+        this.attr('functionsRect', {
+            width:  this.rectWidth,
+            height: this.rectFunctionsHeight,
+            'ref-dy': -this.rectFunctionsHeight
+        });
+
+        // Update position of each CustomTextBlock in functionComponents & variableComponents
+        this.textBlockSize = {
+            //height: this.variableComponents.length === 0 ?  this.rectVariablesHeight * 0.8 : this.rectVariablesHeight / this.variableComponents.length - 5,
+           height: 20,
+            width: this.rectWidth - 5
+        }
+
+        this.variableComponents.forEach((component, index) => {
+
+            component.resize(this.textBlockSize.width, this.textBlockSize.height);
+        });
+
+        this.functionComponents.forEach((component, index) => {
+            component.resize(this.textBlockSize.width, this.textBlockSize.height);
+            component.position(component.position().x, component.position().y - diffY / 2);
+        });
+
+        this.headerComponent.resize(this.textBlockSize.width, this.textBlockSize.height);
+
     }
 
 
