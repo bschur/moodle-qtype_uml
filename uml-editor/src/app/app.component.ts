@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject, Injector } from '@angular/core'
-import { setupCustomElementWithInjector } from '../utils/bootstrap-element.function'
-import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
 import { FullscreenViewComponent } from '../elements/fullscreen-view/fullscreen-view.component'
 import { UmlEditorToolboxComponent } from '../elements/uml-editor-toolbox/uml-editor-toolbox.component'
+import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
+import { setupCustomElementWithInjector } from '../utils/bootstrap-element.function'
 
 /**
  * This component is used to bootstrap all the custom elements

@@ -1,8 +1,8 @@
 import { dia, shapes } from 'jointjs'
+import { CustomJointJSElement } from '../models/jointjs/custom-jointjs-element.model'
+import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
-import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
-import { CustomJointJSElement } from '../models/jointjs/custom-jointjs-element.model'
 import { createCustomJointJSElement } from './create-custom-jointjs-element.function'
 
 const resizePaperObserver = (paper: dia.Paper) =>

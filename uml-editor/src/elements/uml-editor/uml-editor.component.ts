@@ -1,3 +1,4 @@
+import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -13,18 +14,17 @@ import {
   signal,
   ViewChild,
 } from '@angular/core'
-import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import { dia, elementTools, linkTools } from 'jointjs'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
-import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { coerceBooleanProperty } from '@angular/cdk/coercion'
-import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
-import { MatSidenavModule } from '@angular/material/sidenav'
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
+import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { FormControl } from '@angular/forms'
+import { MatSidenavModule } from '@angular/material/sidenav'
+import { dia, elementTools, linkTools } from 'jointjs'
 import { debounceTime, map } from 'rxjs'
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
+import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
+import { UmlClass } from '../../models/jointjs/uml-class.model'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
+import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
   selector: 'app-uml-editor',

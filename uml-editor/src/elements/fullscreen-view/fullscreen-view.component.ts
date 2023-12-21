@@ -1,7 +1,7 @@
+import { DOCUMENT } from '@angular/common'
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { DOCUMENT } from '@angular/common'
 
 @Component({
   selector: 'app-fullscreen-view',

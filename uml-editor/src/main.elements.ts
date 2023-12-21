@@ -1,7 +1,7 @@
-import 'zone.js' // include polyfills for zone.js (not in angular.json since we want a single bundle)
-import { ElementsComponent } from './elements/elements.component'
 import { bootstrapApplication } from '@angular/platform-browser'
 import { provideAnimations } from '@angular/platform-browser/animations'
+import 'zone.js'
+import { ElementsComponent } from './elements/elements.component'
 
 bootstrapApplication(ElementsComponent, {
   providers: [provideAnimations()],
