@@ -15,14 +15,10 @@
             "outputPath": "dist/uml-editor",
             "index": "src/index.html",
             "browser": "src/main.app.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           },
           "configurations": {
             "production": {
@@ -84,9 +80,7 @@
             "tsConfig": "tsconfig.elements.json",
             "inlineStyleLanguage": "scss",
             "outputHashing": "none",
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"]
           }
         }
       }
@@ -109,8 +103,6 @@
     }
   },
   "cli": {
-    "schematicCollections": [
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["@angular-eslint/schematics"]
   }
 }

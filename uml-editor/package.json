@@ -9,7 +9,8 @@
     "build:elements": "npm run build:clean && ng build uml-editor-elements",
     "build:elements:moodle": "npm run build:elements && cp -r ./dist/uml-editor-elements/* ../dist",
     "build:clean": "rm -rf dist/",
-    "lint": "eslint src/**/*"
+    "lint": "eslint src/**/*",
+    "prettier": "prettier --write ."
   },
   "dependencies": {
     "@angular/animations": "^17.0.7",

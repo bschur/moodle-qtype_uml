@@ -1,18 +1,18 @@
 <mat-form-field class="uml-toolbox__search">
-    <mat-icon matPrefix>search</mat-icon>
-    <input type="search" matInput placeholder="..." [formControl]="searchControl">
-    @if (searchControl.value) {
-        <button matSuffix mat-icon-button aria-label="Clear" (click)="searchControl.reset()">
-            <mat-icon>close</mat-icon>
-        </button>
-    }
+  <mat-icon matPrefix>search</mat-icon>
+  <input type="search" matInput placeholder="..." [formControl]="searchControl" />
+  @if (searchControl.value) {
+    <button matSuffix mat-icon-button aria-label="Clear" (click)="searchControl.reset()">
+      <mat-icon>close</mat-icon>
+    </button>
+  }
 </mat-form-field>
 
 <mat-selection-list [multiple]="false" [hideSingleSelectionIndicator]="true">
-    <mat-list-option *ngFor="let item of items()" (click)="selectItem(item.defaults.type)">
-        <div matListItemIcon>
-            <div #listItemsIcon [attr.data-item-type]="item.defaults.type"></div>
-        </div>
-        <div matListItemTitle>{{ item.name }}</div>
-    </mat-list-option>
+  <mat-list-option *ngFor="let item of items()" (click)="selectItem(item.defaults.type)">
+    <div matListItemIcon>
+      <div #listItemsIcon [attr.data-item-type]="item.defaults.type"></div>
+    </div>
+    <div matListItemTitle>{{ item.name }}</div>
+  </mat-list-option>
 </mat-selection-list>

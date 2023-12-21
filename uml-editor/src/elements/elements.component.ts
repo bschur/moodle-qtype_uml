@@ -11,17 +11,17 @@ import { UmlEditorToolboxComponent } from './uml-editor-toolbox/uml-editor-toolb
  * It has no template, since we don't automatically want to render all the custom elements.
  */
 @Component({
-    selector: 'uml-elements',
-    standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    template: ''
+  selector: 'uml-elements',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '',
 })
 export class ElementsComponent {
-    private readonly injector = inject(Injector)
+  private readonly injector = inject(Injector)
 
-    constructor() {
-        setupCustomElementWithInjector('fullscreen-view', FullscreenViewComponent, this.injector)
-        setupCustomElementWithInjector('uml-editor-toolbox', UmlEditorToolboxComponent, this.injector)
-        setupCustomElementWithInjector('uml-editor', UmlEditorComponent, this.injector)
-    }
+  constructor() {
+    setupCustomElementWithInjector('fullscreen-view', FullscreenViewComponent, this.injector)
+    setupCustomElementWithInjector('uml-editor-toolbox', UmlEditorToolboxComponent, this.injector)
+    setupCustomElementWithInjector('uml-editor', UmlEditorComponent, this.injector)
+  }
 }
