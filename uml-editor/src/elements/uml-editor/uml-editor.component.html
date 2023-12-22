@@ -1,2 +1,19 @@
-<div *ngIf="allowEdit" #toolbox class="left"></div>
-<div #editor class="right"></div>
+<mat-drawer-container class="uml-editor" autosize>
+  <mat-drawer #drawer class="uml-editor__menu" mode="side" [opened]="allowEdit">
+    <uml-editor-toolbox #toolbox></uml-editor-toolbox>
+  </mat-drawer>
+
+  @if (allowEdit) {
+    <button type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle">
+      <mat-icon>{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
+    </button>
+  }
+
+  @if (isDirty()) {
+    <button type="button" mat-fab color="warn" (click)="resetDiagram()" class="uml-editor__reset">
+      <mat-icon>undo</mat-icon>
+    </button>
+  }
+
+  <div #editor class="uml-editor__canvas"></div>
+</mat-drawer-container>

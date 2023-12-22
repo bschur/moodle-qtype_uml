@@ -1,7 +1,8 @@
-import { UmlEditorComponent } from './elements/uml-editor/uml-editor.component'
-import { bootstrapCustomElement } from './utils/bootstrap-element.function'
-import 'zone.js' // include polyfills for zone.js (not in angular.json since we want a single bundle)
+import { bootstrapApplication } from '@angular/platform-browser'
+import { provideAnimations } from '@angular/platform-browser/animations'
+import 'zone.js'
+import { ElementsComponent } from './elements/elements.component'
 
-// See for further instructions https://blog.bitsrc.io/diving-deep-into-angular-elements-c17a868d6894
-
-bootstrapCustomElement('uml-editor', UmlEditorComponent).then(() => console.debug('UmlEditorComponent loaded'))
+bootstrapApplication(ElementsComponent, {
+  providers: [provideAnimations()],
+}).catch(err => console.error(err))

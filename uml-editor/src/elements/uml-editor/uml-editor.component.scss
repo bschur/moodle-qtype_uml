@@ -1,17 +1,30 @@
 :host {
-  display: flex;
-  flex-direction: row;
+  display: block;
   height: 100%;
   width: 100%;
-  gap: 2px;
 
-  .left {
-    width: 30% !important;
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0 3px 8px;
+  .uml-editor {
+    height: 100%;
+    width: 100%;
   }
 
-  .right {
-    width: 70% !important;
+  .uml-editor__toggle {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
+
+  .uml-editor__reset {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
+  .uml-editor__menu {
+    width: 300px;
+  }
+
+  ::ng-deep .mat-drawer-content {
+    overflow: hidden !important;
   }
 }

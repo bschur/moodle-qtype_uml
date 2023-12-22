@@ -1,5 +1,5 @@
 import { dia, util } from 'jointjs'
-import { CustomElementAttributes } from './custom-element-attributes.type'
+import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 
 const legsY = 0.7
 const bodyY = 0.3
@@ -37,7 +37,7 @@ export class UmlActor extends dia.Element {
     ]
 
     override defaults() {
-        const elementAttributes: CustomElementAttributes<dia.Element.Attributes> = {
+        const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
             type: 'custom.uml.Actor',
             size: {
                 width: 40,
