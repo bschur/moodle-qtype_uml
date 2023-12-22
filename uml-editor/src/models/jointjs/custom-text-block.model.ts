@@ -36,7 +36,7 @@ export class CustomTextBlock extends dia.Element {
         'input input': 'onInput',
       },
 
-      onInput: function (vt: any) {
+      onInput: function (evt: any) {
         console.log('Input Value:', evt.target.value)
         this.model.attr('name/props/value', evt.target.value)
       },
