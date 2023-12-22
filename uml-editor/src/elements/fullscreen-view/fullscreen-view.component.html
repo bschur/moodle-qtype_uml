@@ -1,13 +1,5 @@
-<div class="fullscreen-view__fab-section">
-    @if (inFullScreen()) {
-        <button type="button" mat-fab color="primary" (click)="toggleFullscreen()">
-            <mat-icon>fullscreen_exit</mat-icon>
-        </button>
-    } @else {
-        <button type="button" mat-fab color="primary" (click)="toggleFullscreen()">
-            <mat-icon>fullscreen</mat-icon>
-        </button>
-    }
-</div>
+<button type="button" mat-fab color="primary" (click)="toggleFullscreen()" class="fullscreen-view__fab-section">
+  <mat-icon>{{ inFullScreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+</button>
 
 <ng-content></ng-content>

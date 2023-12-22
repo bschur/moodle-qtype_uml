@@ -14,7 +14,17 @@
     left: 16px;
   }
 
+  .uml-editor__reset {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+  }
+
   .uml-editor__menu {
-    width: 30%;
+    width: 300px;
+  }
+
+  ::ng-deep .mat-drawer-content {
+    overflow: hidden !important;
   }
 }

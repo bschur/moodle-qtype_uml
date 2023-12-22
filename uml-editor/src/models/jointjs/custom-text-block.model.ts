@@ -1,11 +1,11 @@
 import { dia, shapes, util } from 'jointjs'
-import { CustomElementAttributes } from './custom-element-attributes.type'
+import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 
 export class CustomTextBlock extends shapes.standard.Rectangle {
     override markup = []
 
     override defaults() {
-        const elementAttributes: CustomElementAttributes<shapes.standard.RectangleAttributes> = {
+        const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
             type: 'custom.uml.CustomTextBlock'
         }
 
