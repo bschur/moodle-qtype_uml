@@ -2,8 +2,6 @@ import { dia, util } from 'jointjs'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 
 export const TextBlockView = dia.ElementView.extend({
-  markup: [],
-
   events: {
     'input input': 'onInput',
   },
@@ -16,6 +14,25 @@ export const TextBlockView = dia.ElementView.extend({
 })
 
 export class TextBlock extends dia.Element {
+  override markup = [
+    ...util.svg/* xml */ `
+          <foreignObject @selector="foreignObject">
+              <div
+                     xmlns="http://www.w3.org/1999/xhtml"
+                  style="width: 100%; height: 100%;"
+                  >
+                  <input 
+                      @selector="name" 
+                      type="text" 
+                      name="name" 
+                      placeholder="Type something"
+                      style="width: 100%; height: 100%;"
+                  />
+              </div>
+          </foreignObject>
+      `,
+  ]
+
   // Override the defaults if necessary
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
@@ -26,23 +43,6 @@ export class TextBlock extends dia.Element {
           height: 'calc(h)',
         },
       },
-      // Custom markup with input and button elements
-      markup: util.svg/* xml */ `
-                <foreignObject @selector="foreignObject">
-                    <div
-                           xmlns="http://www.w3.org/1999/xhtml"
-                        style="width: 100%; height: 100%;"
-                        >
-                        <input 
-                            @selector="name" 
-                            type="text" 
-                            name="name" 
-                            placeholder="Type something"
-                            style="width: 100%; height: 100%;"
-                        />
-                    </div>
-                </foreignObject>
-            `,
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)

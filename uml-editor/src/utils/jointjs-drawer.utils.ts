@@ -45,18 +45,17 @@ export const jointJsCustomUmlElementViews: CustomJointJSElementView[] = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
   ...shapes,
-  ...jointJsCustomUmlElements.reduce((acc, item) => {
-    assignValueToObject(acc, item.defaults.type, item.clazz)
-    return acc
-  }, {}),
-  ...jointJsCustomUmlElementViews.reduce((acc, item) => {
-    assignValueToObject(acc, item.elementViewType, item.instance)
+  ...[...jointJsCustomUmlElements, ...jointJsCustomUmlElementViews].reduce((acc, item) => {
+    if (item.type === 'element') {
+      assignValueToObject(acc, item.defaults.type, item.clazz)
+    } else {
+      assignValueToObject(acc, item.elementViewType, item.instance)
+    }
     return acc
   }, {}),
 }
 
 export const initCustomNamespaceGraph = (): dia.Graph => {
-  console.log(jointjsCustomNamespace)
   return new dia.Graph({}, { cellNamespace: jointjsCustomNamespace })
 }
 

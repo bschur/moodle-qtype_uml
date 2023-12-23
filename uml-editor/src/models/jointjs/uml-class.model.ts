@@ -1,7 +1,7 @@
 import { dia, shapes, util } from 'jointjs'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import Paper = dia.Paper
 import { TextBlock } from './text-block.model'
+import Paper = dia.Paper
 
 export class UmlClass extends shapes.standard.Rectangle {
   override markup = [
