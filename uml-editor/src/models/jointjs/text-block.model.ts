@@ -1,11 +1,25 @@
-import { dia, shapes, util } from 'jointjs'
+import { dia, util } from 'jointjs'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 
-export class CustomTextBlock extends dia.Element {
+export const TextBlockView = dia.ElementView.extend({
+  markup: [],
+
+  events: {
+    'input input': 'onInput',
+  },
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onInput(event: any) {
+    console.log('Input Value:', event.target.value)
+    this.model.attr('name/props/value', event.target.value)
+  },
+})
+
+export class TextBlock extends dia.Element {
   // Override the defaults if necessary
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
-      type: 'uml.Form',
+      type: 'custom.uml.TextBlock',
       attrs: {
         foreignObject: {
           width: 'calc(w)',
@@ -30,17 +44,6 @@ export class CustomTextBlock extends dia.Element {
                 </foreignObject>
             `,
     }
-    ;(shapes as any).uml.FormView = dia.ElementView.extend({
-      events: {
-        // Name of event + css selector : custom view method name
-        'input input': 'onInput',
-      },
-
-      onInput: function (evt: any) {
-        console.log('Input Value:', evt.target.value)
-        this.model.attr('name/props/value', evt.target.value)
-      },
-    })
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes

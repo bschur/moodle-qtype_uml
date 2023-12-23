@@ -1,7 +1,7 @@
 import { dia, shapes, util } from 'jointjs'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { CustomTextBlock } from './custom-text-block.model'
 import Paper = dia.Paper
+import { TextBlock } from './text-block.model'
 
 export class UmlClass extends shapes.standard.Rectangle {
   override markup = [
@@ -109,7 +109,7 @@ export class UmlClass extends shapes.standard.Rectangle {
   userInput(evt: dia.Event, paper: Paper) {
     const selectedRect = evt.target.attributes[0].value
     console.log(selectedRect)
-    const ctb = new CustomTextBlock()
+    const ctb = new TextBlock()
     let currentAttributes
 
     let variableComponent

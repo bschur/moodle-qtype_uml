@@ -20,7 +20,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { debounceTime, map, startWith } from 'rxjs'
 import { CustomJointJSElement } from '../../models/jointjs/custom-jointjs-element.model'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
 
 @Component({
   selector: 'app-uml-editor-toolbox',
@@ -40,7 +40,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit {
 
   private readonly destroyRef = inject(DestroyRef)
 
-  private readonly _toolboxItems = jointJsCustomUmlItems
+  private readonly _toolboxItems = jointJsCustomUmlElements
     .filter(item => item.inToolbox)
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -83,7 +83,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit {
       throw new Error('data-item-type attribute is missing')
     }
 
-    const itemByType = jointJsCustomUmlItems.find(item => item.defaults.type === itemTypeAttributeValue)
+    const itemByType = jointJsCustomUmlElements.find(item => item.defaults.type === itemTypeAttributeValue)
     if (!itemByType) {
       throw new Error(`Item with type ${itemTypeAttributeValue} not found`)
     }

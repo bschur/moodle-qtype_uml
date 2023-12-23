@@ -1,9 +1,9 @@
 import { dia, shapes } from 'jointjs'
-import { CustomJointJSElement } from '../models/jointjs/custom-jointjs-element.model'
-import { CustomTextBlock } from '../models/jointjs/custom-text-block.model'
+import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
+import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
-import { createCustomJointJSElement } from './create-custom-jointjs-element.function'
+import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -32,22 +32,31 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
   return existingObject
 }
 
-export const jointJsCustomUmlItems: CustomJointJSElement[] = [
+export const jointJsCustomUmlElements: CustomJointJSElement[] = [
   createCustomJointJSElement(UmlActor, 'Actor', true),
   createCustomJointJSElement(UmlClass, 'Classifier', true),
-  createCustomJointJSElement(CustomTextBlock, 'Text-block', false),
+  createCustomJointJSElement(TextBlock, 'Text-block', false),
+]
+
+export const jointJsCustomUmlElementViews: CustomJointJSElementView[] = [
+  createCustomJointJSElementView(TextBlockView, 'custom.uml.TextBlockView'),
 ]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
   ...shapes,
-  ...jointJsCustomUmlItems.reduce((acc, item) => {
+  ...jointJsCustomUmlElements.reduce((acc, item) => {
     assignValueToObject(acc, item.defaults.type, item.clazz)
+    return acc
+  }, {}),
+  ...jointJsCustomUmlElementViews.reduce((acc, item) => {
+    assignValueToObject(acc, item.elementViewType, item.instance)
     return acc
   }, {}),
 }
 
 export const initCustomNamespaceGraph = (): dia.Graph => {
+  console.log(jointjsCustomNamespace)
   return new dia.Graph({}, { cellNamespace: jointjsCustomNamespace })
 }
 
