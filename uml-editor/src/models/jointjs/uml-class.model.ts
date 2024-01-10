@@ -282,4 +282,16 @@ export class UmlClass extends shapes.standard.Rectangle {
 
     this.headerComponent.resize(this.textBlockSize.width, this.textBlockSize.height)
   }
+
+  handleLink(model: dia.Graph<dia.Graph.Attributes>) {
+    const existingUnclosedLink = model.getLinks().find(link => !link.getTargetElement())
+
+    if (!existingUnclosedLink) {
+      const link = new shapes.standard.Link()
+      model.addCell(link)
+      link.source(this)
+    } else {
+      existingUnclosedLink.target(this)
+    }
+  }
 }

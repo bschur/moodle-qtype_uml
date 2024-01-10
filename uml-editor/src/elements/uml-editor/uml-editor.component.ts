@@ -138,8 +138,8 @@ export class UmlEditorComponent implements AfterViewInit {
             action: function (evt, elementView, toolView) {
               const parent = elementView.model.getParentCell()
               if (elementView.model instanceof TextBlock && parent) {
-                let ref = elementView.model.attr('ref')
-                let posY = elementView.model.position().y
+                const ref = elementView.model.attr('ref')
+                const posY = elementView.model.position().y
                 console.log(parent)
                 // @ts-ignore
                 parent.adjustByDelete(ref, posY)
@@ -172,6 +172,13 @@ export class UmlEditorComponent implements AfterViewInit {
                 const element = elementView.el*/
       } else {
         throw new Error('elementView.model is not instanceof UmlClass')
+      }
+    })
+
+    paperEditor.on('cell:pointerclick', elementView => {
+      if (elementView.model instanceof UmlClass) {
+        const classifier = elementView.model
+        classifier.handleLink(paperEditor.model)
       }
     })
 
