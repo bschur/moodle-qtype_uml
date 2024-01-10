@@ -237,7 +237,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
   }
 
-  resizeOnPaper(view: any, coordinates: any) {
+  resizeOnPaper(coordinates: { x: number; y: number }) {
     const diffY = this.rectHeight - Math.max(coordinates.y, 1)
 
     this.rectWidth = Math.max(coordinates.x, 1)
@@ -271,11 +271,11 @@ export class UmlClass extends shapes.standard.Rectangle {
       width: this.rectWidth - 5,
     }
 
-    this.variableComponents.forEach((component, index) => {
+    this.variableComponents.forEach(component => {
       component.resize(this.textBlockSize.width, this.textBlockSize.height)
     })
 
-    this.functionComponents.forEach((component, index) => {
+    this.functionComponents.forEach(component => {
       component.resize(this.textBlockSize.width, this.textBlockSize.height)
       component.position(component.position().x, component.position().y - diffY / 2)
     })

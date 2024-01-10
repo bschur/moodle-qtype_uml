@@ -25,6 +25,7 @@ import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
+import ElementView = dia.ElementView
 
 @Component({
   selector: 'app-uml-editor',
@@ -110,17 +111,17 @@ export class UmlEditorComponent implements AfterViewInit {
 
     // Assuming paper is your JointJS paper
 
-    paperEditor.on('cell:mouseenter', function (cellView) {
+    paperEditor.on('cell:mouseenter', cellView => {
       const ResizeTool = elementTools.Control.extend({
-        getPosition: function (view: any) {
+        getPosition: (view: ElementView) => {
           const model = view.model
           const { width, height } = model.size()
           return { x: width, y: height }
         },
-        setPosition: function (view: any, coordinates: any) {
+        setPosition: (view: ElementView, coordinates: { x: number; y: number }) => {
           const model = view.model
           if (model instanceof UmlClass) {
-            model.resizeOnPaper(view, coordinates)
+            model.resizeOnPaper(coordinates)
           }
         },
       })
@@ -135,13 +136,11 @@ export class UmlEditorComponent implements AfterViewInit {
           new linkTools.Remove({
             scale: 1.2,
             distance: 15,
-            action: function (evt, elementView, toolView) {
+            action: (evt, elementView, toolView) => {
               const parent = elementView.model.getParentCell()
-              if (elementView.model instanceof TextBlock && parent) {
+              if (elementView.model instanceof TextBlock && parent && parent instanceof UmlClass) {
                 const ref = elementView.model.attr('ref')
                 const posY = elementView.model.position().y
-                console.log(parent)
-                // @ts-ignore
                 parent.adjustByDelete(ref, posY)
               }
               elementView.model.remove({ ui: true, tool: toolView.cid })
@@ -157,7 +156,11 @@ export class UmlEditorComponent implements AfterViewInit {
       cellView.addTools(tools)
     })
 
-    paperEditor.on('element:pointerdblclick', function (elementView, evt) {
+    paperEditor.on('cell:mouseleave', cellView => {
+      cellView.removeTools()
+    })
+
+    paperEditor.on('element:pointerdblclick', (elementView, evt) => {
       if (elementView.model instanceof UmlClass) {
         const class1 = elementView.model
         const x = class1.userInput(evt, paperEditor)
@@ -175,15 +178,11 @@ export class UmlEditorComponent implements AfterViewInit {
       }
     })
 
-    paperEditor.on('cell:pointerclick', elementView => {
+    paperEditor.on('element:pointerclick', elementView => {
       if (elementView.model instanceof UmlClass) {
         const classifier = elementView.model
         classifier.handleLink(paperEditor.model)
       }
-    })
-
-    paperEditor.on('cell:mouseleave', function (cellView) {
-      cellView.removeTools()
     })
   }
 
