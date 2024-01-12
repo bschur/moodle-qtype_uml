@@ -21,10 +21,11 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia, elementTools, linkTools } from 'jointjs'
 import { debounceTime, map } from 'rxjs'
-import { CustomTextBlock } from '../../models/jointjs/custom-text-block.model'
+import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlItems } from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
+import ElementView = dia.ElementView
 
 @Component({
   selector: 'app-uml-editor',
@@ -85,7 +86,7 @@ export class UmlEditorComponent implements AfterViewInit {
   }
 
   addItemFromToolboxToEditor(itemType: string) {
-    const clickedClass = jointJsCustomUmlItems.find(item => item.defaults.type === itemType)?.instance.clone()
+    const clickedClass = jointJsCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
     if (!clickedClass) {
       throw new Error(`itemType ${itemType} not found`)
     }
@@ -110,7 +111,21 @@ export class UmlEditorComponent implements AfterViewInit {
 
     // Assuming paper is your JointJS paper
 
-    paperEditor.on('cell:mouseenter', function (cellView) {
+    paperEditor.on('cell:mouseenter', cellView => {
+      const ResizeTool = elementTools.Control.extend({
+        getPosition: (view: ElementView) => {
+          const model = view.model
+          const { width, height } = model.size()
+          return { x: width, y: height }
+        },
+        setPosition: (view: ElementView, coordinates: { x: number; y: number }) => {
+          const model = view.model
+          if (model instanceof UmlClass) {
+            model.resizeOnPaper(coordinates)
+          }
+        },
+      })
+
       const tools = new dia.ToolsView({
         tools: [
           new elementTools.Boundary({
@@ -121,20 +136,38 @@ export class UmlEditorComponent implements AfterViewInit {
           new linkTools.Remove({
             scale: 1.2,
             distance: 15,
+            action: (evt, elementView, toolView) => {
+              const parent = elementView.model.getParentCell()
+              if (elementView.model instanceof TextBlock && parent && parent instanceof UmlClass) {
+                const ref = elementView.model.attr('ref')
+                const posY = elementView.model.position().y
+                parent.adjustByDelete(ref, posY)
+              }
+              elementView.model.remove({ ui: true, tool: toolView.cid })
+            },
+          }),
+          new ResizeTool({
+            handleAttributes: {
+              fill: '#4666E5',
+            },
           }),
         ],
       })
       cellView.addTools(tools)
     })
 
-    paperEditor.on('element:pointerdblclick', function (elementView, evt) {
+    paperEditor.on('cell:mouseleave', cellView => {
+      cellView.removeTools()
+    })
+
+    paperEditor.on('element:pointerdblclick', (elementView, evt) => {
       if (elementView.model instanceof UmlClass) {
         const class1 = elementView.model
         const x = class1.userInput(evt, paperEditor)
         if (x != null) {
           paperEditor.model.addCell(x)
         }
-      } else if (elementView.model instanceof CustomTextBlock) {
+      } else if (elementView.model instanceof TextBlock) {
         /*const customTextBlock = elementView.model
                 const cell = elementView.model
 
@@ -145,8 +178,11 @@ export class UmlEditorComponent implements AfterViewInit {
       }
     })
 
-    paperEditor.on('cell:mouseleave', function (cellView) {
-      cellView.removeTools()
+    paperEditor.on('element:pointerclick', elementView => {
+      if (elementView.model instanceof UmlClass) {
+        const classifier = elementView.model
+        classifier.handleLink(paperEditor.model)
+      }
     })
   }
 
