@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia, elementTools, linkTools } from 'jointjs'
 import { debounceTime, map } from 'rxjs'
+import { JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
@@ -38,7 +39,7 @@ import ElementView = dia.ElementView
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorComponent implements OnChanges, AfterViewInit {
-  readonly diagramControl = new FormControl<{ cells: dia.Cell[] }>({ cells: [] }, { nonNullable: true })
+  readonly diagramControl = new FormControl<JointJSDiagram>({ cells: [] }, { nonNullable: true })
   readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
 
   @Input({ transform: coerceBooleanProperty }) allowEdit = false
@@ -206,7 +207,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  private readonly encodeAndEmitDiagram = (diagram: { cells: dia.Cell[] }) => {
+  private readonly encodeAndEmitDiagram = (diagram: JointJSDiagram) => {
     // the value was changed
     const inputId = this.inputId
     if (!inputId || !diagram) {

@@ -1,0 +1,17 @@
+<div class="uml-editor-correctness">
+  <uml-editor [diagram]="diagram" />
+  <uml-editor [diagram]="correctAnswer" />
+  @if (differences(); as differences) {
+    <div class="uml-editor-correctness__differences">
+      <mat-list>
+        @if (differences.length) {
+          @for (item of differences; track $index) {
+            <mat-list-item>{{ item | json }}</mat-list-item>
+          }
+        } @else {
+          <mat-list-item>No differences found</mat-list-item>
+        }
+      </mat-list>
+    </div>
+  }
+</div>
