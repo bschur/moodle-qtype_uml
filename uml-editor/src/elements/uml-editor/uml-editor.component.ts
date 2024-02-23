@@ -95,6 +95,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     clickedClass.position(tmpX, tmpY)
 
     this._paperEditor()?.model.addCell(clickedClass)
+    this.diagramControl.setValue(this._paperEditor()?.model.toJSON())
   }
 
   resetDiagram() {
