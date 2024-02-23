@@ -1,3 +1,5 @@
+import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
+
 /**
  * Compress string to be used in Editor
  *
@@ -40,8 +42,7 @@ function decompressString(input: string): string {
  * @param diagram Diagram string
  * @returns diagram as object
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function decodeDiagram(diagram: string): any {
+export function decodeDiagram(diagram: string): JointJSDiagram {
   const diagramJson = decompressString(diagram)
   return JSON.parse(diagramJson)
 }
@@ -52,8 +53,7 @@ export function decodeDiagram(diagram: string): any {
  * @param diagram The diagram object
  * @returns Encoded diagram
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function encodeDiagram(diagram: any): string {
+export function encodeDiagram(diagram: JointJSDiagram): string {
   const diagramContent = JSON.stringify(diagram)
   return compressString(diagramContent)
 }

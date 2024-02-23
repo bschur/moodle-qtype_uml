@@ -24,6 +24,12 @@
     width: 300px;
   }
 
+  .uml-editor__canvas {
+    &.--hide-controls {
+      pointer-events: none;
+    }
+  }
+
   ::ng-deep .mat-drawer-content {
     overflow: hidden !important;
   }

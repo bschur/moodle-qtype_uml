@@ -45,16 +45,17 @@ class qtype_uml_renderer extends qtype_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
-        $result = parent::formulation_and_controls($qa, $options);
+        $question = $qa->get_question();
+        $response = $qa->get_last_qt_var('answer', '');
 
-        $answerdiagram = $qa->get_last_qt_var('answer', '');
+        $result = html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
 
         // Generate the input field.
         $answerattributes = [
                 'type' => 'hidden',
                 'id' => uniqid('diagramInput'),
                 'name' => $qa->get_qt_field_name('answer'),
-                'value' => $answerdiagram,
+                'value' => $response,
         ];
         if ($options->readonly) {
             $answerattributes['disabled'] = 'disabled';
@@ -62,7 +63,7 @@ class qtype_uml_renderer extends qtype_renderer {
 
         $answerinput = html_writer::empty_tag('input', $answerattributes);
 
-        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $answerdiagram) .
+        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $response) .
                 $answerinput;
     }
 
