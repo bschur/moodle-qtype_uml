@@ -3,15 +3,21 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
+  effect,
   signal,
 } from '@angular/core'
 import { MatListModule } from '@angular/material/list'
 import { Operation, diff } from 'just-diff'
 import { EMPTY_DIAGRAM } from '../../models/jointjs/jointjs-diagram.model'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type JustDiff = { readonly op: Operation; readonly path: readonly (string | number)[]; readonly value: any }
 
 @Component({
   selector: 'app-uml-editor-correctness',
@@ -23,12 +29,32 @@ import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorCorrectnessComponent implements OnChanges {
-  @Input({ required: true }) inputId: string | null = null
-  @Input({ required: true }) diagram: string | null = null
-  @Input({ required: true }) correctAnswer: string | null = null
+  @Input({ required: true }) inputId!: string
+  @Input({ required: true }) diagram!: string
+  @Input({ required: true }) correctAnswer!: string
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  readonly differences = signal<{ op: Operation; path: Array<string | number>; value: any }[]>([])
+  @Output() readonly correctionChanged = new EventEmitter<{ inputId: string; correction: string }>()
+
+  private readonly differences = signal<JustDiff[]>([])
+  private readonly domReady = signal(false)
+
+  constructor() {
+    addEventListener('load', () => this.domReady.set(true))
+
+    effect(() => {
+      const domReady = this.domReady()
+      if (!domReady) {
+        return
+      }
+
+      const differences = this.differences()
+      console.log('correction changed', this.inputId, differences)
+      this.correctionChanged.emit({
+        inputId: this.inputId,
+        correction: JSON.stringify(differences),
+      })
+    })
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (('diagram' satisfies keyof this) in changes || ('correctAnswer' satisfies keyof this) in changes) {

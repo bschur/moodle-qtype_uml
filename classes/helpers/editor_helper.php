@@ -48,4 +48,20 @@ class EditorHelper {
                     diagram=\'' . $diagram . '\'/>
                 </fullscreen-view>';
     }
+
+    /**
+     * Loads the editor correctness html with the given display options.
+     *
+     * @param string $bindelementid The id of the input field which holds the correction.
+     * @param string $diagram The diagram to compare.
+     * @param string $correctanswer The diagram correct answer.
+     * @return string The editor correctness html.
+     */
+    public static function load_editor_correctness_html_for_id(string $bindelementid, string $diagram, string $correctanswer) {
+        return '<fullscreen-view><uml-editor-correctness
+                    input-id=\'' . $bindelementid . '\'
+                    diagram=\'' . $diagram . '\'
+                    correct-answer=\'' . $correctanswer . '\'/>
+                </fullscreen-view>';
+    }
 }

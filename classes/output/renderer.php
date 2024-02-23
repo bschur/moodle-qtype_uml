@@ -50,6 +50,15 @@ class qtype_uml_renderer extends qtype_renderer {
 
         $result = html_writer::tag('div', $question->format_questiontext($qa), ['class' => 'qtext']);
 
+        // Render manual comment view when requested.
+        if ($options->manualcomment == question_display_options::EDITABLE) {
+            $correctresponse = self::correct_response($qa);
+            $manualcommentid = uniqid('manualCommentInput');
+            $options->manualcommentlink->id = $manualcommentid;
+
+            return $result . EditorHelper::load_editor_correctness_html_for_id($manualcommentid, $response, $correctresponse);
+        }
+
         // Generate the input field.
         $answerattributes = [
                 'type' => 'hidden',
@@ -65,6 +74,28 @@ class qtype_uml_renderer extends qtype_renderer {
 
         return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $response) .
                 $answerinput;
+    }
+
+    /**
+     * Add additional hidden input field to the manual comment section for mapping the suggested grading to the moodle input.
+     *
+     * @param question_attempt $qa the question attempt to display.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return string HTML fragment.
+     */
+    public function manual_comment(question_attempt $qa, question_display_options $options): string {
+        if ($options->manualcomment != question_display_options::EDITABLE) {
+            return '';
+        }
+
+        // Generate the input field.
+        $manualcommentattributes = [
+            'type' => 'hidden',
+            'id' => $options->manualcommentlink->id,
+            'name' => $qa->get_qt_field_name('graderinfo'),
+        ];
+
+        return html_writer::empty_tag('input', $manualcommentattributes);
     }
 
     /**

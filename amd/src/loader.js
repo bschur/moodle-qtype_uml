@@ -26,6 +26,22 @@ function setDiagramToReferenceInputField(event) {
 }
 
 /**
+ * Set the correction to the reference input field and the moodle textarea.
+ *
+ * @param {Event} event the custom event (fired by the editor)
+ */
+function setCorrectionToInputField(event) {
+    const element = document.getElementById(event.detail?.inputId);
+    if (element) {
+      element.value = event.detail.correction;
+      const moodletextareas = element.parentElement.querySelectorAll('textarea');
+      moodletextareas.forEach((moodletextarea) => {
+        moodletextarea.value = element.value;
+      });
+    }
+}
+
+/**
  * Initialize the uml editor elements.
  *
  * @param {String} basePath path to the dist folder of the uml-element
@@ -56,6 +72,8 @@ export const init = (basePath) => {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeName === 'UML-EDITOR') {
                     node.addEventListener('diagramChanged', setDiagramToReferenceInputField);
+                } else if (node.nodeName === "UML-EDITOR-CORRECTNESS") {
+                  node.addEventListener("correctionChanged", setCorrectionToInputField);
                 }
             });
         });

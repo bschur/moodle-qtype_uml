@@ -4,21 +4,10 @@
   height: 100%;
 
   .uml-editor-correctness {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr auto;
+    display: flex;
+    flex-direction: row;
 
     height: 100%;
     width: 100%;
-
-    .uml-editor-correctness__differences {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      grid-column: span 2;
-      height: auto;
-      background-color: white;
-    }
   }
 }
