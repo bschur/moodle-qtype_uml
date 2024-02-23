@@ -48,7 +48,7 @@ class qtype_uml_renderer extends qtype_renderer {
         $question = $qa->get_question();
         $response = $qa->get_last_qt_var('answer', '');
 
-        $result = html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
+        $result = html_writer::tag('div', $question->format_questiontext($qa), ['class' => 'qtext']);
 
         // Generate the input field.
         $answerattributes = [
