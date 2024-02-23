@@ -42,7 +42,10 @@ class EditorHelper {
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
-        return '<fullscreen-view><uml-editor input-id=\'' . $bindelementid . '\' allow-edit=\'' . $iseditmode . '\' diagram=\'' .
-                $diagram . '\'/></fullscreen-view>';
+        return '<fullscreen-view><uml-editor
+                    input-id=\'' . $bindelementid . '\'
+                    allow-edit=\'' . ($iseditmode ? 'true' : 'false') . '\'
+                    diagram=\'' . $diagram . '\'/>
+                </fullscreen-view>';
     }
 }
