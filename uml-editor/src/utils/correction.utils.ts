@@ -23,10 +23,28 @@ function cleanupDiagram(diagram: JointJSDiagram): JointJSDiagram {
   return { cells: diagram.cells.map(cleanupCell) }
 }
 
+function calculatePoints(referenceDiagram: JointJSDiagram, differences: JustDiff[], maxPoints: number): number {
+  const correctProperties = referenceDiagram.cells.length - differences.length
+  const correctPropertiesNormalized = correctProperties < 0 ? 0 : correctProperties
+
+  const successRate = correctPropertiesNormalized / referenceDiagram.cells.length
+  const receivedPoints = Math.ceil(successRate * maxPoints)
+  if (receivedPoints > maxPoints) {
+    throw new Error('Received points are greater than the maximum points')
+  }
+
+  return receivedPoints < 0 ? 0 : receivedPoints
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type JustDiff = { readonly op: Operation; readonly path: readonly (string | number)[]; readonly value: any }
 
-export function evaluationCorrection(answer: JointJSDiagram, solution: JointJSDiagram): JustDiff[] {
+export interface UmlCorrection {
+  readonly differences: JustDiff[]
+  readonly points: number
+}
+
+export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
   const cleanedAnswer = cleanupDiagram(answer)
   const cleanedSolution = cleanupDiagram(solution)
 
@@ -34,5 +52,8 @@ export function evaluationCorrection(answer: JointJSDiagram, solution: JointJSDi
 
   // TODO do some additional stuff cleanup differences
 
-  return differences
+  return {
+    differences,
+    points: calculatePoints(cleanedSolution, differences, maxPoints),
+  }
 }

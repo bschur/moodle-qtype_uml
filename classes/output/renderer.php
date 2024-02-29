@@ -55,8 +55,9 @@ class qtype_uml_renderer extends qtype_renderer {
             $correctresponse = self::correct_response($qa);
             $manualcommentid = uniqid('manualCommentInput');
             $options->manualcommentlink->id = $manualcommentid;
+            $maxpoints = $question->defaultmark;
 
-            return $result . EditorHelper::load_editor_correctness_html_for_id($manualcommentid, $response, $correctresponse);
+            return $result . EditorHelper::load_editor_correctness_html_for_id($manualcommentid, $response, $correctresponse, $maxpoints);
         }
 
         // Generate the input field.
@@ -89,13 +90,14 @@ class qtype_uml_renderer extends qtype_renderer {
         }
 
         // Generate the input field.
-        $manualcommentattributes = [
-            'type' => 'hidden',
+        $suggestedcorrectionattributes = [
             'id' => $options->manualcommentlink->id,
-            'name' => $qa->get_qt_field_name('graderinfo'),
+            'readonly' => 'readonly',
+            'style' => 'width: 100%'
         ];
 
-        return html_writer::empty_tag('input', $manualcommentattributes);
+        $question = $qa->get_question();
+        return html_writer::nonempty_tag('div', get_string("correction_suggestion", "qtype_uml")) . html_writer::empty_tag('input', $suggestedcorrectionattributes);
     }
 
     /**

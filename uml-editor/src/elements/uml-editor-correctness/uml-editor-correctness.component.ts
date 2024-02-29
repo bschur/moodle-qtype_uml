@@ -1,19 +1,19 @@
 import { JsonPipe } from '@angular/common'
 import {
-  CUSTOM_ELEMENTS_SCHEMA,
   ChangeDetectionStrategy,
   Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  effect,
   EventEmitter,
   Input,
   OnChanges,
   Output,
-  SimpleChanges,
-  effect,
   signal,
+  SimpleChanges,
 } from '@angular/core'
 import { MatListModule } from '@angular/material/list'
 import { EMPTY_DIAGRAM } from '../../models/jointjs/jointjs-diagram.model'
-import { JustDiff, evaluationCorrection } from '../../utils/correction.utils'
+import { evaluateCorrection, UmlCorrection } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
@@ -29,10 +29,11 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
   @Input({ required: true }) inputId!: string
   @Input({ required: true }) diagram!: string
   @Input({ required: true }) correctAnswer!: string
+  @Input({ required: true }) maxPoints!: number
 
   @Output() readonly correctionChanged = new EventEmitter<{ inputId: string; correction: string }>()
 
-  private readonly differences = signal<JustDiff[]>([])
+  private readonly differences = signal<UmlCorrection>({ differences: [], points: 0 })
   private readonly domReady = signal(false)
 
   constructor() {
@@ -46,19 +47,21 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
 
       const differences = this.differences()
       console.log('correction changed', this.inputId, differences)
-      this.correctionChanged.emit({
-        inputId: this.inputId,
-        correction: JSON.stringify(differences),
-      })
+      // TODO human readable correction
+      this.correctionChanged.emit({ inputId: this.inputId, correction: JSON.stringify(differences) })
     })
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (('diagram' satisfies keyof this) in changes || ('correctAnswer' satisfies keyof this) in changes) {
+    if (
+      ('diagram' satisfies keyof this) in changes ||
+      ('correctAnswer' satisfies keyof this) in changes ||
+      ('maxPoints' satisfies keyof this) in changes
+    ) {
       const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
       const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
 
-      this.differences.set(evaluationCorrection(decodedDiagram, decodedCorrectAnswerDiagram))
+      this.differences.set(evaluateCorrection(decodedDiagram, decodedCorrectAnswerDiagram, this.maxPoints))
     }
   }
 }

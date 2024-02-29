@@ -33,3 +33,4 @@ $string['pluginnameediting'] = 'Editing a UML question';
 $string['pluginnamesummary'] = 'UML questions consist of interactive editor where responders can design their diagram.';
 $string['privacy:metadata'] = 'The UML question type plugin does not store any personal data.';
 $string['correctanswer'] = 'Correct solution';
+$string['correction_suggestion'] = 'Correction suggestion';
