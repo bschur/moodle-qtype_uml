@@ -39,14 +39,15 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
   }>()
 
   private readonly correction = signal<UmlCorrection>({ differences: [], points: 0 })
-  private readonly domReady = signal(false)
+  private readonly readyState = signal<typeof document.readyState>('loading')
 
   constructor() {
-    addEventListener('load', () => this.domReady.set(true))
+    document.addEventListener('readystatechange', () => this.readyState.set(document.readyState))
 
     effect(() => {
-      const domReady = this.domReady()
-      if (!domReady) {
+      const readyState = this.readyState()
+      if (readyState !== 'complete') {
+        console.warn(`Document is not ready yet. It's in state '${document.readyState}'`)
         return
       }
 

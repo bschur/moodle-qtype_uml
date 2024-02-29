@@ -75,7 +75,7 @@ export const init = (basePath) => {
                 if (node.nodeName === 'UML-EDITOR') {
                     node.addEventListener('diagramChanged', setDiagramToReferenceInputField);
                 } else if (node.nodeName === "UML-EDITOR-CORRECTNESS") {
-                  node.addEventListener("correctionChanged", setCorrectionToInputField);
+                    node.addEventListener("correctionChanged", setCorrectionToInputField);
                 }
             });
         });
