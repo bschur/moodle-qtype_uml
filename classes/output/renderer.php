@@ -57,7 +57,13 @@ class qtype_uml_renderer extends qtype_renderer {
             $options->manualcommentlink->id = $manualcommentid;
             $maxpoints = $question->defaultmark;
 
-            return $result . EditorHelper::load_editor_correctness_html_for_id($manualcommentid, $response, $correctresponse, $maxpoints);
+            return $result
+                . EditorHelper::load_editor_correctness_html_for_id(
+                    $manualcommentid,
+                    $response,
+                    $correctresponse,
+                    $maxpoints
+                );
         }
 
         // Generate the input field.
@@ -73,8 +79,13 @@ class qtype_uml_renderer extends qtype_renderer {
 
         $answerinput = html_writer::empty_tag('input', $answerattributes);
 
-        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $response) .
-                $answerinput;
+        return $result
+            . EditorHelper::load_editor_html_for_id(
+                $answerattributes['id'],
+                !$options->readonly,
+                $response
+            )
+            . $answerinput;
     }
 
     /**
@@ -93,11 +104,12 @@ class qtype_uml_renderer extends qtype_renderer {
         $suggestedcorrectionattributes = [
             'id' => $options->manualcommentlink->id,
             'readonly' => 'readonly',
-            'style' => 'width: 100%'
+            'style' => 'width: 100%',
         ];
 
         $question = $qa->get_question();
-        return html_writer::nonempty_tag('div', get_string("correction_suggestion", "qtype_uml")) . html_writer::empty_tag('input', $suggestedcorrectionattributes);
+        return html_writer::nonempty_tag('div', get_string("correction_suggestion", "qtype_uml"))
+            . html_writer::empty_tag('input', $suggestedcorrectionattributes);
     }
 
     /**

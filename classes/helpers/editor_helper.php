@@ -58,7 +58,12 @@ class EditorHelper {
      * @param int $maxpoints The maximum points to get for this question.
      * @return string The editor correctness html.
      */
-    public static function load_editor_correctness_html_for_id(string $bindelementid, string $diagram, string $correctanswer, int $maxpoints) {
+    public static function load_editor_correctness_html_for_id(
+        string $bindelementid,
+        string $diagram,
+        string $correctanswer,
+        int $maxpoints
+    ) {
         return '<fullscreen-view><uml-editor-correctness
                     input-id=\'' . $bindelementid . '\'
                     max-points=\'' . $maxpoints . '\'
