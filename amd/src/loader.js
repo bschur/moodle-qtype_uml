@@ -31,9 +31,15 @@ function setDiagramToReferenceInputField(event) {
  * @param {Event} event the custom event (fired by the editor)
  */
 function setCorrectionToInputField(event) {
-    const element = document.getElementById(event.detail?.inputId);
-    if (element) {
-      element.value = event.detail.correction;
+    const elements = document.querySelectorAll(`[id^='${event.detail?.inputId}__']`);
+    if (elements) {
+        elements.forEach((element) => {
+            if (element.id.endsWith('__expected-comment')) {
+                element.innerHTML = event.detail.comment;
+            } else if (element.id.endsWith('__expected-points')) {
+                element.innerHTML = `${event.detail.points} / ${event.detail.maxPoints}`;
+            }
+        });
     }
 }
 

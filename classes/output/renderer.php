@@ -100,16 +100,20 @@ class qtype_uml_renderer extends qtype_renderer {
             return '';
         }
 
-        // Generate the input field.
-        $suggestedcorrectionattributes = [
-            'id' => $options->manualcommentlink->id,
-            'readonly' => 'readonly',
-            'style' => 'width: 100%',
+        // Generate the input fields.
+        $suggestedcommentattributes = [
+            'id' => $options->manualcommentlink->id . '__expected-comment',
+        ];
+
+        $suggestedpointsattributes = [
+            'id' => $options->manualcommentlink->id . '__expected-points',
         ];
 
         $question = $qa->get_question();
-        return html_writer::nonempty_tag('div', get_string("correction_suggestion", "qtype_uml"))
-            . html_writer::empty_tag('input', $suggestedcorrectionattributes);
+        return html_writer::nonempty_tag('div', get_string("suggested_comment", "qtype_uml"))
+            . html_writer::nonempty_tag('div', '...', $suggestedcommentattributes)
+            . html_writer::nonempty_tag('div', get_string("suggested_points", "qtype_uml"))
+            . html_writer::nonempty_tag('div', '...', $suggestedpointsattributes);
     }
 
     /**

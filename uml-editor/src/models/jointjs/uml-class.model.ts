@@ -107,7 +107,7 @@ export class UmlClass extends shapes.standard.Rectangle {
 
   userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value
-    console.log(selectedRect)
+    console.debug(selectedRect)
     const ctb = new TextBlock()
     let currentAttributes
 
@@ -161,7 +161,7 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.embed(variableComponent)
         return variableComponent
       default:
-        console.log('Clicked outside the sections')
+        console.debug('Clicked outside the sections')
         break
     }
     return null
@@ -203,7 +203,7 @@ export class UmlClass extends shapes.standard.Rectangle {
           })
           this.shrinkFuncY(0)
         } else {
-          console.log('Component not found')
+          console.error('Component not found')
         }
 
         this.adjustVariableSize(-1)
@@ -219,7 +219,7 @@ export class UmlClass extends shapes.standard.Rectangle {
           // Adjust the position of subsequent components
           this.shrinkFuncY(indexOfComponentToRemove)
         } else {
-          console.log('Component not found')
+          console.error('Component not found')
         }
 
         this.adjustFuncSize(-1)

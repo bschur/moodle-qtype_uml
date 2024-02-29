@@ -29,11 +29,16 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
   @Input({ required: true }) inputId!: string
   @Input({ required: true }) diagram!: string
   @Input({ required: true }) correctAnswer!: string
-  @Input({ required: true }) maxPoints!: number
+  @Input({ required: true, transform: parseInt }) maxPoints!: number
 
-  @Output() readonly correctionChanged = new EventEmitter<{ inputId: string; correction: string }>()
+  @Output() readonly correctionChanged = new EventEmitter<{
+    inputId: string
+    comment: string
+    points: number
+    maxPoints: number
+  }>()
 
-  private readonly differences = signal<UmlCorrection>({ differences: [], points: 0 })
+  private readonly correction = signal<UmlCorrection>({ differences: [], points: 0 })
   private readonly domReady = signal(false)
 
   constructor() {
@@ -45,10 +50,17 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
         return
       }
 
-      const differences = this.differences()
-      console.log('correction changed', this.inputId, differences)
-      // TODO human readable correction
-      this.correctionChanged.emit({ inputId: this.inputId, correction: JSON.stringify(differences) })
+      const correction = this.correction()
+      const emittedCorrection = {
+        inputId: this.inputId,
+        // TODO human readable comment
+        comment: JSON.stringify(correction.differences),
+        points: correction.points,
+        maxPoints: this.maxPoints,
+      }
+
+      console.debug('correction changed', emittedCorrection)
+      this.correctionChanged.emit(emittedCorrection)
     })
   }
 
@@ -61,7 +73,7 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
       const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
       const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
 
-      this.differences.set(evaluateCorrection(decodedDiagram, decodedCorrectAnswerDiagram, this.maxPoints))
+      this.correction.set(evaluateCorrection(decodedDiagram, decodedCorrectAnswerDiagram, this.maxPoints))
     }
   }
 }
