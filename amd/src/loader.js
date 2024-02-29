@@ -34,10 +34,6 @@ function setCorrectionToInputField(event) {
     const element = document.getElementById(event.detail?.inputId);
     if (element) {
       element.value = event.detail.correction;
-      const moodletextareas = element.parentElement.querySelectorAll('textarea');
-      moodletextareas.forEach((moodletextarea) => {
-        moodletextarea.value = element.value;
-      });
     }
 }
 

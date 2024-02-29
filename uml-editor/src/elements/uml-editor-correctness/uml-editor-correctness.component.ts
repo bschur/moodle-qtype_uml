@@ -12,12 +12,9 @@ import {
   signal,
 } from '@angular/core'
 import { MatListModule } from '@angular/material/list'
-import { Operation, diff } from 'just-diff'
 import { EMPTY_DIAGRAM } from '../../models/jointjs/jointjs-diagram.model'
+import { JustDiff, evaluationCorrection } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type JustDiff = { readonly op: Operation; readonly path: readonly (string | number)[]; readonly value: any }
 
 @Component({
   selector: 'app-uml-editor-correctness',
@@ -61,7 +58,7 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
       const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
       const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
 
-      this.differences.set(diff(decodedDiagram, decodedCorrectAnswerDiagram))
+      this.differences.set(evaluationCorrection(decodedDiagram, decodedCorrectAnswerDiagram))
     }
   }
 }

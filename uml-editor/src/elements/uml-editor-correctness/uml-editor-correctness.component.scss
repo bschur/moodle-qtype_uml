@@ -7,7 +7,33 @@
     display: flex;
     flex-direction: row;
 
-    height: 100%;
     width: 100%;
+    height: 100%;
+  }
+
+  .uml-editor-correctness__part {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    &.--warn {
+      --background-color: orange;
+    }
+
+    &.--success {
+      --background-color: green;
+    }
+
+    ::before {
+      top: 0;
+      left: 0;
+      position: absolute;
+      content: '';
+      height: 100%;
+      width: 100%;
+      opacity: 0.04;
+      z-index: 10;
+      background-color: var(--background-color);
+    }
   }
 }

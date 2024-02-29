@@ -1,4 +1,8 @@
 <div class="uml-editor-correctness">
-  <uml-editor [diagram]="diagram" />
-  <uml-editor [diagram]="correctAnswer" />
+  <div class="uml-editor-correctness__part --warn">
+    <uml-editor [diagram]="diagram" />
+  </div>
+  <div class="uml-editor-correctness__part --success">
+    <uml-editor [diagram]="correctAnswer" />
+  </div>
 </div>
