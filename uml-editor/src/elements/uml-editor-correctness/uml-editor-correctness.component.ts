@@ -3,9 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  DestroyRef,
   EventEmitter,
-  inject,
   Input,
   OnChanges,
   Output,
@@ -41,14 +39,12 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
     maxPoints: number
   }>()
 
-  private readonly destroyRef = inject(DestroyRef)
-
   private readonly correction = signal<UmlCorrection>({ differences: [], points: 0 })
   private readonly readyState = signal<typeof document.readyState>('loading')
 
   constructor() {
     combineLatest([toObservable(this.readyState), toObservable(this.correction)])
-      .pipe(takeUntilDestroyed(this.destroyRef), delay(0))
+      .pipe(takeUntilDestroyed(), delay(0))
       .subscribe(([, correction]) => {
         if (document.readyState !== 'complete') {
           console.warn(`Document is not ready yet. It's in state '${document.readyState}'`)

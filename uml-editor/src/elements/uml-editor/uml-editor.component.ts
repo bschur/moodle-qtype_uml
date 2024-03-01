@@ -4,10 +4,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
-  DestroyRef,
   ElementRef,
   EventEmitter,
-  inject,
   Input,
   OnChanges,
   Output,
@@ -54,14 +52,11 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     diagram: string
   }>()
 
-  private readonly destroyRef = inject(DestroyRef)
   private readonly _paperEditor = signal<dia.Paper | null>(null)
 
   constructor() {
     // listen to diagram changes and emit value
-    this.diagramControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(200))
-      .subscribe(this.encodeAndEmitDiagram)
+    this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(this.encodeAndEmitDiagram)
   }
 
   ngOnChanges(changes: SimpleChanges) {
