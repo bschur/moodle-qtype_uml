@@ -50,11 +50,11 @@ export class TextBlock extends dia.Element {
   }
 
   // Method to create the variable component
-  public createVariableComponent(ref: string, x: number, y: number, textBlockSize: any) {
+  public createVariableComponent(ref: string, x: number, y: number, textBlockSize: { width: number; height: number }) {
     // Define a new custom form element
     // Create an instance of the custom form element
     console.log(textBlockSize)
-    const form = this
+    const form = this.clone()
     form.position(x, y)
     form.resize(textBlockSize.width, textBlockSize.height)
     form.attr('ref', ref)

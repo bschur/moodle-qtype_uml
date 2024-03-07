@@ -112,7 +112,7 @@ export class UmlEditorComponent implements AfterViewInit {
     // Assuming paper is your JointJS paper
 
     paperEditor.on('cell:mouseenter', cellView => {
-      const ResizeTool = elementTools.Control.extend({
+      const resizeTool = elementTools.Control.extend({
         getPosition: (view: ElementView) => {
           const model = view.model
           const { width, height } = model.size()
@@ -136,17 +136,18 @@ export class UmlEditorComponent implements AfterViewInit {
           new linkTools.Remove({
             scale: 1.2,
             distance: 15,
-            action: (evt, elementView, toolView) => {
+            action: (_, elementView, toolView) => {
+              const target = elementView.model
               const parent = elementView.model.getParentCell()
-              if (elementView.model instanceof TextBlock && parent && parent instanceof UmlClass) {
+              if (parent instanceof UmlClass && target instanceof TextBlock) {
                 const ref = elementView.model.attr('ref')
                 const posY = elementView.model.position().y
                 parent.adjustByDelete(ref, posY)
               }
-              elementView.model.remove({ ui: true, tool: toolView.cid })
+              target.remove({ ui: true, tool: toolView.cid })
             },
           }),
-          new ResizeTool({
+          new resizeTool({
             handleAttributes: {
               fill: '#4666E5',
             },
@@ -161,11 +162,11 @@ export class UmlEditorComponent implements AfterViewInit {
     })
 
     paperEditor.on('element:pointerdblclick', (elementView, evt) => {
-      if (elementView.model instanceof UmlClass) {
-        const class1 = elementView.model
-        const x = class1.userInput(evt, paperEditor)
-        if (x != null) {
-          paperEditor.model.addCell(x)
+      const target = elementView.model
+      if (target instanceof UmlClass) {
+        const textBlock = target.userInput(evt)
+        if (textBlock) {
+          paperEditor.model.addCell(textBlock)
         }
       } else if (elementView.model instanceof TextBlock) {
         /*const customTextBlock = elementView.model
@@ -179,9 +180,9 @@ export class UmlEditorComponent implements AfterViewInit {
     })
 
     paperEditor.on('element:pointerclick', elementView => {
-      if (elementView.model instanceof UmlClass) {
-        const classifier = elementView.model
-        classifier.handleLink(paperEditor.model)
+      const target = elementView.model
+      if (target instanceof UmlClass) {
+        target.handleLink(paperEditor.model)
       }
     })
   }

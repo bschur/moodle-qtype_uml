@@ -1,0 +1,41 @@
+name: UML Editor Angular Web components CI (Test, Lint)
+
+on:
+  # push only for branches (ignore tags)
+  push:
+    branches:
+      - "main"
+    tags-ignore:
+      - "**"
+  # pull request only for branches (ignore tags)
+  pull_request:
+    branches:
+      - "**"
+    tags-ignore:
+      - "**"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: "./uml-editor"
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Dependencies
+        run: npm ci
+      - name: Test Code
+        run: npm test
+      - name: Lint Code
+        run: npm run lint
