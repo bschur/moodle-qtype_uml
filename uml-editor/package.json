@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm run build:clean && ng build:app",
+    "build": "npm run build:clean && ng run uml-editor:build-app",
     "build:elements": "npm run build:clean && ng build",
     "build:elements:moodle": "npm run build:elements && cp -r ./dist/uml-editor-elements/* ../dist",
     "build:clean": "rm -rf dist/",

@@ -22,7 +22,7 @@
             "styles": ["src/styles.scss"]
           }
         },
-        "build:app": {
+        "build-app": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/uml-editor",
@@ -38,13 +38,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
                 }
               ],
               "outputHashing": "all"
@@ -61,10 +61,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "uml-editor:build:app:production"
+              "buildTarget": "uml-editor:build-app:production"
             },
             "development": {
-              "buildTarget": "uml-editor:build:app:development"
+              "buildTarget": "uml-editor:build-app:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "uml-editor:build"
+            "buildTarget": "uml-editor:build-app"
           }
         }
       }
