@@ -3,6 +3,7 @@ import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointj
 import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
+import { UseCase } from '../models/jointjs/uml-use-case.model'
 import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
 
 const resizePaperObserver = (paper: dia.Paper) =>
@@ -36,6 +37,7 @@ export const jointJsCustomUmlElements: CustomJointJSElement[] = [
   createCustomJointJSElement(UmlActor, 'Actor', true),
   createCustomJointJSElement(UmlClass, 'Classifier', true),
   createCustomJointJSElement(TextBlock, 'Text-block', false),
+  createCustomJointJSElement(UseCase, 'UseCase', true),
 ]
 
 export const jointJsCustomUmlElementViews: CustomJointJSElementView[] = [

@@ -53,7 +53,7 @@ export class TextBlock extends dia.Element {
   public createVariableComponent(ref: string, x: number, y: number, textBlockSize: any) {
     // Define a new custom form element
     // Create an instance of the custom form element
-    console.log(textBlockSize)
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const form = this
     form.position(x, y)
     form.resize(textBlockSize.width, textBlockSize.height)

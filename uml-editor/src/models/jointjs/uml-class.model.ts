@@ -42,7 +42,6 @@ export class UmlClass extends shapes.standard.Rectangle {
   private functionsRect = 'functionsRect'
 
   override defaults() {
-    //todo check how to initialize
     this.rectWidth = 150 // Width of the class
     this.rectHeight = 100 // Height of the class
     this.headerHeight = 20 // Height of the header section
@@ -106,9 +105,8 @@ export class UmlClass extends shapes.standard.Rectangle {
     return elementAttributes
   }
 
-  userInput(evt: dia.Event, paper: Paper) {
+  userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value
-    console.log(selectedRect)
     const ctb = new TextBlock()
     let currentAttributes
 

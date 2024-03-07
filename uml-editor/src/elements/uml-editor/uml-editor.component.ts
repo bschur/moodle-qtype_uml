@@ -23,6 +23,7 @@ import { dia, elementTools, linkTools } from 'jointjs'
 import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
+import { UseCase } from '../../models/jointjs/uml-use-case.model'
 import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import ElementView = dia.ElementView
@@ -163,8 +164,9 @@ export class UmlEditorComponent implements AfterViewInit {
     paperEditor.on('element:pointerdblclick', (elementView, evt) => {
       if (elementView.model instanceof UmlClass) {
         const class1 = elementView.model
-        const x = class1.userInput(evt, paperEditor)
+        const x = class1.userInput(evt)
         if (x != null) {
+          console.log(x)
           paperEditor.model.addCell(x)
         }
       } else if (elementView.model instanceof TextBlock) {
@@ -173,16 +175,23 @@ export class UmlEditorComponent implements AfterViewInit {
 
                 // customTextBlock.createVariableComponent();
                 const element = elementView.el*/
+      } else if (elementView.model instanceof UseCase) {
+        const class1 = elementView.model
+        const x = class1.userInput()
+        if (x != null) {
+          console.log(x)
+          paperEditor.model.addCell(x)
+        }
       } else {
         throw new Error('elementView.model is not instanceof UmlClass')
       }
     })
 
     paperEditor.on('element:pointerclick', elementView => {
-      if (elementView.model instanceof UmlClass) {
+      /*if (elementView.model instanceof UmlClass) {
         const classifier = elementView.model
         classifier.handleLink(paperEditor.model)
-      }
+      }*/
     })
   }
 
