@@ -1,4 +1,4 @@
-name: Node.js CI (Lint, Test)
+name: UML Editor Angular Web components CI (Test, Lint)
 
 on:
   # push only for branches (ignore tags)
@@ -18,16 +18,22 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: './uml-editor'
+
     strategy:
       matrix:
         node-version: [ 20.x ]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache-dependency-path: './uml-editor'
-      - run: npm test
-      - run: npm run lint
+      - name: Test Code
+        run: npm test
+      - name: Lint Code
+        run: npm run lint
