@@ -10,15 +10,32 @@
       "prefix": "app",
       "architect": {
         "build": {
+          "builder": "ngx-build-plus:build",
+          "options": {
+            "outputPath": "dist/uml-editor-elements",
+            "index": "src/index.html",
+            "main": "src/main.elements.ts",
+            "singleBundle": true,
+            "tsConfig": "tsconfig.elements.json",
+            "inlineStyleLanguage": "scss",
+            "outputHashing": "none",
+            "styles": ["src/styles.scss"]
+          }
+        },
+        "build:app": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/uml-editor",
             "index": "src/index.html",
             "browser": "src/main.app.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "styles": ["src/styles.scss"]
+            "styles": [
+              "src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {
@@ -48,39 +65,25 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "uml-editor:build:production"
+              "buildTarget": "uml-editor:build:app:production"
             },
             "development": {
-              "buildTarget": "uml-editor:build:development"
+              "buildTarget": "uml-editor:build:app:development"
             }
           },
           "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:jest",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "uml-editor:build"
-          }
-        }
-      }
-    },
-    "uml-editor-elements": {
-      "projectType": "application",
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "ngx-build-plus:build",
-          "options": {
-            "outputPath": "dist/uml-editor-elements",
-            "index": "src/index.html",
-            "main": "src/main.elements.ts",
-            "singleBundle": true,
-            "tsConfig": "tsconfig.elements.json",
-            "inlineStyleLanguage": "scss",
-            "outputHashing": "none",
-            "styles": ["src/styles.scss"]
           }
         }
       }
