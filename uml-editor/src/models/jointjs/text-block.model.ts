@@ -1,4 +1,4 @@
-import { dia, util } from 'jointjs'
+import { dia, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 
 export const TextBlockView = dia.ElementView.extend({

@@ -1,4 +1,4 @@
-import { dia, shapes } from 'jointjs'
+import { dia, shapes } from '@joint/core'
 import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
 import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
