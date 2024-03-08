@@ -8,7 +8,7 @@ export const TextBlockView = dia.ElementView.extend({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onInput(event: any) {
-    console.log('Input Value:', event.target.value)
+    console.debug('Input Value:', event.target.value)
     this.model.attr('name/props/value', event.target.value)
   },
 })
@@ -53,7 +53,7 @@ export class TextBlock extends dia.Element {
   public createVariableComponent(ref: string, x: number, y: number, textBlockSize: { width: number; height: number }) {
     // Define a new custom form element
     // Create an instance of the custom form element
-    console.log(textBlockSize)
+    console.debug(textBlockSize)
     const form = this.clone()
     form.position(x, y)
     form.resize(textBlockSize.width, textBlockSize.height)

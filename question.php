@@ -96,8 +96,7 @@ class qtype_uml_question extends question_with_responses {
      * @return bool
      */
     public function is_same_response(array $prevresponse, array $newresponse): bool {
-        // TODO: Implement is_same_response() method.
-        return false;
+        return false; // We handle the correction in the frontend itself.
     }
 
     /**
