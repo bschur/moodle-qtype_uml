@@ -121,7 +121,7 @@ export class UmlEditorComponent implements AfterViewInit {
         },
         setPosition: (view: ElementView, coordinates: { x: number; y: number }) => {
           const model = view.model
-          if (model instanceof UmlClass) {
+          if (model instanceof UmlClass || model instanceof UseCase) {
             model.resizeOnPaper(coordinates)
           }
         },

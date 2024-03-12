@@ -8,7 +8,6 @@ export const TextBlockView = dia.ElementView.extend({
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onInput(event: any) {
-    console.log('Input Value:', event.target.value)
     this.model.attr('name/props/value', event.target.value)
   },
 })

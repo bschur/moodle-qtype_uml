@@ -16,10 +16,15 @@ export class UseCase extends dia.Element {
   userInput() {
     const ctb = new TextBlock()
 
-    const variableComponent = ctb.createVariableComponent('textBox', this.position().x, this.position().y, {
-      width: 100,
-      height: 30,
-    })
+    const variableComponent = ctb.createVariableComponent(
+      'textBox',
+      this.position().x,
+      this.position().y + (this.size().width - 5) / 4,
+      {
+        width: this.size().width - 5,
+        height: this.size().height / 2,
+      }
+    )
 
     // Alternatively, store the textbox reference for further manipulation
     this.embed(variableComponent)
@@ -30,29 +35,33 @@ export class UseCase extends dia.Element {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'UseCase',
 
+      size: {
+        width: 60,
+        height: 50,
+      },
       attrs: {
         root: {
           highlighterSelector: 'body',
         },
         body: {
-          cx: 'calc(1 * w)',
-          cy: 'calc(1 * h)',
-          rx: 'calc(60 * w)',
-          ry: 'calc(30 * h)',
+          cx: 30,
+          cy: 25,
+          rx: 50,
+          ry: 30,
           stroke: '#000000',
           strokeWidth: 2,
           fill: '#ffffff',
-        },
-        textBox: {
-          width: 20,
-          height: 20,
-          stroke: 'black',
-          strokeWidth: 3,
-          fill: 'white',
         },
       },
     }
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
+  }
+  resizeOnPaper(coordinates: { x: number; y: number }) {
+    const diffY = this.size().height - Math.max(coordinates.y, 1)
+    const diffX = this.size().width - Math.max(coordinates.x, 1)
+
+    this.scale(this.size().width / diffX, this.size().height / diffY)
+    //this.body.cy = ...ö
   }
 }
