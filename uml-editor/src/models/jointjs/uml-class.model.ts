@@ -1,7 +1,6 @@
-import { dia, shapes, util } from 'jointjs'
+import { dia, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
-import Paper = dia.Paper
 
 export class UmlClass extends shapes.standard.Rectangle {
   override markup = [
@@ -31,7 +30,7 @@ export class UmlClass extends shapes.standard.Rectangle {
   private rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2 // Height of each section
   private functionComponents: shapes.standard.TextBlock[] = []
   private variableComponents: shapes.standard.TextBlock[] = []
-  private headerComponent: any
+  private headerComponent: TextBlock | null = null
   private textBlockSize = {
     //height: this.variableComponents.length === 0 ?  this.rectVariablesHeight * 0.8 : this.rectVariablesHeight / this.variableComponents.length - 5,
     height: 20,
@@ -183,7 +182,7 @@ export class UmlClass extends shapes.standard.Rectangle {
   }
 
   adjustByDelete(selectedRect: string, posY: number) {
-    let indexOfComponentToRemove: any
+    let indexOfComponentToRemove = -1
 
     switch (selectedRect) {
       case this.variablesRect:
@@ -278,7 +277,7 @@ export class UmlClass extends shapes.standard.Rectangle {
       component.position(component.position().x, component.position().y - diffY / 2)
     })
 
-    this.headerComponent.resize(this.textBlockSize.width, this.textBlockSize.height)
+    this.headerComponent?.resize(this.textBlockSize.width, this.textBlockSize.height)
   }
 
   handleLink(model: dia.Graph<dia.Graph.Attributes>) {
