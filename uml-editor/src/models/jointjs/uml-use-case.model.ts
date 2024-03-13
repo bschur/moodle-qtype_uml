@@ -5,7 +5,7 @@ import { TextBlock } from './text-block.model'
 export class UseCase extends dia.Element {
   override markup = [
     ...util.svg`
-            <ellipse @selector="body" />
+            <ellipse @selector="ellipse" />
         `,
     {
       tagName: 'textBox',
@@ -43,7 +43,7 @@ export class UseCase extends dia.Element {
         root: {
           highlighterSelector: 'body',
         },
-        body: {
+        ellipse: {
           cx: 30,
           cy: 25,
           rx: 50,

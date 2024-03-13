@@ -24,7 +24,12 @@ import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { UseCase } from '../../models/jointjs/uml-use-case.model'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
+import {
+  CustomBoundary,
+  initCustomNamespaceGraph,
+  initCustomPaper,
+  jointJsCustomUmlElements,
+} from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import ElementView = dia.ElementView
 
@@ -129,11 +134,14 @@ export class UmlEditorComponent implements AfterViewInit {
 
       const tools = new dia.ToolsView({
         tools: [
-          new elementTools.Boundary({
-            padding: 3,
-            rotate: true,
-            useModelGeometry: true,
-          }),
+          new CustomBoundary(
+            {
+              padding: 3,
+              rotate: true,
+              useModelGeometry: true,
+            },
+            cellView.model
+          ),
           new linkTools.Remove({
             scale: 1.2,
             distance: 15,

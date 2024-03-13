@@ -1,10 +1,11 @@
-import { dia, shapes } from '@joint/core'
+import { dia, elementTools, shapes } from '@joint/core'
 import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
 import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
 import { UseCase } from '../models/jointjs/uml-use-case.model'
 import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
+import Boundary = elementTools.Boundary
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -76,4 +77,28 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
   resizePaperObserver(paper).observe(el)
 
   return paper
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace,@typescript-eslint/no-unused-vars
+namespace CustomBoundary {
+  export interface Options extends dia.ToolView.Options {
+    // Add any additional options you need for your custom boundary
+    customOption?: never
+  }
+}
+
+export class CustomBoundary extends Boundary {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  constructor(options?: CustomBoundary.Options, model?: never) {
+    // @ts-ignore
+    if (model instanceof UseCase) {
+      //
+    } else {
+      super(options)
+      // Initialize your custom options or perform any additional setup here
+      if (options && options.customOption) {
+        // Initialize custom options
+      }
+    }
+  }
 }
