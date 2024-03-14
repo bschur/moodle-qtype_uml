@@ -1,6 +1,6 @@
 import { connectionStrategies, dia, elementTools, shapes } from '@joint/core'
-import { TextBlock } from '../text-block.model'
-import { UmlClass } from '../uml-class.model'
+import { TextBlock } from '../models/jointjs/text-block.model'
+import { UmlClass } from '../models/jointjs/uml-class.model'
 import Paper = dia.Paper
 
 const ResizeTool = elementTools.Control.extend({
@@ -35,7 +35,11 @@ const ResizeTool = elementTools.Control.extend({
   },
   setPosition: (view: dia.ElementView, coordinates: dia.Point) => {
     const model = view.model
-    model.resize(Math.max(coordinates.x - 10, 1), Math.max(coordinates.y - 10, 1))
+    if (model instanceof UmlClass) {
+      model.resizeOnPaper(coordinates)
+    } else {
+      model.resize(Math.max(coordinates.x - 10, 1), Math.max(coordinates.y - 10, 1))
+    }
   },
 })
 

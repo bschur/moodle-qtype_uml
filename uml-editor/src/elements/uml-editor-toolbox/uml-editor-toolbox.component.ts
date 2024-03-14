@@ -20,7 +20,8 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { debounceTime, map, startWith } from 'rxjs'
 import { CustomJointJSElement } from '../../models/jointjs/custom-jointjs-element.model'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
+import { jointJsCustomUmlElements } from '../../utils/jointjs-extension.const'
 
 @Component({
   selector: 'app-uml-editor-toolbox',

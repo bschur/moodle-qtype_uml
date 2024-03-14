@@ -236,7 +236,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
   }
 
-  resizeOnPaper(coordinates: { x: number; y: number }) {
+  resizeOnPaper(coordinates: dia.Point) {
     const diffY = this.rectHeight - Math.max(coordinates.y, 1)
 
     this.rectWidth = Math.max(coordinates.x, 1)

@@ -1,10 +1,6 @@
 import { dia, shapes } from '@joint/core'
-import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
-import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
-import { paperHoverConnectToolOptions } from '../models/jointjs/tools/element-tool.model'
-import { UmlActor } from '../models/jointjs/uml-actor.model'
-import { UmlClass } from '../models/jointjs/uml-class.model'
-import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
+import { paperHoverConnectToolOptions } from './jointjs-element-tools.const'
+import { jointJsCustomUmlElementViews, jointJsCustomUmlElements } from './jointjs-extension.const'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -32,16 +28,6 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
 
   return existingObject
 }
-
-export const jointJsCustomUmlElements: CustomJointJSElement[] = [
-  createCustomJointJSElement(UmlActor, 'Actor', true),
-  createCustomJointJSElement(UmlClass, 'Classifier', true),
-  createCustomJointJSElement(TextBlock, 'Text-block', false),
-]
-
-export const jointJsCustomUmlElementViews: CustomJointJSElementView[] = [
-  createCustomJointJSElementView(TextBlockView, 'custom.uml.TextBlockView'),
-]
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
