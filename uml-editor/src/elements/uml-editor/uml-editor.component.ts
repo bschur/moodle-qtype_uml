@@ -24,9 +24,7 @@ import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
-import { globalElementTools } from '../../utils/jointjs-element-tools.const'
 import { jointJsCustomUmlElements } from '../../utils/jointjs-extension.const'
-import { globalLinkTools } from '../../utils/link-tools.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
@@ -112,21 +110,6 @@ export class UmlEditorComponent implements AfterViewInit {
     })
 
     // Assuming paper is your JointJS paper
-
-    paperEditor.on('cell:mouseenter', cellView => {
-      const elementTools = cellView instanceof dia.ElementView ? globalElementTools : []
-      const linkTools = cellView instanceof dia.LinkView ? globalLinkTools : []
-
-      const tools = new dia.ToolsView({
-        tools: [...elementTools, ...linkTools],
-      })
-
-      cellView.addTools(tools)
-    })
-
-    paperEditor.on('cell:mouseleave', cellView => {
-      cellView.removeTools()
-    })
 
     paperEditor.on('element:pointerdblclick', (elementView, evt) => {
       const target = elementView.model

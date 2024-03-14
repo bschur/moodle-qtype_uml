@@ -1,6 +1,7 @@
 import { dia, shapes } from '@joint/core'
-import { paperHoverConnectToolOptions } from './jointjs-element-tools.const'
+import { globalElementToolsView, paperHoverConnectToolOptions } from './jointjs-element-tools.const'
 import { jointJsCustomUmlElementViews, jointJsCustomUmlElements } from './jointjs-extension.const'
+import { globalLinkToolsView } from './jointjs-link-tools.const'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -60,6 +61,19 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
   })
 
   resizePaperObserver(paper).observe(el)
+
+  // register tools for links and elements
+  paper.on('link:mouseenter', linkView => {
+    linkView.addTools(globalLinkToolsView)
+  })
+
+  paper.on('element:mouseenter', elementView => {
+    elementView.addTools(globalElementToolsView)
+  })
+
+  paper.on('blank:mouseover', () => {
+    paper.removeTools()
+  })
 
   return paper
 }
