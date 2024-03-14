@@ -1,6 +1,6 @@
 import { dia, shapes } from '@joint/core'
 import { globalElementToolsView, paperHoverConnectToolOptions } from './jointjs-element-tools.const'
-import { jointJsCustomUmlElementViews, jointJsCustomUmlElements } from './jointjs-extension.const'
+import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
 
 const resizePaperObserver = (paper: dia.Paper) =>
@@ -33,7 +33,7 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
   ...shapes,
-  ...[...jointJsCustomUmlElements, ...jointJsCustomUmlElementViews].reduce((acc, item) => {
+  ...[...jointJSCustomUmlElements, ...jointJSCustomUmlElementViews].reduce((acc, item) => {
     if (item.type === 'element') {
       assignValueToObject(acc, item.defaults.type, item.clazz)
     } else {

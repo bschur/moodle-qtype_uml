@@ -24,7 +24,7 @@ import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
-import { jointJsCustomUmlElements } from '../../utils/jointjs-extension.const'
+import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
@@ -86,7 +86,7 @@ export class UmlEditorComponent implements AfterViewInit {
   }
 
   addItemFromToolboxToEditor(itemType: string) {
-    const clickedClass = jointJsCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
+    const clickedClass = jointJSCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
     if (!clickedClass) {
       throw new Error(`itemType ${itemType} not found`)
     }
