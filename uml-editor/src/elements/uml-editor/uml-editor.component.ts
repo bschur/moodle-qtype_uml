@@ -19,13 +19,14 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { dia, elementTools, linkTools } from '@joint/core'
+import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
+import { globalElementTools } from '../../models/jointjs/tools/element-tool.model'
+import { globalLinkTools } from '../../models/jointjs/tools/link-tool.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
 import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import ElementView = dia.ElementView
 
 @Component({
   selector: 'app-uml-editor',
@@ -112,48 +113,13 @@ export class UmlEditorComponent implements AfterViewInit {
     // Assuming paper is your JointJS paper
 
     paperEditor.on('cell:mouseenter', cellView => {
-      const resizeTool = elementTools.Control.extend({
-        getPosition: (view: ElementView) => {
-          const model = view.model
-          const { width, height } = model.size()
-          return { x: width, y: height }
-        },
-        setPosition: (view: ElementView, coordinates: { x: number; y: number }) => {
-          const model = view.model
-          if (model instanceof UmlClass) {
-            model.resizeOnPaper(coordinates)
-          }
-        },
-      })
+      const elementTools = cellView instanceof dia.ElementView ? globalElementTools : []
+      const linkTools = cellView instanceof dia.LinkView ? globalLinkTools : []
 
       const tools = new dia.ToolsView({
-        tools: [
-          new elementTools.Boundary({
-            padding: 3,
-            rotate: true,
-            useModelGeometry: true,
-          }),
-          new linkTools.Remove({
-            scale: 1.2,
-            distance: 15,
-            action: (_, elementView, toolView) => {
-              const target = elementView.model
-              const parent = elementView.model.getParentCell()
-              if (parent instanceof UmlClass && target instanceof TextBlock) {
-                const ref = elementView.model.attr('ref')
-                const posY = elementView.model.position().y
-                parent.adjustByDelete(ref, posY)
-              }
-              target.remove({ ui: true, tool: toolView.cid })
-            },
-          }),
-          new resizeTool({
-            handleAttributes: {
-              fill: '#4666E5',
-            },
-          }),
-        ],
+        tools: [...elementTools, ...linkTools],
       })
+
       cellView.addTools(tools)
     })
 
@@ -176,13 +142,6 @@ export class UmlEditorComponent implements AfterViewInit {
                 const element = elementView.el*/
       } else {
         throw new Error('elementView.model is not instanceof UmlClass')
-      }
-    })
-
-    paperEditor.on('element:pointerclick', elementView => {
-      const target = elementView.model
-      if (target instanceof UmlClass) {
-        target.handleLink(paperEditor.model)
       }
     })
   }

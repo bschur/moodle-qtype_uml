@@ -1,6 +1,7 @@
 import { dia, shapes } from '@joint/core'
 import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
 import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
+import { paperHoverConnectToolOptions } from '../models/jointjs/tools/element-tool.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
 import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
@@ -69,6 +70,7 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
     drawGrid: true,
     interactive: isInteractive,
     cellViewNamespace: jointjsCustomNamespace,
+    ...paperHoverConnectToolOptions,
   })
 
   resizePaperObserver(paper).observe(el)
