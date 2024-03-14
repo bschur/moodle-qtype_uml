@@ -1,5 +1,5 @@
 import { Type } from '@angular/core'
-import { dia } from 'jointjs'
+import { dia } from '@joint/core'
 
 export interface JointJSElementType {
   type: string
