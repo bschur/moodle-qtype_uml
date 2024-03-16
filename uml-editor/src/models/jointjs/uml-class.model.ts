@@ -31,6 +31,7 @@ export class UmlClass extends shapes.standard.Rectangle {
   private functionComponents: shapes.standard.TextBlock[] = []
   private variableComponents: shapes.standard.TextBlock[] = []
   private headerComponent: TextBlock | null = null
+
   private textBlockSize = {
     //height: this.variableComponents.length === 0 ?  this.rectVariablesHeight * 0.8 : this.rectVariablesHeight / this.variableComponents.length - 5,
     height: 20,

@@ -136,7 +136,7 @@ export class UmlEditorComponent implements AfterViewInit {
         tools: [
           new CustomBoundary(
             {
-              padding: 3,
+              padding: 1,
               rotate: true,
               useModelGeometry: true,
             },

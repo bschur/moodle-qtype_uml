@@ -4,9 +4,10 @@ import { TextBlock } from './text-block.model'
 
 export class UseCase extends dia.Element {
   override markup = [
-    ...util.svg`
-            <ellipse @selector="ellipse" />
-        `,
+    {
+      tagName: 'ellipse',
+      selector: 'body',
+    },
     {
       tagName: 'textBox',
       selector: 'textBox',
@@ -33,18 +34,18 @@ export class UseCase extends dia.Element {
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
-      type: 'UseCase',
+      type: 'custom.uml.UseCase',
 
       size: {
-        width: 60,
-        height: 50,
+        width: 95,
+        height: 45,
       },
       attrs: {
         root: {
           highlighterSelector: 'body',
         },
-        ellipse: {
-          cx: 30,
+        body: {
+          cx: 50,
           cy: 25,
           rx: 50,
           ry: 30,
@@ -58,10 +59,17 @@ export class UseCase extends dia.Element {
     return elementAttributes
   }
   resizeOnPaper(coordinates: { x: number; y: number }) {
-    const diffY = this.size().height - Math.max(coordinates.y, 1)
-    const diffX = this.size().width - Math.max(coordinates.x, 1)
+    const newSize = {
+      width: Math.max(coordinates.x - this.position().x, 60), // Ensuring width doesn't go below 60
+      height: Math.max(coordinates.y - this.position().y, 50), // Ensuring height doesn't go below 50
+    }
+    const newRx = newSize.width / 2 + 5
+    const newRy = newRx * (3 / 5) + 5
 
-    this.scale(this.size().width / diffX, this.size().height / diffY)
-    //this.body.cy = ...ö
+    this.resize(newSize.width, newSize.height)
+
+    // Updating ellipse attributes
+    this.attr('body/rx', newRx)
+    this.attr('body/ry', newRy)
   }
 }

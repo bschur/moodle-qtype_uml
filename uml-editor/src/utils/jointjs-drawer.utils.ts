@@ -1,4 +1,4 @@
-import { dia, elementTools, shapes } from '@joint/core'
+import { dia, elementTools, mvc, shapes } from '@joint/core'
 import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
 import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
@@ -88,17 +88,11 @@ namespace CustomBoundary {
 }
 
 export class CustomBoundary extends Boundary {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  constructor(options?: CustomBoundary.Options, model?: never) {
-    // @ts-ignore
+  constructor(options?: CustomBoundary.Options, model?: dia.Cell extends mvc.Model ? dia.Cell : undefined) {
     if (model instanceof UseCase) {
-      //
+      super(options)
     } else {
       super(options)
-      // Initialize your custom options or perform any additional setup here
-      if (options && options.customOption) {
-        // Initialize custom options
-      }
     }
   }
 }
