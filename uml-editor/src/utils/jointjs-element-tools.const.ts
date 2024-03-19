@@ -23,8 +23,8 @@ const ResizeTool = elementTools.Control.extend({
         fill: 'none',
         stroke: '#33334F',
         'stroke-dasharray': '2,4',
-        rx: 5,
-        ry: 5,
+        rx: 2,
+        ry: 2,
       },
     },
   ],
@@ -35,11 +35,7 @@ const ResizeTool = elementTools.Control.extend({
   },
   setPosition: (view: dia.ElementView, coordinates: dia.Point) => {
     const model = view.model
-    if (model instanceof UmlClass) {
-      model.resizeOnPaper(coordinates)
-    } else {
-      model.resize(Math.max(coordinates.x - 10, 1), Math.max(coordinates.y - 10, 1))
-    }
+    model.resize(Math.max(coordinates.x - 10, 1), Math.max(coordinates.y - 10, 1))
   },
 })
 
@@ -67,7 +63,6 @@ export const globalElementToolsView = new dia.ToolsView({
     new elementTools.HoverConnect(),
     new elementTools.Remove({
       scale: 1.2,
-      distance: 15,
       action: (_, elementView) => {
         const target = elementView.model
         const parent = target.getParentCell()
@@ -80,7 +75,6 @@ export const globalElementToolsView = new dia.ToolsView({
       },
     }),
     new elementTools.Boundary({
-      padding: 12,
       rotate: false,
       useModelGeometry: true,
     }),

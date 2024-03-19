@@ -2,8 +2,15 @@ import { dia, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
+type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
+
+const initialWidth = 150
+const initialHeight = 100
+
+const listItemHeight = 20
+
 export class UmlClass extends shapes.standard.Rectangle {
-  override markup = [
+  override readonly markup = [
     {
       tagName: 'rect',
       selector: 'body',
@@ -21,41 +28,46 @@ export class UmlClass extends shapes.standard.Rectangle {
       selector: 'functionsRect',
     },
   ]
-  private variablesCounter = 0
-  private funcCounter = 0
-  private rectWidth = 150 // Width of the class
-  private rectHeight = 100
-  private headerHeight = 20 // Height of the header section
-  private rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2 // Height of each section
-  private rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2 // Height of each section
-  private functionComponents: shapes.standard.TextBlock[] = []
-  private variableComponents: shapes.standard.TextBlock[] = []
-  private headerComponent: TextBlock | null = null
-  private textBlockSize = {
-    //height: this.variableComponents.length === 0 ?  this.rectVariablesHeight * 0.8 : this.rectVariablesHeight / this.variableComponents.length - 5,
-    height: 20,
-    width: this.rectWidth - 5,
+
+  private get variablesComponentAllHeight(): number {
+    return this.variableComponents.length * listItemHeight
   }
-  private header = 'header'
-  private variablesRect = 'variablesRect'
-  private functionsRect = 'functionsRect'
+
+  private get functionsComponentAllHeight(): number {
+    return this.functionComponents.length * listItemHeight
+  }
+
+  private get inlineContainerHeight(): number {
+    let height = initialHeight
+    try {
+      height = this.size().height
+    } catch (e) {
+      console.debug(e)
+    }
+    return (height - listItemHeight) / 2 // Height of each section
+  }
+
+  private get listItemWidth(): number {
+    let width = initialWidth
+    try {
+      width = this.size().width
+    } catch (e) {
+      console.debug(e)
+    }
+    return width - 5
+  }
+
+  private readonly functionComponents: shapes.standard.TextBlock[] = []
+  private readonly variableComponents: shapes.standard.TextBlock[] = []
+
+  private headerComponent: TextBlock | null = null
 
   override defaults() {
-    //todo check how to initialize
-    this.rectWidth = 150 // Width of the class
-    this.rectHeight = 100 // Height of the class
-    this.headerHeight = 20 // Height of the header section
-    this.rectVariablesHeight = (this.rectHeight - this.headerHeight) / 2 // Height of each section
-    this.rectFunctionsHeight = (this.rectHeight - this.headerHeight) / 2 // Height of each section
-    this.header = 'header'
-    this.variablesRect = 'variablesRect'
-    this.functionsRect = 'functionsRect'
-
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
       type: 'custom.uml.Classifier',
       size: {
-        width: this.rectWidth,
-        height: this.rectHeight,
+        width: initialWidth,
+        height: initialHeight,
       },
       attrs: {
         body: {
@@ -64,9 +76,9 @@ export class UmlClass extends shapes.standard.Rectangle {
           strokeWidth: 4,
           stroke: 'black',
         },
-        header: {
-          width: this.rectWidth,
-          height: this.headerHeight,
+        ['header' satisfies UmlClassSectors]: {
+          width: initialWidth,
+          height: listItemHeight,
           fontSize: 12,
           fontWeight: 'bold',
           fontFamily: 'Arial, helvetica, sans-serif',
@@ -78,22 +90,22 @@ export class UmlClass extends shapes.standard.Rectangle {
           strokeWidth: 3,
           fill: 'white',
         },
-        variablesRect: {
-          width: this.rectWidth,
-          height: this.rectVariablesHeight,
+        ['variablesRect' satisfies UmlClassSectors]: {
+          width: initialWidth,
+          height: this.inlineContainerHeight,
           stroke: 'black',
           strokeWidth: 3,
-          'ref-y': this.headerHeight,
+          'ref-y': listItemHeight,
           'ref-x': 0,
           ref: 'body',
           fill: 'white',
         },
-        functionsRect: {
-          width: this.rectWidth,
-          height: this.rectFunctionsHeight,
+        ['functionsRect' satisfies UmlClassSectors]: {
+          width: initialWidth,
+          height: this.inlineContainerHeight,
           stroke: 'black',
           strokeWidth: 3,
-          'ref-dy': -this.rectFunctionsHeight,
+          'ref-dy': -listItemHeight,
           'ref-x': 0,
           ref: 'body',
           fill: 'white',
@@ -106,88 +118,58 @@ export class UmlClass extends shapes.standard.Rectangle {
   }
 
   userInput(evt: dia.Event) {
-    const selectedRect = evt.target.attributes[0].value
+    const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
     console.log(selectedRect)
-    const ctb = new TextBlock()
-    let currentAttributes
 
-    let variableComponent
-    let positionY
+    const newTextBlockElement = new TextBlock()
+    newTextBlockElement.attr('ref', selectedRect)
 
+    let positionY = 0
     switch (selectedRect) {
-      case this.header:
-        variableComponent = ctb.createVariableComponent(
-          'header',
-          this.position().x,
-          this.position().y,
-          this.textBlockSize
-        )
-        this.headerComponent = variableComponent
-        currentAttributes = this.attr()
-        currentAttributes.body2 = variableComponent
-        this.embed(variableComponent)
-        return variableComponent
-      case this.variablesRect:
-        positionY = this.position().y + this.headerHeight + this.variablesCounter
-        variableComponent = ctb.createVariableComponent(
-          'variablesRect',
-          this.position().x,
-          positionY,
-          this.textBlockSize
-        )
-        this.variableComponents.push(variableComponent)
-        this.adjustVariableSize(1)
+      case 'header':
+        newTextBlockElement.position(this.position().x, this.position().y)
+        newTextBlockElement.resize(this.size().width, this.size().height)
+        this.headerComponent = newTextBlockElement
+        break
+      case 'variablesRect':
+        positionY = this.position().y + listItemHeight + this.variablesComponentAllHeight
+        newTextBlockElement.position(this.position().x, positionY)
+        newTextBlockElement.resize(this.listItemWidth, listItemHeight)
+        this.variableComponents.push(newTextBlockElement)
+        this.resizeInlineContainer(1, 'variablesRect')
         this.functionComponents.forEach(component => {
           const p = component.position()
-          component.position(p.x, p.y + 20)
+          component.position(p.x, p.y + listItemHeight)
         })
-        currentAttributes = this.attr()
-        currentAttributes.body2 = variableComponent
-        this.embed(variableComponent)
-        return variableComponent
-      case this.functionsRect:
-        positionY = this.position().y + this.size().height - this.rectFunctionsHeight + this.funcCounter
-        variableComponent = ctb.createVariableComponent(
-          'functionsRect',
-          this.position().x,
-          positionY,
-          this.textBlockSize
-        )
-        this.functionComponents.push(variableComponent)
+        break
+      case 'functionsRect':
+        positionY =
+          this.position().y + this.size().height - this.inlineContainerHeight + this.functionsComponentAllHeight
+        newTextBlockElement.position(this.position().x, positionY)
+        newTextBlockElement.resize(this.listItemWidth, listItemHeight)
+        this.functionComponents.push(newTextBlockElement)
 
-        this.adjustFuncSize(1)
-        currentAttributes = this.attr()
-        currentAttributes.body2 = variableComponent
-        this.embed(variableComponent)
-        return variableComponent
+        this.resizeInlineContainer(1, 'functionsRect')
+        break
       default:
         console.log('Clicked outside the sections')
-        break
+        return null
     }
-    return null
+
+    this.embed(newTextBlockElement)
+    return newTextBlockElement
   }
 
-  adjustFuncSize(direction: number) {
-    this.resize(this.size().width, (this.size().height += 20 * direction))
-    this.size().height += 20 * direction
-    this.rectHeight += 20 * direction
-    this.rectFunctionsHeight += 20 * direction
-    this.funcCounter += 20 * direction
+  resizeInlineContainer(direction: number, container: UmlClassSectors) {
+    this.resize(this.size().width, (this.size().height += listItemHeight * direction))
+    this.attr(container + '/height', this.inlineContainerHeight)
   }
 
-  adjustVariableSize(direction: number) {
-    this.resize(this.size().width, (this.size().height += 20 * direction))
-    this.rectVariablesHeight += 20 * direction
-    this.rectHeight += 20 * direction
-    this.variablesCounter += 20 * direction
-    this.attr(this.variablesRect + '/height', this.rectVariablesHeight)
-  }
-
-  adjustByDelete(selectedRect: string, posY: number) {
+  adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
     let indexOfComponentToRemove = -1
 
     switch (selectedRect) {
-      case this.variablesRect:
+      case 'variablesRect':
         indexOfComponentToRemove = this.variableComponents.findIndex(component => component.position().y === posY)
 
         if (indexOfComponentToRemove !== -1) {
@@ -198,7 +180,7 @@ export class UmlClass extends shapes.standard.Rectangle {
           this.variableComponents.forEach((component, index) => {
             if (index >= indexOfComponentToRemove) {
               const p = component.position()
-              component.position(p.x, p.y - 20)
+              component.position(p.x, p.y - listItemHeight)
             }
           })
           this.shrinkFuncY(0)
@@ -206,10 +188,10 @@ export class UmlClass extends shapes.standard.Rectangle {
           console.log('Component not found')
         }
 
-        this.adjustVariableSize(-1)
+        this.resizeInlineContainer(-1, 'variablesRect')
 
         break
-      case this.functionsRect:
+      case 'functionsRect':
         indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
 
         if (indexOfComponentToRemove !== -1) {
@@ -222,7 +204,7 @@ export class UmlClass extends shapes.standard.Rectangle {
           console.log('Component not found')
         }
 
-        this.adjustFuncSize(-1)
+        this.resizeInlineContainer(-1, 'functionsRect')
         break
     }
   }
@@ -231,54 +213,40 @@ export class UmlClass extends shapes.standard.Rectangle {
     this.functionComponents.forEach((component, index) => {
       if (index >= indexOfComponentToRemove) {
         const p = component.position()
-        component.position(p.x, p.y - 20)
+        component.position(p.x, p.y - listItemHeight)
       }
     })
   }
 
-  resizeOnPaper(coordinates: dia.Point) {
-    const diffY = this.rectHeight - Math.max(coordinates.y, 1)
+  override resize(width: number, height: number) {
+    const diffY = height - this.size().height
 
-    this.rectWidth = Math.max(coordinates.x, 1)
-    this.rectHeight = Math.max(coordinates.y, 1)
-
-    this.resize(this.rectWidth, this.rectHeight)
-
-    // Assuming header height remains constant
-    const headerHeight = this.attr('header/height')
-    const remainingHeight = this.rectHeight - headerHeight
-    this.rectVariablesHeight = remainingHeight / 2
-    this.rectFunctionsHeight = remainingHeight / 2
+    super.resize(width, height)
 
     // Update subelements
-    this.attr('header/width', this.rectWidth)
-    this.attr('variablesRect', {
-      width: this.rectWidth,
-      height: this.rectVariablesHeight,
-      'ref-y': headerHeight,
+    this.attr('header/width', width)
+    this.attr('variablesRect' satisfies UmlClassSectors, {
+      width: width,
+      height: this.inlineContainerHeight,
+      'ref-y': listItemHeight,
     })
-    this.attr('functionsRect', {
-      width: this.rectWidth,
-      height: this.rectFunctionsHeight,
-      'ref-dy': -this.rectFunctionsHeight,
+    this.attr('functionsRect' satisfies UmlClassSectors, {
+      width: width,
+      height: this.inlineContainerHeight,
+      'ref-dy': -this.inlineContainerHeight,
     })
-
-    // Update position of each CustomTextBlock in functionComponents & variableComponents
-    this.textBlockSize = {
-      //height: this.variableComponents.length === 0 ?  this.rectVariablesHeight * 0.8 : this.rectVariablesHeight / this.variableComponents.length - 5,
-      height: 20,
-      width: this.rectWidth - 5,
-    }
 
     this.variableComponents.forEach(component => {
-      component.resize(this.textBlockSize.width, this.textBlockSize.height)
+      component.resize(this.listItemWidth, listItemHeight)
     })
 
     this.functionComponents.forEach(component => {
-      component.resize(this.textBlockSize.width, this.textBlockSize.height)
+      component.resize(this.listItemWidth, listItemHeight)
       component.position(component.position().x, component.position().y - diffY / 2)
     })
 
-    this.headerComponent?.resize(this.textBlockSize.width, this.textBlockSize.height)
+    this.headerComponent?.resize(width, height)
+
+    return this
   }
 }
