@@ -119,16 +119,20 @@ export class UmlEditorComponent implements AfterViewInit {
 
     paperEditor.on('cell:mouseenter', cellView => {
       const resizeTool = elementTools.Control.extend({
-        getPosition: (view: ElementView) => {
+        getPosition: function (view: ElementView): dia.Point {
           const model = view.model
           const { width, height } = model.size()
+
           return { x: width, y: height }
         },
-        setPosition: (view: ElementView, coordinates: { x: number; y: number }) => {
+        setPosition: function (view: ElementView, coordinates: { x: number; y: number }) {
           const model = view.model
-          if (model instanceof UmlClass || model instanceof UseCase) {
+          if (model instanceof UseCase || model instanceof UmlClass) {
             model.resizeOnPaper(coordinates)
           }
+        },
+        resetPosition: function (view: ElementView) {
+          view.model.attr(['body'], { rx: 0, ry: 0 })
         },
       })
 
@@ -157,8 +161,9 @@ export class UmlEditorComponent implements AfterViewInit {
             },
           }),
           new resizeTool({
+            padding: { left: 15 },
             handleAttributes: {
-              fill: '#4666E5',
+              fill: 'red',
             },
           }),
         ],

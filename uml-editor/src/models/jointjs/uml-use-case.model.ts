@@ -61,7 +61,7 @@ export class UseCase extends dia.Element {
   resizeOnPaper(coordinates: { x: number; y: number }) {
     const newSize = {
       width: Math.max(coordinates.x - this.position().x, 60), // Ensuring width doesn't go below 60
-      height: Math.max(coordinates.y - this.position().y, 50), // Ensuring height doesn't go below 50
+      height: Math.max(coordinates.x - this.position().x, 60) * 0.43, // Ensuring width doesn't go below 60
     }
     const newRx = newSize.width / 2 + 5
     const newRy = newRx * (3 / 5) + 5
@@ -71,5 +71,7 @@ export class UseCase extends dia.Element {
     // Updating ellipse attributes
     this.attr('body/rx', newRx)
     this.attr('body/ry', newRy)
+    this.attr('body/cx', newRx)
+    this.attr('body/cy', newRx / 2)
   }
 }
