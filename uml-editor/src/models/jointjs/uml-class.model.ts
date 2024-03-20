@@ -30,21 +30,19 @@ export class UmlClass extends shapes.standard.Rectangle {
   ]
 
   private get variablesComponentAllHeight(): number {
-    return this.variableComponents.length * listItemHeight
+    return (this.variableComponents?.length || 0) * listItemHeight
   }
 
   private get functionsComponentAllHeight(): number {
-    return this.functionComponents.length * listItemHeight
+    return (this.functionComponents?.length || 0) * listItemHeight
   }
 
-  private get inlineContainerHeight(): number {
-    let height = initialHeight
-    try {
-      height = this.size().height
-    } catch (e) {
-      console.debug(e)
+  private inlineContainerHeight(container: UmlClassSectors): number {
+    if (container == 'variablesRect') {
+      return 40 + this.variablesComponentAllHeight
+    } else {
+      return 40 + this.functionsComponentAllHeight
     }
-    return (height - listItemHeight) / 2 // Height of each section
   }
 
   private get listItemWidth(): number {
@@ -92,23 +90,23 @@ export class UmlClass extends shapes.standard.Rectangle {
         },
         ['variablesRect' satisfies UmlClassSectors]: {
           width: initialWidth,
-          height: this.inlineContainerHeight,
+          height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
           strokeWidth: 3,
           'ref-y': listItemHeight,
           'ref-x': 0,
           ref: 'body',
-          fill: 'white',
+          fill: 'blue',
         },
         ['functionsRect' satisfies UmlClassSectors]: {
           width: initialWidth,
-          height: this.inlineContainerHeight,
+          height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
           strokeWidth: 3,
-          'ref-dy': -listItemHeight,
+          'ref-dy': -this.inlineContainerHeight('variablesRect'),
           'ref-x': 0,
           ref: 'body',
-          fill: 'white',
+          fill: 'red',
         },
       },
     }
@@ -119,7 +117,6 @@ export class UmlClass extends shapes.standard.Rectangle {
 
   userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
-    console.log(selectedRect)
 
     const newTextBlockElement = new TextBlock()
     newTextBlockElement.attr('ref', selectedRect)
@@ -144,7 +141,10 @@ export class UmlClass extends shapes.standard.Rectangle {
         break
       case 'functionsRect':
         positionY =
-          this.position().y + this.size().height - this.inlineContainerHeight + this.functionsComponentAllHeight
+          this.position().y +
+          this.size().height -
+          this.inlineContainerHeight('variablesRect') +
+          this.functionsComponentAllHeight //todo vlt ni selectedRect
         newTextBlockElement.position(this.position().x, positionY)
         newTextBlockElement.resize(this.listItemWidth, listItemHeight)
         this.functionComponents.push(newTextBlockElement)
@@ -162,7 +162,7 @@ export class UmlClass extends shapes.standard.Rectangle {
 
   resizeInlineContainer(direction: number, container: UmlClassSectors) {
     this.resize(this.size().width, (this.size().height += listItemHeight * direction))
-    this.attr(container + '/height', this.inlineContainerHeight)
+    this.attr(container + '/height', this.inlineContainerHeight(container))
   }
 
   adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
@@ -220,20 +220,23 @@ export class UmlClass extends shapes.standard.Rectangle {
 
   override resize(width: number, height: number) {
     const diffY = height - this.size().height
+    width = Math.max(width, initialWidth)
+    height = Math.max(height, initialHeight)
 
     super.resize(width, height)
 
     // Update subelements
     this.attr('header/width', width)
+
     this.attr('variablesRect' satisfies UmlClassSectors, {
       width: width,
-      height: this.inlineContainerHeight,
+      height: this.inlineContainerHeight('variablesRect'),
       'ref-y': listItemHeight,
     })
     this.attr('functionsRect' satisfies UmlClassSectors, {
       width: width,
-      height: this.inlineContainerHeight,
-      'ref-dy': -this.inlineContainerHeight,
+      height: this.inlineContainerHeight('functionsRect'),
+      'ref-dy': -this.inlineContainerHeight('functionsRect'),
     })
 
     this.variableComponents.forEach(component => {
