@@ -119,12 +119,14 @@ export class UmlClass extends shapes.standard.Rectangle {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
+    newTextBlockElement.attr('ref', selectedRect)
 
     let positionY = 0
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y)
         newTextBlockElement.resize(this.size().width, this.size().height)
+
         this.headerComponent = newTextBlockElement
         break
       case 'variablesRect':
