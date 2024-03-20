@@ -119,7 +119,6 @@ export class UmlClass extends shapes.standard.Rectangle {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
-    newTextBlockElement.attr('ref', selectedRect)
 
     let positionY = 0
     switch (selectedRect) {
@@ -142,9 +141,10 @@ export class UmlClass extends shapes.standard.Rectangle {
       case 'functionsRect':
         positionY =
           this.position().y +
-          this.size().height -
+          listItemHeight +
           this.inlineContainerHeight('variablesRect') +
-          this.functionsComponentAllHeight //todo vlt ni selectedRect
+          this.functionsComponentAllHeight
+
         newTextBlockElement.position(this.position().x, positionY)
         newTextBlockElement.resize(this.listItemWidth, listItemHeight)
         this.functionComponents.push(newTextBlockElement)
@@ -219,9 +219,12 @@ export class UmlClass extends shapes.standard.Rectangle {
   }
 
   override resize(width: number, height: number) {
-    const diffY = height - this.size().height
+    // const diffY = height - this.size().height
     width = Math.max(width, initialWidth)
-    height = Math.max(height, initialHeight)
+    height = Math.max(
+      height,
+      this.inlineContainerHeight('variablesRect') + this.inlineContainerHeight('functionsRect') + listItemHeight
+    )
 
     super.resize(width, height)
 
@@ -245,7 +248,7 @@ export class UmlClass extends shapes.standard.Rectangle {
 
     this.functionComponents.forEach(component => {
       component.resize(this.listItemWidth, listItemHeight)
-      component.position(component.position().x, component.position().y - diffY / 2)
+      //component.position(component.position().x, component.position().y - diffY / 2)
     })
 
     this.headerComponent?.resize(width, height)
