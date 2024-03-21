@@ -19,19 +19,14 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { dia, elementTools, linkTools } from '@joint/core'
+import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { UseCase } from '../../models/jointjs/uml-use-case.model'
-import {
-  CustomBoundary,
-  initCustomNamespaceGraph,
-  initCustomPaper,
-  jointJsCustomUmlElements,
-} from '../../utils/jointjs-drawer.utils'
+import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import ElementView = dia.ElementView
+import { UseCase } from '../../models/jointjs/uml-use-case.model'
+import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 
 @Component({
   selector: 'app-uml-editor',
@@ -92,7 +87,7 @@ export class UmlEditorComponent implements AfterViewInit {
   }
 
   addItemFromToolboxToEditor(itemType: string) {
-    const clickedClass = jointJsCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
+    const clickedClass = jointJSCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
     if (!clickedClass) {
       throw new Error(`itemType ${itemType} not found`)
     }
@@ -117,64 +112,6 @@ export class UmlEditorComponent implements AfterViewInit {
 
     // Assuming paper is your JointJS paper
 
-    paperEditor.on('cell:mouseenter', cellView => {
-      const resizeTool = elementTools.Control.extend({
-        getPosition: function (view: ElementView): dia.Point {
-          const model = view.model
-          const { width, height } = model.size()
-
-          return { x: width, y: height }
-        },
-        setPosition: function (view: ElementView, coordinates: { x: number; y: number }) {
-          const model = view.model
-          if (model instanceof UseCase || model instanceof UmlClass) {
-            model.resizeOnPaper(coordinates)
-          }
-        },
-        resetPosition: function (view: ElementView) {
-          view.model.attr(['body'], { rx: 0, ry: 0 })
-        },
-      })
-
-      const tools = new dia.ToolsView({
-        tools: [
-          new CustomBoundary(
-            {
-              padding: 1,
-              rotate: true,
-              useModelGeometry: true,
-            },
-            cellView.model
-          ),
-          new linkTools.Remove({
-            scale: 1.2,
-            distance: 15,
-            action: (_, elementView, toolView) => {
-              const target = elementView.model
-              const parent = elementView.model.getParentCell()
-              if (parent instanceof UmlClass && target instanceof TextBlock) {
-                const ref = elementView.model.attr('ref')
-                const posY = elementView.model.position().y
-                parent.adjustByDelete(ref, posY)
-              }
-              target.remove({ ui: true, tool: toolView.cid })
-            },
-          }),
-          new resizeTool({
-            padding: { left: 15 },
-            handleAttributes: {
-              fill: 'red',
-            },
-          }),
-        ],
-      })
-      cellView.addTools(tools)
-    })
-
-    paperEditor.on('cell:mouseleave', cellView => {
-      cellView.removeTools()
-    })
-
     paperEditor.on('element:pointerdblclick', (elementView, evt) => {
       const target = elementView.model
       if (target instanceof UmlClass) {
@@ -197,13 +134,6 @@ export class UmlEditorComponent implements AfterViewInit {
         }
       } else {
         throw new Error('elementView.model is not instanceof UmlClass')
-      }
-    })
-
-    paperEditor.on('element:pointerclick', elementView => {
-      const target = elementView.model
-      if (target instanceof UmlClass) {
-        target.handleLink(paperEditor.model)
       }
     })
   }

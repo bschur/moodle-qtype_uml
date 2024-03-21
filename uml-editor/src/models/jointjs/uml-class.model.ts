@@ -235,7 +235,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
   }
 
-  resizeOnPaper(coordinates: { x: number; y: number }) {
+  resizeOnPaper(coordinates: dia.Point) {
     const diffY = this.rectHeight - Math.max(coordinates.y, 1)
 
     this.rectWidth = Math.max(coordinates.x, 1)
@@ -279,17 +279,5 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
 
     this.headerComponent?.resize(this.textBlockSize.width, this.textBlockSize.height)
-  }
-
-  handleLink(model: dia.Graph<dia.Graph.Attributes>) {
-    const existingUnclosedLink = model.getLinks().find(link => !link.getTargetElement())
-
-    if (!existingUnclosedLink) {
-      const link = new shapes.standard.Link()
-      model.addCell(link)
-      link.source(this)
-    } else {
-      existingUnclosedLink.target(this)
-    }
   }
 }

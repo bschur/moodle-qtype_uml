@@ -1,11 +1,7 @@
-import { dia, elementTools, mvc, shapes } from '@joint/core'
-import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
-import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
-import { UmlActor } from '../models/jointjs/uml-actor.model'
-import { UmlClass } from '../models/jointjs/uml-class.model'
-import { UseCase } from '../models/jointjs/uml-use-case.model'
-import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
-import Boundary = elementTools.Boundary
+import { dia, shapes } from '@joint/core'
+import { globalElementToolsView, paperHoverConnectToolOptions } from './jointjs-element-tools.const'
+import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
+import { globalLinkToolsView } from './jointjs-link-tools.const'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -34,21 +30,10 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
   return existingObject
 }
 
-export const jointJsCustomUmlElements: CustomJointJSElement[] = [
-  createCustomJointJSElement(UmlActor, 'Actor', true),
-  createCustomJointJSElement(UmlClass, 'Classifier', true),
-  createCustomJointJSElement(TextBlock, 'Text-block', false),
-  createCustomJointJSElement(UseCase, 'UseCase', true),
-]
-
-export const jointJsCustomUmlElementViews: CustomJointJSElementView[] = [
-  createCustomJointJSElementView(TextBlockView, 'custom.uml.TextBlockView'),
-]
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
   ...shapes,
-  ...[...jointJsCustomUmlElements, ...jointJsCustomUmlElementViews].reduce((acc, item) => {
+  ...[...jointJSCustomUmlElements, ...jointJSCustomUmlElementViews].reduce((acc, item) => {
     if (item.type === 'element') {
       assignValueToObject(acc, item.defaults.type, item.clazz)
     } else {
@@ -72,27 +57,23 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
     drawGrid: true,
     interactive: isInteractive,
     cellViewNamespace: jointjsCustomNamespace,
+    ...paperHoverConnectToolOptions,
   })
 
   resizePaperObserver(paper).observe(el)
 
+  // register tools for links and elements
+  paper.on('link:mouseenter', linkView => {
+    linkView.addTools(globalLinkToolsView)
+  })
+
+  paper.on('element:mouseenter', elementView => {
+    elementView.addTools(globalElementToolsView)
+  })
+
+  paper.on('blank:mouseover', () => {
+    paper.removeTools()
+  })
+
   return paper
-}
-
-// eslint-disable-next-line @typescript-eslint/no-namespace,@typescript-eslint/no-unused-vars
-namespace CustomBoundary {
-  export interface Options extends dia.ToolView.Options {
-    // Add any additional options you need for your custom boundary
-    customOption?: never
-  }
-}
-
-export class CustomBoundary extends Boundary {
-  constructor(options?: CustomBoundary.Options, model?: dia.Cell extends mvc.Model ? dia.Cell : undefined) {
-    if (model instanceof UseCase) {
-      super(options)
-    } else {
-      super(options)
-    }
-  }
 }
