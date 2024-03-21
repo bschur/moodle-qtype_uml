@@ -7,10 +7,12 @@ export class UseCase extends shapes.standard.Ellipse {
     {
       tagName: 'ellipse',
       selector: 'body',
-    },
-    {
-      tagName: 'textBox',
-      selector: 'textBox',
+      children: [
+        {
+          tagName: 'textBox',
+          selector: 'textBox',
+        },
+      ],
     },
   ]
 
@@ -30,42 +32,12 @@ export class UseCase extends shapes.standard.Ellipse {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.EllipseAttributes> = {
       type: 'custom.uml.UseCase',
-
       size: {
         width: 95,
         height: 45,
       },
-      attrs: {
-        root: {
-          highlighterSelector: 'body',
-        },
-        body: {
-          cx: 50,
-          cy: 25,
-          rx: 50,
-          ry: 30,
-          stroke: '#000000',
-          strokeWidth: 2,
-          fill: '#ffffff',
-        },
-      },
     }
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
-  }
-
-  override resize(width: number, height: number) {
-    const newRx = width / 2 + 5
-    const newRy = newRx * (3 / 5) + 5
-
-    super.resize(width, height)
-
-    // Updating ellipse attributes
-    this.attr('body/rx', newRx)
-    this.attr('body/ry', newRy)
-    this.attr('body/cx', newRx)
-    this.attr('body/cy', newRx / 2)
-
-    return this
   }
 }
