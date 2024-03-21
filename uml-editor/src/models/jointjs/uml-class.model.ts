@@ -259,11 +259,10 @@ export class UmlClass extends shapes.standard.Rectangle {
 
   override resize(width: number, height: number) {
     width = Math.max(width, initialWidth)
-    /*const minHeigth =
-      this.inlineContainerHeight('variablesRect') + this.inlineContainerHeight('functionsRect') + listItemHeight
+    const minHeigth = this.variablesComponentAllHeight + this.functionsComponentAllHeight + 3 * listItemHeight
     if (height < minHeigth) {
       height = minHeigth
-    }*/
+    }
 
     super.resize(width, height)
 
@@ -285,9 +284,15 @@ export class UmlClass extends shapes.standard.Rectangle {
       component.resize(this.listItemWidth, listItemHeight)
     })
 
+    let counter = 0
     this.functionComponents.forEach(component => {
       component.resize(this.listItemWidth, listItemHeight)
-      //component.position(component.position().x, component.position().y - diffY / 2)
+
+      component.position(
+        component.position().x,
+        this.position().y + listItemHeight + this.inlineContainerHeight('variablesRect') + counter
+      )
+      counter += 20
     })
 
     this.headerComponent?.resize(width, height)
