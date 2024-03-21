@@ -5,32 +5,25 @@ export const TextBlockView = dia.ElementView.extend({
   events: {
     'input input': 'onInput',
   },
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onInput(event: any) {
-    this.model.attr('name/props/value', event.target.value)
+  onInput: function (event: dia.Event) {
+    this.model.attr('text/props/value', event.target.value)
   },
 })
 
 export class TextBlock extends dia.Element {
-  override markup = [
-    ...util.svg/* xml */ `
-          <foreignObject @selector="foreignObject">
-              <div
-                     xmlns="http://www.w3.org/1999/xhtml"
-                  style="width: 100%; height: 100%;"
-                  >
-                  <input 
-                      @selector="name" 
-                      type="text" 
-                      name="name" 
-                      placeholder="Type something"
-                      style="width: 100%; height: 100%;"
-                  />
-              </div>
-          </foreignObject>
-      `,
-  ]
+  override readonly markup = util.svg`
+    <foreignObject @selector="foreignObject">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="width: 100%; height: 100%;">
+        <input 
+            @selector="text" 
+            type="text" 
+            name="text" 
+            placeholder="Type something"
+            style="width: 100%; height: 100%;"
+        />
+      </div>
+    </foreignObject>
+  `
 
   // Override the defaults if necessary
   override defaults() {
@@ -49,17 +42,9 @@ export class TextBlock extends dia.Element {
   }
 
   // Method to create the variable component
-  public createVariableComponent(ref: string, x: number, y: number, textBlockSize: { width: number; height: number }) {
-    // Define a new custom form element
-    // Create an instance of the custom form element
-
-    const form = this.clone()
-    form.position(x, y)
-    form.resize(textBlockSize.width, textBlockSize.height)
-    form.attr('ref', ref)
-
-    // Define the handleInput method
-
-    return form
+  public placeAt(ref: string, x: number, y: number, textBlockSize: { width: number; height: number }) {
+    this.position(x, y)
+    this.resize(textBlockSize.width, textBlockSize.height)
+    this.attr('ref', ref)
   }
 }

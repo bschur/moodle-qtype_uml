@@ -1,9 +1,9 @@
-import { dia, util } from '@joint/core'
+import { shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
-export class UseCase extends dia.Element {
-  override markup = [
+export class UseCase extends shapes.standard.Ellipse {
+  override readonly markup = [
     {
       tagName: 'ellipse',
       selector: 'body',
@@ -17,23 +17,18 @@ export class UseCase extends dia.Element {
   userInput() {
     const ctb = new TextBlock()
 
-    const variableComponent = ctb.createVariableComponent(
-      'textBox',
-      this.position().x,
-      this.position().y + (this.size().width - 5) / 4,
-      {
-        width: this.size().width - 5,
-        height: this.size().height / 2,
-      }
-    )
+    ctb.placeAt('textBox', this.position().x, this.position().y + (this.size().width - 5) / 4, {
+      width: this.size().width - 5,
+      height: this.size().height / 2,
+    })
 
     // Alternatively, store the textbox reference for further manipulation
-    this.embed(variableComponent)
-    return variableComponent
+    this.embed(ctb)
+    return ctb
   }
 
   override defaults() {
-    const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
+    const elementAttributes: CustomJointJSElementAttributes<shapes.standard.EllipseAttributes> = {
       type: 'custom.uml.UseCase',
 
       size: {
@@ -60,14 +55,10 @@ export class UseCase extends dia.Element {
   }
 
   override resize(width: number, height: number) {
-    const newSize = {
-      width: Math.max(width - this.position().x, 60), // Ensuring width doesn't go below 60
-      height: Math.max(height - this.position().x, 60) * 0.43, // Ensuring width doesn't go below 60
-    }
-    const newRx = newSize.width / 2 + 5
+    const newRx = width / 2 + 5
     const newRy = newRx * (3 / 5) + 5
 
-    super.resize(newSize.width, newSize.height)
+    super.resize(width, height)
 
     // Updating ellipse attributes
     this.attr('body/rx', newRx)

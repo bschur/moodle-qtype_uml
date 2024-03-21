@@ -3,7 +3,7 @@ import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
 export class UmlClass extends shapes.standard.Rectangle {
-  override markup = [
+  override readonly markup = [
     {
       tagName: 'rect',
       selector: 'body',
@@ -110,55 +110,39 @@ export class UmlClass extends shapes.standard.Rectangle {
     const ctb = new TextBlock()
     let currentAttributes
 
-    let variableComponent
     let positionY
 
     switch (selectedRect) {
       case this.header:
-        variableComponent = ctb.createVariableComponent(
-          'header',
-          this.position().x,
-          this.position().y,
-          this.textBlockSize
-        )
-        this.headerComponent = variableComponent
+        ctb.placeAt('header', this.position().x, this.position().y, this.textBlockSize)
+        this.headerComponent = ctb
         currentAttributes = this.attr()
-        currentAttributes.body2 = variableComponent
-        this.embed(variableComponent)
-        return variableComponent
+        currentAttributes.body2 = ctb
+        this.embed(ctb)
+        return ctb
       case this.variablesRect:
         positionY = this.position().y + this.headerHeight + this.variablesCounter
-        variableComponent = ctb.createVariableComponent(
-          'variablesRect',
-          this.position().x,
-          positionY,
-          this.textBlockSize
-        )
-        this.variableComponents.push(variableComponent)
+        ctb.placeAt('variablesRect', this.position().x, positionY, this.textBlockSize)
+        this.variableComponents.push(ctb)
         this.adjustVariableSize(1)
         this.functionComponents.forEach(component => {
           const p = component.position()
           component.position(p.x, p.y + 20)
         })
         currentAttributes = this.attr()
-        currentAttributes.body2 = variableComponent
-        this.embed(variableComponent)
-        return variableComponent
+        currentAttributes.body2 = ctb
+        this.embed(ctb)
+        return ctb
       case this.functionsRect:
         positionY = this.position().y + this.size().height - this.rectFunctionsHeight + this.funcCounter
-        variableComponent = ctb.createVariableComponent(
-          'functionsRect',
-          this.position().x,
-          positionY,
-          this.textBlockSize
-        )
-        this.functionComponents.push(variableComponent)
+        ctb.placeAt('functionsRect', this.position().x, positionY, this.textBlockSize)
+        this.functionComponents.push(ctb)
 
         this.adjustFuncSize(1)
         currentAttributes = this.attr()
-        currentAttributes.body2 = variableComponent
-        this.embed(variableComponent)
-        return variableComponent
+        currentAttributes.body2 = ctb
+        this.embed(ctb)
+        return ctb
       default:
         console.log('Clicked outside the sections')
         break
