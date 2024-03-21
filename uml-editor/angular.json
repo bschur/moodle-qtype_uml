@@ -31,7 +31,16 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "styles": ["src/styles.scss"]
+            "styles": [
+              "src/styles.scss"
+            ],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "./node_modules/draw.io-angular-new/dist/mxgraph",
+                "output": "./mxgraph"
+              }
+            ]
           },
           "configurations": {
             "production": {
