@@ -38,10 +38,47 @@ export class UmlClass extends shapes.standard.Rectangle {
   }
 
   private inlineContainerHeight(container: UmlClassSectors): number {
-    if (container == 'variablesRect') {
-      return 40 + this.variablesComponentAllHeight
-    } else {
-      return 40 + this.functionsComponentAllHeight
+    const initialHeightPerContainer = (initialHeight - listItemHeight) / 2
+
+    try {
+      const amountInputs = this.variablesComponentAllHeight + this.functionsComponentAllHeight
+      const heigthBothContainer = this.size().height - listItemHeight - amountInputs
+      const heigthWithoutInputs = this.size().height - listItemHeight
+
+      if (amountInputs == 0) {
+        return heigthBothContainer / 2
+      }
+      /*
+      let rationVariable = (heigthWithoutInputs / amountInputs) * Math.max(this.variablesComponentAllHeight, 1)
+      let rationFunc = (heigthWithoutInputs / amountInputs) * Math.max(this.functionsComponentAllHeight, 1)
+
+      if (container === 'variablesRect') {
+        if (rationVariable == heigthWithoutInputs) {
+          rationVariable -= heigthBothContainer / 2
+        } else if (this.variablesComponentAllHeight == 0) {
+          return heigthBothContainer / 2
+        }
+        return rationVariable
+      } else {
+        console.log('wtgf')
+        if (rationFunc == heigthWithoutInputs) {
+          rationFunc -= heigthBothContainer / 2
+        } else if (this.functionsComponentAllHeight == 0) {
+          return heigthBothContainer / 2
+        }
+
+        return rationFunc*/
+      if (container === 'variablesRect') {
+        return this.variablesComponentAllHeight + heigthBothContainer / 2
+      } else {
+        return this.functionsComponentAllHeight + heigthBothContainer / 2
+      }
+    } catch (e) {
+      if (container === 'variablesRect') {
+        return initialHeightPerContainer
+      } else {
+        return initialHeightPerContainer
+      }
     }
   }
 
@@ -221,12 +258,12 @@ export class UmlClass extends shapes.standard.Rectangle {
   }
 
   override resize(width: number, height: number) {
-    // const diffY = height - this.size().height
     width = Math.max(width, initialWidth)
-    height = Math.max(
-      height,
+    /*const minHeigth =
       this.inlineContainerHeight('variablesRect') + this.inlineContainerHeight('functionsRect') + listItemHeight
-    )
+    if (height < minHeigth) {
+      height = minHeigth
+    }*/
 
     super.resize(width, height)
 
