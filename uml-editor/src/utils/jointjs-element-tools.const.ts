@@ -35,11 +35,7 @@ const ResizeTool = elementTools.Control.extend({
   },
   setPosition: (view: dia.ElementView, coordinates: dia.Point) => {
     const model = view.model
-    if (model instanceof UmlClass) {
-      model.resizeOnPaper(coordinates)
-    } else {
-      model.resize(Math.max(coordinates.x - 10, 1), Math.max(coordinates.y - 10, 1))
-    }
+    model.resize(Math.max(coordinates.x - 10, 1), Math.max(coordinates.y - 10, 1))
   },
 })
 

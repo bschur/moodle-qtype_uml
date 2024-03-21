@@ -235,13 +235,13 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
   }
 
-  resizeOnPaper(coordinates: dia.Point) {
-    const diffY = this.rectHeight - Math.max(coordinates.y, 1)
+  override resize(width: number, height: number) {
+    const diffY = this.rectHeight - Math.max(this.position().y, 1)
 
-    this.rectWidth = Math.max(coordinates.x, 1)
-    this.rectHeight = Math.max(coordinates.y, 1)
+    this.rectWidth = width
+    this.rectHeight = height
 
-    this.resize(this.rectWidth, this.rectHeight)
+    super.resize(this.rectWidth, this.rectHeight)
 
     // Assuming header height remains constant
     const headerHeight = this.attr('header/height')
@@ -279,5 +279,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
 
     this.headerComponent?.resize(this.textBlockSize.width, this.textBlockSize.height)
+
+    return this
   }
 }

@@ -1,4 +1,5 @@
 import { dia, shapes } from '@joint/core'
+import { TextBlockView } from '../models/jointjs/text-block.model'
 import { globalElementToolsView, paperHoverConnectToolOptions } from './jointjs-element-tools.const'
 import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
@@ -68,6 +69,10 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
   })
 
   paper.on('element:mouseenter', elementView => {
+    if (elementView instanceof TextBlockView) {
+      return
+    }
+
     elementView.addTools(globalElementToolsView)
   })
 

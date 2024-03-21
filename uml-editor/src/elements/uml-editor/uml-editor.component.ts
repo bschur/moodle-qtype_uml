@@ -23,10 +23,10 @@ import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { TextBlock } from '../../models/jointjs/text-block.model'
 import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
-import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { UseCase } from '../../models/jointjs/uml-use-case.model'
+import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
+import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
   selector: 'app-uml-editor',
