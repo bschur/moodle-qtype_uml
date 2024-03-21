@@ -5,4 +5,46 @@
   --panel-color: #f1f3f4;
   --border-color: #dadce0;
   --text-color: #707070;
+
+  .uml-editor {
+    width: 100%;
+    height: 100%;
+  }
+
+  .uml-editor__canvas {
+    ::ng-deep .geSidebarContainer,
+    ::ng-deep .geDiagramContainer {
+      top: 0 !important;
+      width: 100%;
+      height: 100%;
+    }
+
+    ::ng-deep .geMenubarContainer,
+    ::ng-deep .geTabContainer,
+    ::ng-deep .geDialog,
+    ::ng-deep .geToolbarContainer {
+      display: none;
+    }
+
+    ::ng-deep .geDialog {
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+    }
+
+    &.--hide-controls {
+      pointer-events: none;
+
+      ::ng-deep > *:not(.geDiagramContainer) {
+        display: none;
+      }
+
+      table {
+        left: unset !important;
+
+        ::ng-deep .geDiagramContainer {
+          inset: 0 !important;
+        }
+      }
+    }
+  }
 }

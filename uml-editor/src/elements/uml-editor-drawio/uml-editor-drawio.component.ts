@@ -10,7 +10,6 @@ import {
   Input,
   Output,
   ViewChild,
-  ViewEncapsulation,
 } from '@angular/core'
 import { GraphEditor, GraphInitConfig, GraphXmlData, OptIn, OptOut } from 'draw.io-angular-new'
 import { encodeDiagram } from '../../utils/uml-editor-compression.utils'
@@ -83,12 +82,8 @@ const injectOverrideGetComputedStyle = () => {
   standalone: true,
   imports: [],
   templateUrl: './uml-editor-drawio.component.html',
-  styleUrls: [
-    './../../../node_modules/draw.io-angular-new/dist/mxgraph/styles/grapheditor.css',
-    './uml-editor-drawio.component.scss',
-  ],
+  styleUrl: './uml-editor-drawio.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.ShadowDom,
 })
 export class UmlEditorDrawioComponent implements AfterViewInit {
   @Input({ transform: coerceBooleanProperty }) allowEdit = false
