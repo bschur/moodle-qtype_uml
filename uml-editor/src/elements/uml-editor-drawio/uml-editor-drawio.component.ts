@@ -1,18 +1,17 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
-import { DOCUMENT } from '@angular/common'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
-  inject,
   Input,
+  OnChanges,
   Output,
+  SimpleChange,
   ViewChild,
 } from '@angular/core'
 import { GraphEditor, GraphInitConfig, GraphXmlData, OptIn, OptOut } from 'draw.io-angular-new'
-import { encodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 export const graphEditorLibraryImportFinishEvent: OptOut = graphData => {
   console.debug('graphEditorLibraryImportFinishEvent', graphData)
@@ -62,22 +61,6 @@ export const graphInitConfig: GraphInitConfig = {
   actions: {},
 }
 
-const injectOverrideGetComputedStyle = () => {
-  const window = inject(DOCUMENT).defaultView!
-  const targetElement = inject(ElementRef).nativeElement
-
-  const shadowRoot = targetElement.shadowRoot!
-
-  const oldGetComputedStyle = window.getComputedStyle.bind(window)
-  window.getComputedStyle = (elt, pseudoElt) => {
-    if (elt === shadowRoot) {
-      return oldGetComputedStyle(targetElement, pseudoElt)
-    }
-
-    return oldGetComputedStyle(elt, pseudoElt)
-  }
-}
-
 @Component({
   standalone: true,
   imports: [],
@@ -85,7 +68,7 @@ const injectOverrideGetComputedStyle = () => {
   styleUrl: './uml-editor-drawio.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UmlEditorDrawioComponent implements AfterViewInit {
+export class UmlEditorDrawioComponent implements OnChanges, AfterViewInit {
   @Input({ transform: coerceBooleanProperty }) allowEdit = false
   @Input({ required: true }) inputId: string | null = null
   @Input({ required: true }) diagram: string | null = null
@@ -100,8 +83,10 @@ export class UmlEditorDrawioComponent implements AfterViewInit {
 
   private readonly graphEditor = new GraphEditor()
 
-  constructor() {
-    injectOverrideGetComputedStyle()
+  async ngOnChanges(changes: Record<keyof this, SimpleChange>) {
+    if (changes.diagram && !changes.diagram.firstChange) {
+      await this.graphEditor.setGrapheditorData({ name: 'UML Editor Diagram', xml: graphXML })
+    }
   }
 
   async ngAfterViewInit() {
@@ -122,12 +107,11 @@ export class UmlEditorDrawioComponent implements AfterViewInit {
   }
 
   private readonly save: OptOut = xml => {
-    const newValue = encodeDiagram(xml)
     console.debug('save diagram', this.graphEditor.editorUiObj)
 
     this.diagramChanged.emit({
       inputId: this.inputId!,
-      diagram: newValue,
+      diagram: JSON.stringify(xml),
     })
 
     return Promise.resolve({
