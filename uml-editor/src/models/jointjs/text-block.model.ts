@@ -37,6 +37,7 @@ export class TextBlock extends dia.Element {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.TextBlock',
+      resizeable: false,
       attrs: {
         foreignObject: {
           width: 'calc(w)',

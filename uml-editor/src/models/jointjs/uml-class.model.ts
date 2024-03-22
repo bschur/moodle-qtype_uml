@@ -43,31 +43,11 @@ export class UmlClass extends shapes.standard.Rectangle {
     try {
       const amountInputs = this.variablesComponentAllHeight + this.functionsComponentAllHeight
       const heigthBothContainer = this.size().height - listItemHeight - amountInputs
-      const heigthWithoutInputs = this.size().height - listItemHeight
 
       if (amountInputs == 0) {
         return heigthBothContainer / 2
       }
-      /*
-      let rationVariable = (heigthWithoutInputs / amountInputs) * Math.max(this.variablesComponentAllHeight, 1)
-      let rationFunc = (heigthWithoutInputs / amountInputs) * Math.max(this.functionsComponentAllHeight, 1)
 
-      if (container === 'variablesRect') {
-        if (rationVariable == heigthWithoutInputs) {
-          rationVariable -= heigthBothContainer / 2
-        } else if (this.variablesComponentAllHeight == 0) {
-          return heigthBothContainer / 2
-        }
-        return rationVariable
-      } else {
-        console.log('wtgf')
-        if (rationFunc == heigthWithoutInputs) {
-          rationFunc -= heigthBothContainer / 2
-        } else if (this.functionsComponentAllHeight == 0) {
-          return heigthBothContainer / 2
-        }
-
-        return rationFunc*/
       if (container === 'variablesRect') {
         return this.variablesComponentAllHeight + heigthBothContainer / 2
       } else {
@@ -89,7 +69,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     } catch (e) {
       console.debug(e)
     }
-    return width - 5
+    return width - 1
   }
 
   private readonly functionComponents: shapes.standard.TextBlock[] = []
@@ -133,7 +113,7 @@ export class UmlClass extends shapes.standard.Rectangle {
           'ref-y': listItemHeight,
           'ref-x': 0,
           ref: 'body',
-          fill: 'blue',
+          fill: 'white',
         },
         ['functionsRect' satisfies UmlClassSectors]: {
           width: initialWidth,
@@ -143,7 +123,7 @@ export class UmlClass extends shapes.standard.Rectangle {
           'ref-dy': -this.inlineContainerHeight('variablesRect'),
           'ref-x': 0,
           ref: 'body',
-          fill: 'red',
+          fill: 'white',
         },
       },
     }
@@ -162,7 +142,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y)
-        newTextBlockElement.resize(this.size().width, this.size().height)
+        newTextBlockElement.resize(this.size().width, listItemHeight)
 
         this.headerComponent = newTextBlockElement
         break
@@ -288,14 +268,16 @@ export class UmlClass extends shapes.standard.Rectangle {
     this.functionComponents.forEach(component => {
       component.resize(this.listItemWidth, listItemHeight)
 
-      component.position(
-        component.position().x,
-        this.position().y + listItemHeight + this.inlineContainerHeight('variablesRect') + counter
-      )
-      counter += 20
-    })
+      let y = this.position().y + listItemHeight + this.inlineContainerHeight('variablesRect') + counter
 
-    this.headerComponent?.resize(width, height)
+      //dont know why this works
+      if (y - component.position().y == listItemHeight) {
+        y -= listItemHeight
+      }
+      component.position(component.position().x, y)
+
+      counter += listItemHeight
+    })
 
     return this
   }
