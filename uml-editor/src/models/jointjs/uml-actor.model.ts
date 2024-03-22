@@ -8,7 +8,7 @@ const headY = 0.15
 const COLORS = ['#3f84e5', '#49306B', '#fe7f2d', '#ad343e', '#899e8b', '#ede9e9', '#b2a29f', '#392F2D']
 
 export class UmlActor extends dia.Element {
-  override markup = [
+  override readonly markup = [
     {
       tagName: 'rect',
       selector: 'background',

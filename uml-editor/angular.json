@@ -99,6 +99,9 @@
     "@schematics/angular:pipe": {
       "standalone": true,
       "skipTests": true
+    },
+    "@schematics/angular:service": {
+      "skipTests": true
     }
   },
   "cli": {
