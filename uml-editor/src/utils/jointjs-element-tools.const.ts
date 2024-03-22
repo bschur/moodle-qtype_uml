@@ -60,7 +60,7 @@ export const paperHoverConnectToolOptions: Paper.Options = {
 export const globalElementToolsView = new dia.ToolsView({
   tools: [
     new ResizeTool(),
-    // new elementTools.HoverConnect(),
+    new elementTools.HoverConnect(),
     new elementTools.Remove({
       scale: 1.2,
       action: (_, elementView) => {
@@ -75,9 +75,28 @@ export const globalElementToolsView = new dia.ToolsView({
         target.remove({ ui: true, tool: true })
       },
     }),
-    /*new elementTools.Boundary({
+    new elementTools.Boundary({
       rotate: false,
       useModelGeometry: true,
-    }),*/
+    }),
+  ],
+})
+
+export const internalElementToolsView = new dia.ToolsView({
+  tools: [
+    new elementTools.Remove({
+      scale: 1.2,
+      action: (_, elementView) => {
+        const target = elementView.model
+        const parent = target.getParentCell()
+        if (parent instanceof UmlClass && target instanceof TextBlock) {
+          const ref = elementView.model.attr('ref')
+          const posY = elementView.model.position().y
+
+          parent.adjustByDelete(ref, posY)
+        }
+        target.remove({ ui: true, tool: true })
+      },
+    }),
   ],
 })
