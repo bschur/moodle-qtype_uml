@@ -29,6 +29,7 @@ export class TextBlock extends dia.Element {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.TextBlock',
+      resizeable: false,
       attrs: {
         foreignObject: {
           width: 'calc(w)',
@@ -39,12 +40,5 @@ export class TextBlock extends dia.Element {
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
-  }
-
-  // Method to create the variable component
-  public placeAt(ref: string, x: number, y: number, textBlockSize: { width: number; height: number }) {
-    this.position(x, y)
-    this.resize(textBlockSize.width, textBlockSize.height)
-    this.attr('ref', ref)
   }
 }

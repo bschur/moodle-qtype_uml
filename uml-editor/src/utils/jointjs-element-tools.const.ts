@@ -23,8 +23,8 @@ const ResizeTool = elementTools.Control.extend({
         fill: 'none',
         stroke: '#33334F',
         'stroke-dasharray': '2,4',
-        rx: 5,
-        ry: 5,
+        rx: 2,
+        ry: 2,
       },
     },
   ],
@@ -60,25 +60,24 @@ export const paperHoverConnectToolOptions: Paper.Options = {
 export const globalElementToolsView = new dia.ToolsView({
   tools: [
     new ResizeTool(),
-    new elementTools.HoverConnect(),
+    // new elementTools.HoverConnect(),
     new elementTools.Remove({
       scale: 1.2,
-      distance: 15,
       action: (_, elementView) => {
         const target = elementView.model
         const parent = target.getParentCell()
         if (parent instanceof UmlClass && target instanceof TextBlock) {
           const ref = elementView.model.attr('ref')
           const posY = elementView.model.position().y
+
           parent.adjustByDelete(ref, posY)
         }
         target.remove({ ui: true, tool: true })
       },
     }),
-    new elementTools.Boundary({
-      padding: 12,
+    /*new elementTools.Boundary({
       rotate: false,
       useModelGeometry: true,
-    }),
+    }),*/
   ],
 })
