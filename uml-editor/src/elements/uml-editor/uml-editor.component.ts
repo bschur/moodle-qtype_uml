@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   DestroyRef,
   effect,
@@ -21,8 +22,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
-import { TextBlock } from '../../models/jointjs/text-block.model'
-import { UmlClass } from '../../models/jointjs/uml-class.model'
+import { PropertyEditorService } from '../../core/serices/property-editor.service'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
@@ -47,7 +47,11 @@ export class UmlEditorComponent implements AfterViewInit {
     inputId: string
     diagram: string
   }>()
+
+  readonly showPropertyEditor = computed(() => this.showPropertyEditorService.showPropertyEditor())
+
   private readonly destroyRef = inject(DestroyRef)
+  private readonly showPropertyEditorService = inject(PropertyEditorService)
   private readonly _inputId = signal<string | null>(null)
   private readonly _inputDiagram = signal<string | null>(null)
   private readonly _paperEditor = signal<dia.Paper | null>(null)
@@ -76,7 +80,14 @@ export class UmlEditorComponent implements AfterViewInit {
   ngAfterViewInit() {
     const paperEditor = initCustomPaper(this.editorRef.nativeElement, initCustomNamespaceGraph(), true)
 
-    this.subscribeToEvents(paperEditor)
+    paperEditor.on('change', () => {
+      this.diagramControl.setValue(paperEditor.model.toJSON())
+      this.diagramControl.markAsDirty()
+    })
+
+    paperEditor.on('cell:pointerdblclick', () => {
+      this.showPropertyEditorService.show()
+    })
 
     this._paperEditor.set(paperEditor)
 
@@ -101,33 +112,6 @@ export class UmlEditorComponent implements AfterViewInit {
   resetDiagram() {
     const resetValue = this._inputDiagram()
     this.setDiagramToEditor(resetValue)
-  }
-
-  private subscribeToEvents(paperEditor: dia.Paper) {
-    paperEditor.model.on('change', () => {
-      this.diagramControl.setValue(paperEditor.model.toJSON())
-      this.diagramControl.markAsDirty()
-    })
-
-    // Assuming paper is your JointJS paper
-
-    paperEditor.on('element:pointerdblclick', (elementView, evt) => {
-      const target = elementView.model
-      if (target instanceof UmlClass) {
-        const textBlock = target.userInput(evt)
-        if (textBlock) {
-          paperEditor.model.addCell(textBlock)
-        }
-      } else if (elementView.model instanceof TextBlock) {
-        /*const customTextBlock = elementView.model
-                const cell = elementView.model
-
-                // customTextBlock.createVariableComponent();
-                const element = elementView.el*/
-      } else {
-        throw new Error('elementView.model is not instanceof UmlClass')
-      }
-    })
   }
 
   private readonly setDiagramToEditor = (
