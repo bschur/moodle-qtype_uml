@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   DestroyRef,
   effect,
@@ -19,13 +20,12 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { dia, elementTools, linkTools } from '@joint/core'
+import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
-import { TextBlock } from '../../models/jointjs/text-block.model'
-import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
+import { PropertyEditorService } from '../../core/serices/property-editor.service'
+import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
+import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import ElementView = dia.ElementView
 
 @Component({
   selector: 'app-uml-editor',
@@ -47,7 +47,11 @@ export class UmlEditorComponent implements AfterViewInit {
     inputId: string
     diagram: string
   }>()
+
+  readonly showPropertyEditor = computed(() => this.showPropertyEditorService.showPropertyEditor())
+
   private readonly destroyRef = inject(DestroyRef)
+  private readonly showPropertyEditorService = inject(PropertyEditorService)
   private readonly _inputId = signal<string | null>(null)
   private readonly _inputDiagram = signal<string | null>(null)
   private readonly _paperEditor = signal<dia.Paper | null>(null)
@@ -76,7 +80,14 @@ export class UmlEditorComponent implements AfterViewInit {
   ngAfterViewInit() {
     const paperEditor = initCustomPaper(this.editorRef.nativeElement, initCustomNamespaceGraph(), true)
 
-    this.subscribeToEvents(paperEditor)
+    paperEditor.on('change', () => {
+      this.diagramControl.setValue(paperEditor.model.toJSON())
+      this.diagramControl.markAsDirty()
+    })
+
+    paperEditor.on('cell:pointerdblclick', () => {
+      this.showPropertyEditorService.show()
+    })
 
     this._paperEditor.set(paperEditor)
 
@@ -86,7 +97,7 @@ export class UmlEditorComponent implements AfterViewInit {
   }
 
   addItemFromToolboxToEditor(itemType: string) {
-    const clickedClass = jointJsCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
+    const clickedClass = jointJSCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
     if (!clickedClass) {
       throw new Error(`itemType ${itemType} not found`)
     }
@@ -101,90 +112,6 @@ export class UmlEditorComponent implements AfterViewInit {
   resetDiagram() {
     const resetValue = this._inputDiagram()
     this.setDiagramToEditor(resetValue)
-  }
-
-  private subscribeToEvents(paperEditor: dia.Paper) {
-    paperEditor.model.on('change', () => {
-      this.diagramControl.setValue(paperEditor.model.toJSON())
-      this.diagramControl.markAsDirty()
-    })
-
-    // Assuming paper is your JointJS paper
-
-    paperEditor.on('cell:mouseenter', cellView => {
-      const resizeTool = elementTools.Control.extend({
-        getPosition: (view: ElementView) => {
-          const model = view.model
-          const { width, height } = model.size()
-          return { x: width, y: height }
-        },
-        setPosition: (view: ElementView, coordinates: { x: number; y: number }) => {
-          const model = view.model
-          if (model instanceof UmlClass) {
-            model.resizeOnPaper(coordinates)
-          }
-        },
-      })
-
-      const tools = new dia.ToolsView({
-        tools: [
-          new elementTools.Boundary({
-            padding: 3,
-            rotate: true,
-            useModelGeometry: true,
-          }),
-          new linkTools.Remove({
-            scale: 1.2,
-            distance: 15,
-            action: (_, elementView, toolView) => {
-              const target = elementView.model
-              const parent = elementView.model.getParentCell()
-              if (parent instanceof UmlClass && target instanceof TextBlock) {
-                const ref = elementView.model.attr('ref')
-                const posY = elementView.model.position().y
-                parent.adjustByDelete(ref, posY)
-              }
-              target.remove({ ui: true, tool: toolView.cid })
-            },
-          }),
-          new resizeTool({
-            handleAttributes: {
-              fill: '#4666E5',
-            },
-          }),
-        ],
-      })
-      cellView.addTools(tools)
-    })
-
-    paperEditor.on('cell:mouseleave', cellView => {
-      cellView.removeTools()
-    })
-
-    paperEditor.on('element:pointerdblclick', (elementView, evt) => {
-      const target = elementView.model
-      if (target instanceof UmlClass) {
-        const textBlock = target.userInput(evt)
-        if (textBlock) {
-          paperEditor.model.addCell(textBlock)
-        }
-      } else if (elementView.model instanceof TextBlock) {
-        /*const customTextBlock = elementView.model
-                const cell = elementView.model
-
-                // customTextBlock.createVariableComponent();
-                const element = elementView.el*/
-      } else {
-        throw new Error('elementView.model is not instanceof UmlClass')
-      }
-    })
-
-    paperEditor.on('element:pointerclick', elementView => {
-      const target = elementView.model
-      if (target instanceof UmlClass) {
-        target.handleLink(paperEditor.model)
-      }
-    })
   }
 
   private readonly setDiagramToEditor = (
