@@ -19,10 +19,10 @@ export class UseCase extends shapes.standard.Ellipse {
   userInput() {
     const ctb = new TextBlock()
 
-    ctb.placeAt('textBox', this.position().x, this.position().y + (this.size().width - 5) / 4, {
-      width: this.size().width - 5,
-      height: this.size().height / 2,
-    })
+    ctb.position().x = this.position().x
+    ctb.position().y = this.position().y + (this.size().width - 5) / 4
+    ctb.size().width = this.size().width - 5
+    ctb.size().height = this.size().height / 2
 
     // Alternatively, store the textbox reference for further manipulation
     this.embed(ctb)
