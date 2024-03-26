@@ -1,15 +1,16 @@
 import { dia, shapes, util } from '@joint/core'
-import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock } from './text-block.model'
+import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
+import { TextBlock } from '../text-block.model'
+import { IUmlClassifierModel } from './IUml-classifier.model'
+import { UmlInterface } from './uml-interface.model'
 
 type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
 
 const initialWidth = 150
 const initialHeight = 100
-
 const listItemHeight = 20
 
-export class UmlClass extends shapes.standard.Rectangle {
+export class UmlClass extends shapes.standard.Rectangle implements IUmlClassifierModel {
   override readonly markup = [
     {
       tagName: 'rect',
@@ -132,6 +133,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     return elementAttributes
   }
 
+  // @ts-ignore
   userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
@@ -280,5 +282,13 @@ export class UmlClass extends shapes.standard.Rectangle {
     })
 
     return this
+  }
+
+  convertToClass(): UmlClass {
+    return this
+  }
+
+  convertToInterface(): UmlInterface {
+    return new UmlInterface(this.position())
   }
 }
