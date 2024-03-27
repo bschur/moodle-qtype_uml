@@ -32,7 +32,8 @@ export class UmlInterface extends UmlClassifierModel {
 
   constructor(coordinates: { x: number; y: number }) {
     super()
-    this.position(coordinates)
+
+    this.position(coordinates?.x || 0, coordinates?.y || 0)
   }
 
   private get functionsComponentAllHeight(): number {

@@ -1,6 +1,7 @@
 import { dia, shapes } from '@joint/core'
 import { TextBlockView } from '../models/jointjs/text-block.model'
-import { UmlClass } from '../models/jointjs/uml-class.model'
+import { UmlClass } from '../models/jointjs/uml-classifier/uml-class.model'
+import { UmlInterface } from '../models/jointjs/uml-classifier/uml-interface.model'
 import { UseCase } from '../models/jointjs/uml-use-case.model'
 import {
   globalElementToolsView,
@@ -9,6 +10,7 @@ import {
 } from './jointjs-element-tools.const'
 import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
+import ElementView = dia.ElementView
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -89,13 +91,21 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
 
   paper.on('element:pointerdblclick', (elementView, evt) => {
     const target = elementView.model
-    if (target instanceof UmlClass || target instanceof UseCase) {
+    if (target instanceof UmlClass || target instanceof UseCase || target instanceof UmlInterface) {
       const textBlock = target.userInput(evt)
       if (textBlock) {
         paper.model.addCell(textBlock)
       }
     } else {
       throw new Error('elementView.model is not instanceof UmlClass')
+    }
+
+    if (target instanceof UmlClass) {
+      const newModel = target.convertToInterface()
+      graph.removeCells([elementView.model])
+      graph.addCell(newModel)
+      elementView.model = newModel
+      elementView.update()
     }
   })
 
