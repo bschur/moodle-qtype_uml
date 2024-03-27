@@ -59,18 +59,20 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
         },
         ['headerlabel' satisfies UmlClassSectors]: {
           text: '<<Interface>>',
-          width: 'calc(w - 10)',
+          width: '100%', // Assuming you want the label to occupy the entire width of the body
           height: listItemHeight,
           'ref-y': 0,
-          'ref-x': 0,
+          'ref-x': 0.5, // Adjust reference to center horizontally
+          'text-anchor': 'middle', // Center align text horizontally
           ref: 'body',
           fill: 'black',
         },
         ['header' satisfies UmlClassSectors]: {
-          width: initialWidth,
+          width: initialWidth - 8,
           height: listItemHeight,
           'ref-y': listItemHeight,
-          'ref-x': 0,
+
+          'text-anchor': 'middle',
           ref: 'body',
           fill: 'white',
         },
@@ -102,7 +104,6 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
-    newTextBlockElement.attr('ref', selectedRect)
 
     let positionY = 0
     switch (selectedRect) {
@@ -155,6 +156,16 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
     })
   }
 
+  private get listItemWidth(): number {
+    let width = initialWidth
+    try {
+      width = this.size().width
+    } catch (e) {
+      console.debug(e)
+    }
+    return width - 1
+  }
+
   override resize(width: number, height: number) {
     width = Math.max(width, initialWidth)
     const minHeigth = this.functionComponents.length * 30 + 2 * listItemHeight
@@ -171,6 +182,10 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
       width: width,
       height: this.functionsComponentAllHeight,
       'ref-y': 2 * listItemHeight,
+    })
+
+    this.functionComponents.forEach(component => {
+      component.resize(this.listItemWidth, listItemHeight)
     })
     return this
   }
