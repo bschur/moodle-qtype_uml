@@ -12,14 +12,16 @@ export const TextBlockView = dia.ElementView.extend({
 
 export class TextBlock extends dia.Element {
   override readonly markup = util.svg`
-    <foreignObject @selector="foreignObject" style="  position: relative;">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute; right: 6.5%; width: 92%; height: 98%;">
+    <foreignObject @selector="foreignObject" style=" position: relative;">
+      <div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute;  left: 4px; width: 100%; height: 100%;">
         <input 
             @selector="text" 
             type="text" 
             name="text" 
             placeholder="Type something"
-            style="width: 100%; height: 100%;"
+            style="width: 100%; height: 100%;  border: none;
+            outline: none;
+            background: none;"
         />
       </div>
     </foreignObject>
@@ -32,7 +34,7 @@ export class TextBlock extends dia.Element {
       resizeable: false,
       attrs: {
         foreignObject: {
-          width: 'calc(w)',
+          width: 'calc(w-6)',
           height: 'calc(h)',
         },
       },

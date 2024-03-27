@@ -1,7 +1,7 @@
 import { dia, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
-import { IUmlClassifierModel } from './IUml-classifier.model'
+import { UmlClassifierModel } from './IUml-classifier.model'
 import { UmlClass } from './uml-class.model'
 
 type UmlClassSectors = 'header' | 'headerlabel' | 'functionsRect'
@@ -10,7 +10,7 @@ const initialWidth = 150
 const initialHeight = 80
 const listItemHeight = 20
 
-export class UmlInterface extends shapes.standard.Rectangle implements IUmlClassifierModel {
+export class UmlInterface extends UmlClassifierModel {
   override readonly markup = [
     {
       tagName: 'rect',
@@ -21,7 +21,7 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
       selector: 'headerlabel',
     },
     {
-      tagName: 'rect',
+      tagName: 'TextBlock',
       selector: 'header',
     },
     {
@@ -38,10 +38,6 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
   private get functionsComponentAllHeight(): number {
     return initialHeight - 2 * listItemHeight + (this.functionComponents?.length || 0) * listItemHeight
   }
-
-  private readonly functionComponents: shapes.standard.TextBlock[] = []
-
-  private headerComponent: TextBlock | null = null
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
@@ -109,14 +105,14 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + listItemHeight)
-        newTextBlockElement.resize(this.size().width, listItemHeight)
+        //newTextBlockElement.size(20, listItemHeight)
 
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
         positionY = this.position().y + 2 * listItemHeight + this.functionComponents.length * listItemHeight
         newTextBlockElement.position(this.position().x, positionY)
-        newTextBlockElement.resize(this.size().width, listItemHeight)
+        //newTextBlockElement.resize(this.size().width, listItemHeight)
         this.functionComponents.push(newTextBlockElement)
         this.resizeInlineContainer(1, 'functionsRect')
         break
@@ -147,25 +143,6 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
     this.resizeInlineContainer(-1, 'functionsRect')
   }
 
-  shrinkFuncY(indexOfComponentToRemove: number) {
-    this.functionComponents.forEach((component, index) => {
-      if (index >= indexOfComponentToRemove) {
-        const p = component.position()
-        component.position(p.x, p.y - listItemHeight)
-      }
-    })
-  }
-
-  private get listItemWidth(): number {
-    let width = initialWidth
-    try {
-      width = this.size().width
-    } catch (e) {
-      console.debug(e)
-    }
-    return width - 1
-  }
-
   override resize(width: number, height: number) {
     width = Math.max(width, initialWidth)
     const minHeigth = this.functionComponents.length * 30 + 2 * listItemHeight
@@ -180,12 +157,12 @@ export class UmlInterface extends shapes.standard.Rectangle implements IUmlClass
 
     this.attr('functionsRect' satisfies UmlClassSectors, {
       width: width,
-      height: this.functionsComponentAllHeight,
+      height: height - 2 * listItemHeight,
       'ref-y': 2 * listItemHeight,
     })
 
     this.functionComponents.forEach(component => {
-      component.resize(this.listItemWidth, listItemHeight)
+      component.resize(super.listItemWidth, listItemHeight)
     })
     return this
   }

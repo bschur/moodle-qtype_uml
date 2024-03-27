@@ -1,7 +1,7 @@
 import { dia, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
-import { IUmlClassifierModel } from './IUml-classifier.model'
+import { UmlClassifierModel } from './IUml-classifier.model'
 import { UmlInterface } from './uml-interface.model'
 
 type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
@@ -10,7 +10,7 @@ const initialWidth = 150
 const initialHeight = 100
 const listItemHeight = 20
 
-export class UmlClass extends shapes.standard.Rectangle implements IUmlClassifierModel {
+export class UmlClass extends UmlClassifierModel {
   override readonly markup = [
     {
       tagName: 'rect',
@@ -63,20 +63,7 @@ export class UmlClass extends shapes.standard.Rectangle implements IUmlClassifie
     }
   }
 
-  private get listItemWidth(): number {
-    let width = initialWidth
-    try {
-      width = this.size().width
-    } catch (e) {
-      console.debug(e)
-    }
-    return width - 1
-  }
-
-  private readonly functionComponents: shapes.standard.TextBlock[] = []
   private readonly variableComponents: shapes.standard.TextBlock[] = []
-
-  private headerComponent: TextBlock | null = null
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
@@ -144,7 +131,7 @@ export class UmlClass extends shapes.standard.Rectangle implements IUmlClassifie
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y)
-        newTextBlockElement.resize(this.size().width, listItemHeight)
+        newTextBlockElement.resize(this.size().width - 10, listItemHeight)
 
         this.headerComponent = newTextBlockElement
         break
@@ -228,15 +215,6 @@ export class UmlClass extends shapes.standard.Rectangle implements IUmlClassifie
         this.resizeInlineContainer(-1, 'functionsRect')
         break
     }
-  }
-
-  shrinkFuncY(indexOfComponentToRemove: number) {
-    this.functionComponents.forEach((component, index) => {
-      if (index >= indexOfComponentToRemove) {
-        const p = component.position()
-        component.position(p.x, p.y - listItemHeight)
-      }
-    })
   }
 
   override resize(width: number, height: number) {
