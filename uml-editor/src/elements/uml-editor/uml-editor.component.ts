@@ -1,4 +1,5 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
+import { ComponentType } from '@angular/cdk/overlay'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -12,7 +13,6 @@ import {
   Output,
   signal,
   SimpleChanges,
-  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
@@ -23,9 +23,9 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
+import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
 import { JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
-import { UmlUseCaseConfigurationComponent } from '../../shared/uml-usecase-configuration/uml-use-case-configuration.component'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
@@ -36,7 +36,7 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor.component.html',
   styleUrl: './uml-editor.component.scss',
-  imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlUseCaseConfigurationComponent],
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorComponent implements OnChanges, AfterViewInit {
@@ -49,7 +49,6 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
 
   @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
   @ViewChild('toolbox', { static: true }) toolboxRef!: ElementRef<HTMLDivElement>
-  @ViewChild('propertyEditorContentTemplate', { static: true }) propertyEditorContentTemplate!: TemplateRef<unknown>
 
   @Output() readonly diagramChanged = new EventEmitter<{
     inputId: string
@@ -80,9 +79,13 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       this.diagramControl.markAsDirty()
     })
 
-    paperEditor.on('cell:pointerdblclick', () => {
-      // TODO solve generally
-      this.showPropertyEditorService.show(this.viewContainerRef, this.propertyEditorContentTemplate)
+    paperEditor.on('cell:pointerdblclick', cell => {
+      this.showPropertyEditorService.hide()
+      const model = cell.model.attributes
+      const propertyViewKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<never>
+      if (propertyViewKey in model && model[propertyViewKey]) {
+        this.showPropertyEditorService.show(this.viewContainerRef, <ComponentType<unknown>>model[propertyViewKey])
+      }
     })
 
     this._paperEditor.set(paperEditor)

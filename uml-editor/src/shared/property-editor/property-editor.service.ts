@@ -1,6 +1,6 @@
-import { Overlay, OverlayRef } from '@angular/cdk/overlay'
+import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay'
 import { ComponentPortal } from '@angular/cdk/portal'
-import { ElementRef, Injectable, TemplateRef, ViewContainerRef, inject } from '@angular/core'
+import { ElementRef, Injectable, ViewContainerRef, inject } from '@angular/core'
 import { PropertyEditorComponent } from './property-editor.component'
 
 function isHTMLElementRef(element: ElementRef): element is ElementRef<HTMLElement> {
@@ -15,7 +15,7 @@ export class PropertyEditorService {
 
   private overlayRef: OverlayRef | null = null
 
-  show<T>(viewContainerRef: ViewContainerRef, templateRef: TemplateRef<T>) {
+  show<T>(viewContainerRef: ViewContainerRef, componentType: ComponentType<T>) {
     if (this.overlayRef) {
       // Overlay already shown, hiding it first
       this.hide()
@@ -40,7 +40,9 @@ export class PropertyEditorService {
 
     const containerPortal = new ComponentPortal(PropertyEditorComponent, viewContainerRef)
     const componentRef = this.overlayRef.attach(containerPortal)
-    componentRef.instance.template = templateRef
+    componentRef.instance.type = componentType
+
+    return componentRef
   }
 
   hide() {
