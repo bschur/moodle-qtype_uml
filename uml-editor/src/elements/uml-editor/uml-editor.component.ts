@@ -12,6 +12,7 @@ import {
   Input,
   Output,
   signal,
+  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
@@ -22,10 +23,11 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
+import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
+import { UmlUseCaseConfigurationComponent } from '../../shared/uml-usecase-configuration/uml-use-case-configuration.component'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import { PropertyEditorService } from '../property-editor/property-editor.service'
 
 @Component({
   selector: 'app-uml-editor',
@@ -33,13 +35,14 @@ import { PropertyEditorService } from '../property-editor/property-editor.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor.component.html',
   styleUrl: './uml-editor.component.scss',
-  imports: [MatSidenavModule, MatButtonModule, MatIconModule],
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlUseCaseConfigurationComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorComponent implements AfterViewInit {
   readonly diagramControl = new FormControl<{ cells: dia.Cell[] }>({ cells: [] }, { nonNullable: true })
   readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
   @Input({ transform: coerceBooleanProperty }) allowEdit = false
+  @ViewChild('propertyEditorContentTemplate', { static: true }) propertyEditorContentTemplate!: TemplateRef<unknown>
   @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
   @ViewChild('toolbox', { static: true })
   toolboxRef!: ElementRef<HTMLDivElement>
@@ -85,7 +88,8 @@ export class UmlEditorComponent implements AfterViewInit {
     })
 
     paperEditor.on('cell:pointerdblclick', () => {
-      this.showPropertyEditorService.show(this.viewContainerRef)
+      // TODO solve generally
+      this.showPropertyEditorService.show(this.viewContainerRef, this.propertyEditorContentTemplate)
     })
 
     this._paperEditor.set(paperEditor)
