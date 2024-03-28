@@ -1,14 +1,14 @@
 import { ComponentType } from '@angular/cdk/overlay'
 import { NgComponentOutlet } from '@angular/common'
 import { ChangeDetectionStrategy, Component, HostBinding, inject, OnInit } from '@angular/core'
-import { MatButton, MatIconButton } from '@angular/material/button'
+import { MatButton, MatFabButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
 import { PropsOfType } from '../../models/property-of.type'
 import { PropertyEditorService } from './property-editor.service'
 
 @Component({
   standalone: true,
-  imports: [MatButton, MatIcon, MatIconButton, NgComponentOutlet],
+  imports: [MatButton, MatIcon, NgComponentOutlet, MatFabButton],
   templateUrl: './property-editor.component.html',
   styleUrl: './property-editor.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
