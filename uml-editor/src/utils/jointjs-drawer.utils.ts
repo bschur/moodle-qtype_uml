@@ -9,6 +9,7 @@ import {
 } from './jointjs-element-tools.const'
 import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
+import { defineMarkers } from './jointjs-link.utils'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -66,6 +67,8 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
     cellViewNamespace: jointjsCustomNamespace,
     ...paperHoverConnectToolOptions,
   })
+
+  defineMarkers(paper)
 
   resizePaperObserver(paper).observe(el)
 

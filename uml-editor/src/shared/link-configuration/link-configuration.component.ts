@@ -5,6 +5,11 @@ import { MatIcon } from '@angular/material/icon'
 import { MatOption, MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
 
+/**
+ * Component for configuring link properties.
+ * For configuring link see the documentation of JointJS.
+ * See: https://resources.jointjs.com/tutorial/links
+ */
 @Component({
   standalone: true,
   imports: [MatButton, MatIcon, MatLabel, MatFormField, MatSelect, MatOption],
@@ -15,8 +20,8 @@ import { dia } from '@joint/core'
 export class LinkConfigurationComponent {
   @Input({ required: true }) model!: dia.Link
 
-  readonly arrows = ['none', 'source', 'target', 'both']
-  readonly lines = ['normal', 'dotted']
+  readonly arrows = ['normal', 'outlined'] as const
+  readonly lines = ['normal', 'dotted'] as const
 
   swapDirection() {
     const source = this.model.prop('source')
