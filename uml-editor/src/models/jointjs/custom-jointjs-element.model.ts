@@ -3,8 +3,8 @@ import { Type } from '@angular/core'
 import { dia } from '@joint/core'
 
 interface CustomJointJSEntity {
-  type: 'element' | 'view'
-  instance: dia.Element | dia.ElementView
+  type: 'element' | 'view' | 'link' | 'linkView'
+  instance: dia.Element | dia.ElementView | dia.Link | dia.LinkView
 }
 
 export interface JointJSElementType {

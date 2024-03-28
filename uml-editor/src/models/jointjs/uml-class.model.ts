@@ -1,4 +1,5 @@
 import { dia, shapes, util } from '@joint/core'
+import { ClassifierConfigurationComponent } from '../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
@@ -80,6 +81,7 @@ export class UmlClass extends shapes.standard.Rectangle {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
       type: 'custom.uml.Classifier',
+      propertyView: ClassifierConfigurationComponent,
       size: {
         width: initialWidth,
         height: initialHeight,

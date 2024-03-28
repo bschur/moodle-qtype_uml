@@ -1,5 +1,4 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion'
-import { ComponentType } from '@angular/cdk/overlay'
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -25,6 +24,7 @@ import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
 import { JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
+import { LinkConfigurationComponent } from '../../shared/link-configuration/link-configuration.component'
 import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
@@ -81,10 +81,19 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
 
     paperEditor.on('cell:pointerdblclick', cell => {
       this.showPropertyEditorService.hide()
-      const model = cell.model.attributes
-      const propertyViewKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<never>
-      if (propertyViewKey in model && model[propertyViewKey]) {
-        this.showPropertyEditorService.show(this.viewContainerRef, <ComponentType<unknown>>model[propertyViewKey])
+
+      // handle generic link from jointjs
+      if (cell instanceof dia.LinkView) {
+        this.showPropertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, { model: cell.model })
+        return
+      }
+
+      // handle custom elements
+      const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
+      if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
+        this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
+          model: cell.model,
+        })
       }
     })
 

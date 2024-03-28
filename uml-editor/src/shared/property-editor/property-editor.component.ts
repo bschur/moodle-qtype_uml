@@ -3,6 +3,7 @@ import { NgComponentOutlet } from '@angular/common'
 import { ChangeDetectionStrategy, Component, HostBinding, inject, OnInit } from '@angular/core'
 import { MatButton, MatIconButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
+import { PropsOfType } from '../../models/property-of.type'
 import { PropertyEditorService } from './property-editor.service'
 
 @Component({
@@ -17,7 +18,8 @@ export class PropertyEditorComponent<T> implements OnInit {
 
   readonly propertyEditorService = inject(PropertyEditorService)
 
-  type: ComponentType<T> | null = null
+  type!: ComponentType<T>
+  initProperties?: Partial<PropsOfType<T>>
 
   ngOnInit() {
     if (!this.type) {
