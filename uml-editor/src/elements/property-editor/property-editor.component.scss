@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  height: 100%;
+  width: 300px;
+  padding: 8px 16px;
+  background-color: var(--mat-app-background-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+
+  .property-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}

@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  computed,
   CUSTOM_ELEMENTS_SCHEMA,
   DestroyRef,
   effect,
@@ -14,6 +13,7 @@ import {
   Output,
   signal,
   ViewChild,
+  ViewContainerRef,
 } from '@angular/core'
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
 import { FormControl } from '@angular/forms'
@@ -22,10 +22,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
-import { PropertyEditorService } from '../../core/serices/property-editor.service'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
+import { PropertyEditorService } from '../property-editor/property-editor.service'
 
 @Component({
   selector: 'app-uml-editor',
@@ -48,9 +48,8 @@ export class UmlEditorComponent implements AfterViewInit {
     diagram: string
   }>()
 
-  readonly showPropertyEditor = computed(() => this.showPropertyEditorService.showPropertyEditor())
-
   private readonly destroyRef = inject(DestroyRef)
+  private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly showPropertyEditorService = inject(PropertyEditorService)
   private readonly _inputId = signal<string | null>(null)
   private readonly _inputDiagram = signal<string | null>(null)
@@ -86,7 +85,7 @@ export class UmlEditorComponent implements AfterViewInit {
     })
 
     paperEditor.on('cell:pointerdblclick', () => {
-      this.showPropertyEditorService.show()
+      this.showPropertyEditorService.show(this.viewContainerRef)
     })
 
     this._paperEditor.set(paperEditor)

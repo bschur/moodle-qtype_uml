@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
 import { MatButton } from '@angular/material/button'
-import { PropertyEditorService } from '../../core/serices/property-editor.service'
+import { PropertyEditorService } from './property-editor.service'
 
 @Component({
   selector: 'app-property-editor',
