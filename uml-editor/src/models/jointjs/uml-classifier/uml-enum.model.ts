@@ -8,8 +8,7 @@ type UmlClassSectors = 'header' | 'headerlabel' | 'functionsRect'
 const initialWidth = 150
 const initialHeight = 80
 const listItemHeight = 20
-
-export class UmlInterface extends UmlClassifierModel {
+export class UmlEnum extends UmlClassifierModel {
   override readonly markup = [
     {
       tagName: 'rect',
@@ -41,7 +40,7 @@ export class UmlInterface extends UmlClassifierModel {
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
-      type: 'custom.uml.Interface',
+      type: 'custom.uml.Enum',
       size: {
         width: initialWidth,
         height: initialHeight,
@@ -54,7 +53,7 @@ export class UmlInterface extends UmlClassifierModel {
           stroke: 'black',
         },
         ['headerlabel' satisfies UmlClassSectors]: {
-          text: '<<Interface>>',
+          text: '<<Enumeration>>',
           width: '100%', // Assuming you want the label to occupy the entire width of the body
           height: listItemHeight,
           'ref-y': 0,
@@ -117,7 +116,7 @@ export class UmlInterface extends UmlClassifierModel {
     return new UmlClass(/* Pass necessary parameters */)
   }
 
-  convertToInterface(): UmlInterface {
+  convertToInterface(): UmlEnum {
     return this // Already an interface
   }
 }

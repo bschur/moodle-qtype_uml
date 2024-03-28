@@ -1,6 +1,6 @@
 import { connectionStrategies, dia, elementTools, shapes } from '@joint/core'
 import { TextBlock } from '../models/jointjs/text-block.model'
-import { UmlClass } from '../models/jointjs/uml-class.model'
+import { UmlClassifierModel } from '../models/jointjs/uml-classifier/IUml-classifier.model'
 import Paper = dia.Paper
 
 const ResizeTool = elementTools.Control.extend({
@@ -66,7 +66,7 @@ export const globalElementToolsView = new dia.ToolsView({
       action: (_, elementView) => {
         const target = elementView.model
         const parent = target.getParentCell()
-        if (parent instanceof UmlClass && target instanceof TextBlock) {
+        if (parent instanceof UmlClassifierModel && target instanceof TextBlock) {
           const ref = elementView.model.attr('ref')
           const posY = elementView.model.position().y
 
@@ -89,7 +89,7 @@ export const internalElementToolsView = new dia.ToolsView({
       action: (_, elementView) => {
         const target = elementView.model
         const parent = target.getParentCell()
-        if (parent instanceof UmlClass && target instanceof TextBlock) {
+        if (parent instanceof UmlClassifierModel && target instanceof TextBlock) {
           const ref = elementView.model.attr('ref')
           const posY = elementView.model.position().y
 

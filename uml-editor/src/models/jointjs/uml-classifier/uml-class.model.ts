@@ -2,15 +2,18 @@ import { dia, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
 import { UmlClassifierModel } from './IUml-classifier.model'
+import { UmlEnum } from './uml-enum.model'
 import { UmlInterface } from './uml-interface.model'
 
-type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
+//type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
 
 const initialWidth = 150
 const initialHeight = 100
 const listItemHeight = 20
 
 export class UmlClass extends UmlClassifierModel {
+  //override UmlClassSectors!: 'header' | 'variablesRect' | 'functionsRect'
+
   override readonly markup = [
     {
       tagName: 'rect',
@@ -38,7 +41,7 @@ export class UmlClass extends UmlClassifierModel {
     return (this.functionComponents?.length || 0) * listItemHeight
   }
 
-  private inlineContainerHeight(container: UmlClassSectors): number {
+  private inlineContainerHeight(container: this['UmlClassSectors']): number {
     const initialHeightPerContainer = (initialHeight - listItemHeight) / 2
 
     try {
@@ -79,7 +82,7 @@ export class UmlClass extends UmlClassifierModel {
           strokeWidth: 4,
           stroke: 'black',
         },
-        ['header' satisfies UmlClassSectors]: {
+        ['header' satisfies this['UmlClassSectors']]: {
           width: initialWidth,
           height: listItemHeight,
           fontSize: 12,
@@ -93,7 +96,7 @@ export class UmlClass extends UmlClassifierModel {
           strokeWidth: 3,
           fill: 'white',
         },
-        ['variablesRect' satisfies UmlClassSectors]: {
+        ['variablesRect' satisfies this['UmlClassSectors']]: {
           width: initialWidth,
           height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
@@ -103,7 +106,7 @@ export class UmlClass extends UmlClassifierModel {
           ref: 'body',
           fill: 'white',
         },
-        ['functionsRect' satisfies UmlClassSectors]: {
+        ['functionsRect' satisfies this['UmlClassSectors']]: {
           width: initialWidth,
           height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
@@ -120,9 +123,8 @@ export class UmlClass extends UmlClassifierModel {
     return elementAttributes
   }
 
-  // @ts-ignore
-  userInput(evt: dia.Event) {
-    const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
+  override userInput(evt: dia.Event) {
+    const selectedRect = evt.target.attributes[0].value as this['UmlClassSectors'] | string
 
     const newTextBlockElement = new TextBlock()
     newTextBlockElement.attr('ref', selectedRect)
@@ -168,12 +170,12 @@ export class UmlClass extends UmlClassifierModel {
     return newTextBlockElement
   }
 
-  resizeInlineContainer(direction: number, container: UmlClassSectors) {
+  override resizeInlineContainer(direction: number, container: this['UmlClassSectors']) {
     this.resize(this.size().width, (this.size().height += listItemHeight * direction))
     this.attr(container + '/height', this.inlineContainerHeight(container))
   }
 
-  adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
+  override adjustByDelete(selectedRect: this['UmlClassSectors'], posY: number) {
     let indexOfComponentToRemove = -1
 
     switch (selectedRect) {
@@ -229,12 +231,12 @@ export class UmlClass extends UmlClassifierModel {
     // Update subelements
     this.attr('header/width', width)
 
-    this.attr('variablesRect' satisfies UmlClassSectors, {
+    this.attr('variablesRect' satisfies this['UmlClassSectors'], {
       width: width,
       height: this.inlineContainerHeight('variablesRect'),
       'ref-y': listItemHeight,
     })
-    this.attr('functionsRect' satisfies UmlClassSectors, {
+    this.attr('functionsRect' satisfies this['UmlClassSectors'], {
       width: width,
       height: this.inlineContainerHeight('functionsRect'),
       'ref-dy': -this.inlineContainerHeight('functionsRect'),
@@ -268,5 +270,9 @@ export class UmlClass extends UmlClassifierModel {
 
   convertToInterface(): UmlInterface {
     return new UmlInterface(this.position())
+  }
+
+  convertToEnum() {
+    return new UmlEnum(this.position())
   }
 }
