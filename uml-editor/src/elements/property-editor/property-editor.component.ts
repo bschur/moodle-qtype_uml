@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
+import { ChangeDetectionStrategy, Component, HostBinding, inject } from '@angular/core'
 import { MatButton } from '@angular/material/button'
 import { PropertyEditorService } from './property-editor.service'
 
@@ -11,5 +11,7 @@ import { PropertyEditorService } from './property-editor.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PropertyEditorComponent {
+  @HostBinding('class') readonly hostClasses = 'mat-drawer-side mat-drawer-end'
+
   readonly propertyEditorService = inject(PropertyEditorService)
 }

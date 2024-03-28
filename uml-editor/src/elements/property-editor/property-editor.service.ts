@@ -1,11 +1,10 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay'
 import { ComponentPortal } from '@angular/cdk/portal'
 import { ElementRef, Injectable, ViewContainerRef, inject } from '@angular/core'
-import { Subscription, first } from 'rxjs'
 import { PropertyEditorComponent } from './property-editor.component'
 
 function isHTMLElementRef(element: ElementRef): element is ElementRef<HTMLElement> {
-  return ('getBoundingClientRect' satisfies keyof HTMLElement) in element
+  return ('nativeElement' satisfies keyof ElementRef<HTMLElement>) in element
 }
 
 @Injectable({
@@ -15,7 +14,6 @@ export class PropertyEditorService {
   private readonly overlay = inject(Overlay)
 
   private overlayRef: OverlayRef | null = null
-  private backdropSubscription: Subscription | null = null
 
   show(viewContainerRef: ViewContainerRef) {
     if (this.overlayRef) {
@@ -23,9 +21,11 @@ export class PropertyEditorService {
       this.hide()
     }
 
-    const referenceHeight = isHTMLElementRef(viewContainerRef.element)
-      ? `${viewContainerRef.element.nativeElement.getBoundingClientRect().height}px`
-      : '100%'
+    if (!isHTMLElementRef(viewContainerRef.element)) {
+      throw new Error('ViewContainerRef element is not an HTMLElement')
+    }
+
+    const referenceHeight = viewContainerRef.element.nativeElement.getBoundingClientRect().height
 
     this.overlayRef = this.overlay.create({
       positionStrategy: this.overlay
@@ -38,11 +38,6 @@ export class PropertyEditorService {
       height: referenceHeight,
     })
 
-    this.backdropSubscription = this.overlayRef
-      .backdropClick()
-      .pipe(first())
-      .subscribe(() => this.hide())
-
     const containerPortal = new ComponentPortal(PropertyEditorComponent, viewContainerRef)
     return this.overlayRef.attach(containerPortal)
   }
@@ -50,8 +45,6 @@ export class PropertyEditorService {
   hide() {
     // Hiding overlay
     this.overlayRef?.detach()
-    this.backdropSubscription?.unsubscribe()
     this.overlayRef = null
-    this.backdropSubscription = null
   }
 }

@@ -2,12 +2,11 @@
   display: block;
   height: 100%;
   width: 300px;
-  padding: 8px 16px;
-  background-color: var(--mat-app-background-color);
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+  background-color: white;
 
   .property-editor {
     display: flex;
+    padding: 8px 16px;
     flex-direction: column;
     gap: 16px;
   }
