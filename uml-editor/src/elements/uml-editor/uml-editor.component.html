@@ -15,7 +15,7 @@
     </button>
   }
 
-  <div #editor class="uml-editor__canvas"></div>
+  <div #editor class="uml-editor__canvas" [class.--hide-controls]="!allowEdit"></div>
 </mat-drawer-container>
 
 <ng-template #propertyEditorContentTemplate>

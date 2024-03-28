@@ -5,14 +5,13 @@ import {
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   DestroyRef,
-  effect,
   ElementRef,
   EventEmitter,
   inject,
   Input,
   Output,
   signal,
-  TemplateRef,
+  SimpleChanges,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
@@ -21,13 +20,14 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { dia } from '@joint/core'
+import { dia, elementTools, linkTools } from 'jointjs'
 import { debounceTime, map } from 'rxjs'
-import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
-import { UmlUseCaseConfigurationComponent } from '../../shared/uml-usecase-configuration/uml-use-case-configuration.component'
-import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
-import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
+import { TextBlock } from '../../models/jointjs/text-block.model'
+import { UmlClass } from '../../models/jointjs/uml-class.model'
+import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
+import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
+import ElementView = dia.ElementView
 
 @Component({
   selector: 'app-uml-editor',
@@ -38,14 +38,18 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlUseCaseConfigurationComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class UmlEditorComponent implements AfterViewInit {
-  readonly diagramControl = new FormControl<{ cells: dia.Cell[] }>({ cells: [] }, { nonNullable: true })
+export class UmlEditorComponent implements OnChanges, AfterViewInit {
+  readonly diagramControl = new FormControl<JointJSDiagram>({ cells: [] }, { nonNullable: true })
   readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
+
   @Input({ transform: coerceBooleanProperty }) allowEdit = false
-  @ViewChild('propertyEditorContentTemplate', { static: true }) propertyEditorContentTemplate!: TemplateRef<unknown>
+  @Input({ required: true }) inputId: string | null = null
+  @Input({ required: true }) diagram: string | null = null
+
   @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
-  @ViewChild('toolbox', { static: true })
-  toolboxRef!: ElementRef<HTMLDivElement>
+  @ViewChild('toolbox', { static: true }) toolboxRef!: ElementRef<HTMLDivElement>
+  @ViewChild('propertyEditorContentTemplate', { static: true }) propertyEditorContentTemplate!: TemplateRef<unknown>
+
   @Output() readonly diagramChanged = new EventEmitter<{
     inputId: string
     diagram: string
@@ -54,29 +58,18 @@ export class UmlEditorComponent implements AfterViewInit {
   private readonly destroyRef = inject(DestroyRef)
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly showPropertyEditorService = inject(PropertyEditorService)
-  private readonly _inputId = signal<string | null>(null)
-  private readonly _inputDiagram = signal<string | null>(null)
+
   private readonly _paperEditor = signal<dia.Paper | null>(null)
 
   constructor() {
-    // listen to diagram input and draw it on editor
-    effect(() => {
-      const diagram = this._inputDiagram()
-      this.setDiagramToEditor(diagram, { emitEvent: false })
-    })
-
     // listen to diagram changes and emit value
-    this.diagramControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(200))
-      .subscribe(this.encodeAndEmitDiagram)
+    this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(this.encodeAndEmitDiagram)
   }
 
-  @Input() set inputId(value: string | null) {
-    this._inputId.set(value)
-  }
-
-  @Input() set diagram(value: string | null) {
-    this._inputDiagram.set(value)
+  ngOnChanges(changes: SimpleChanges) {
+    if (('diagram' satisfies keyof this) in changes) {
+      this.setDiagramToEditor(this.diagram, { emitEvent: false })
+    }
   }
 
   ngAfterViewInit() {
@@ -94,6 +87,8 @@ export class UmlEditorComponent implements AfterViewInit {
 
     this._paperEditor.set(paperEditor)
 
+    this.setDiagramToEditor(this.diagram, { emitEvent: false })
+
     this.toolboxRef.nativeElement.addEventListener('itemSelected', <EventListenerOrEventListenerObject>(
       ((event: CustomEvent) => this.addItemFromToolboxToEditor(event.detail))
     ))
@@ -110,11 +105,11 @@ export class UmlEditorComponent implements AfterViewInit {
     clickedClass.position(tmpX, tmpY)
 
     this._paperEditor()?.model.addCell(clickedClass)
+    this.diagramControl.setValue(this._paperEditor()?.model.toJSON())
   }
 
   resetDiagram() {
-    const resetValue = this._inputDiagram()
-    this.setDiagramToEditor(resetValue)
+    this.setDiagramToEditor(this.diagram)
   }
 
   private readonly setDiagramToEditor = (
@@ -139,9 +134,9 @@ export class UmlEditorComponent implements AfterViewInit {
     }
   }
 
-  private readonly encodeAndEmitDiagram = (diagram: { cells: dia.Cell[] }) => {
+  private readonly encodeAndEmitDiagram = (diagram: JointJSDiagram) => {
     // the value was changed
-    const inputId = this._inputId()
+    const inputId = this.inputId
     if (!inputId || !diagram) {
       console.warn('inputId or diagram not set')
       return
