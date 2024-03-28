@@ -9,9 +9,11 @@ import {
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   Output,
   signal,
   SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core'
@@ -20,14 +22,14 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { dia, elementTools, linkTools } from 'jointjs'
+import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
-import { TextBlock } from '../../models/jointjs/text-block.model'
-import { UmlClass } from '../../models/jointjs/uml-class.model'
-import { initCustomNamespaceGraph, initCustomPaper, jointJsCustomUmlElements } from '../../utils/jointjs-drawer.utils'
-import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
+import { JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
-import ElementView = dia.ElementView
+import { UmlUseCaseConfigurationComponent } from '../../shared/uml-usecase-configuration/uml-use-case-configuration.component'
+import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
+import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
+import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
   selector: 'app-uml-editor',
@@ -63,7 +65,9 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
 
   constructor() {
     // listen to diagram changes and emit value
-    this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(this.encodeAndEmitDiagram)
+    this.diagramControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(200))
+      .subscribe(this.encodeAndEmitDiagram)
   }
 
   ngOnChanges(changes: SimpleChanges) {
