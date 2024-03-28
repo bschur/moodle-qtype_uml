@@ -1,7 +1,13 @@
 :host {
+  display: block;
+
   --mdc-list-list-item-leading-icon-size: 60px;
 
   .uml-toolbox__search {
     width: 100%;
+  }
+
+  .uml-toolbox__icon {
+    pointer-events: none;
   }
 }

@@ -8,15 +8,18 @@
     width: 100%;
   }
 
-  .uml-editor__toggle {
+  .uml-editor__toggle,
+  .uml-editor__reset {
+    z-index: 99999;
     position: absolute;
     top: 16px;
+  }
+
+  .uml-editor__toggle {
     left: 16px;
   }
 
   .uml-editor__reset {
-    position: absolute;
-    top: 16px;
     right: 16px;
   }
 

@@ -1,4 +1,4 @@
-import { dia } from 'jointjs'
+import { dia } from '@joint/core'
 import { diff, Operation } from 'just-diff'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
 
