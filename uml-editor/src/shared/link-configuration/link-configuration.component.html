@@ -8,7 +8,7 @@
 
   <mat-form-field>
     <mat-label>Arrow type (end)</mat-label>
-    <mat-select>
+    <mat-select [formControl]="form.controls.arrowTarget">
       @for (arrow of arrows; track arrow) {
         <mat-option [value]="arrow">{{ arrow }}</mat-option>
       }
@@ -17,7 +17,7 @@
 
   <mat-form-field>
     <mat-label>Arrow type (start)</mat-label>
-    <mat-select>
+    <mat-select [formControl]="form.controls.arrowSource">
       @for (arrow of arrows; track arrow) {
         <mat-option [value]="arrow">{{ arrow }}</mat-option>
       }
@@ -26,7 +26,7 @@
 
   <mat-form-field>
     <mat-label>Line type</mat-label>
-    <mat-select>
+    <mat-select [formControl]="form.controls.line">
       @for (line of lines; track line) {
         <mat-option [value]="line">{{ line }}</mat-option>
       }
