@@ -42,7 +42,33 @@ class EditorHelper {
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
-        return '<fullscreen-view><uml-editor input-id=\'' . $bindelementid . '\' allow-edit=\'' . $iseditmode . '\' diagram=\'' .
-                $diagram . '\'/></fullscreen-view>';
+        return '<fullscreen-view style="min-height: 300px;"><uml-editor
+                    input-id=\'' . $bindelementid . '\'
+                    allow-edit=\'' . ($iseditmode ? 'true' : 'false') . '\'
+                    diagram=\'' . $diagram . '\'/>
+                </fullscreen-view>';
+    }
+
+    /**
+     * Loads the editor correctness html with the given display options.
+     *
+     * @param string $bindelementid The id of the input field which holds the correction.
+     * @param string $diagram The diagram to compare.
+     * @param string $correctanswer The diagram correct answer.
+     * @param int $maxpoints The maximum points to get for this question.
+     * @return string The editor correctness html.
+     */
+    public static function load_editor_correctness_html_for_id(
+        string $bindelementid,
+        string $diagram,
+        string $correctanswer,
+        int $maxpoints
+    ) {
+        return '<fullscreen-view style="min-height: 300px;"><uml-editor-correctness
+                    input-id=\'' . $bindelementid . '\'
+                    max-points=\'' . $maxpoints . '\'
+                    diagram=\'' . $diagram . '\'
+                    correct-answer=\'' . $correctanswer . '\'/>
+                </fullscreen-view>';
     }
 }

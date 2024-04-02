@@ -49,7 +49,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit {
     // filter items by search input
     this.searchControl.valueChanges
       .pipe(
-        takeUntilDestroyed(this.destroyRef),
+        takeUntilDestroyed(),
         startWith(this.searchControl.value),
         map(value => value?.trim().toLowerCase() || ''),
         debounceTime(200)
