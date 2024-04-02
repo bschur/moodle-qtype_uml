@@ -1,16 +1,18 @@
+import { ComponentType } from '@angular/cdk/overlay'
 import { Type } from '@angular/core'
-import { dia } from 'jointjs'
+import { dia } from '@joint/core'
+
+interface CustomJointJSEntity {
+  type: 'element' | 'view' | 'link' | 'linkView'
+  instance: dia.Element | dia.ElementView | dia.Link | dia.LinkView
+}
 
 export interface JointJSElementType {
   type: string
+  propertyView?: ComponentType<unknown>
 }
 
 export type CustomJointJSElementAttributes<T extends dia.Element.Attributes> = JointJSElementType & Partial<T>
-
-export interface CustomJointJSEntity {
-  type: 'element' | 'view'
-  instance: dia.Element | dia.ElementView
-}
 
 export interface CustomJointJSElementView extends CustomJointJSEntity {
   type: 'view'

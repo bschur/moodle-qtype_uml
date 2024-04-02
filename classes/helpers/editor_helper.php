@@ -42,7 +42,7 @@ class EditorHelper {
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
             string $diagram = null): string {
-        return '<fullscreen-view><uml-editor
+        return '<fullscreen-view style="min-height: 300px;"><uml-editor
                     input-id=\'' . $bindelementid . '\'
                     allow-edit=\'' . ($iseditmode ? 'true' : 'false') . '\'
                     diagram=\'' . $diagram . '\'/>
@@ -64,7 +64,7 @@ class EditorHelper {
         string $correctanswer,
         int $maxpoints
     ) {
-        return '<fullscreen-view><uml-editor-correctness
+        return '<fullscreen-view style="min-height: 300px;"><uml-editor-correctness
                     input-id=\'' . $bindelementid . '\'
                     max-points=\'' . $maxpoints . '\'
                     diagram=\'' . $diagram . '\'

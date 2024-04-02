@@ -1,9 +1,14 @@
-import { dia, shapes } from 'jointjs'
-import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
-import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
-import { UmlActor } from '../models/jointjs/uml-actor.model'
+import { dia, shapes } from '@joint/core'
+import { TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlClass } from '../models/jointjs/uml-class.model'
-import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
+import { UseCase } from '../models/jointjs/uml-use-case.model'
+import {
+  globalElementToolsView,
+  internalElementToolsView,
+  paperHoverConnectToolOptions,
+} from './jointjs-element-tools.const'
+import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
+import { globalLinkToolsView } from './jointjs-link-tools.const'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -32,20 +37,10 @@ function assignValueToObject(existingObject: any, inputString: string, value: an
   return existingObject
 }
 
-export const jointJsCustomUmlElements: CustomJointJSElement[] = [
-  createCustomJointJSElement(UmlActor, 'Actor', true),
-  createCustomJointJSElement(UmlClass, 'Classifier', true),
-  createCustomJointJSElement(TextBlock, 'Text-block', false),
-]
-
-export const jointJsCustomUmlElementViews: CustomJointJSElementView[] = [
-  createCustomJointJSElementView(TextBlockView, 'custom.uml.TextBlockView'),
-]
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {
   ...shapes,
-  ...[...jointJsCustomUmlElements, ...jointJsCustomUmlElementViews].reduce((acc, item) => {
+  ...[...jointJSCustomUmlElements, ...jointJSCustomUmlElementViews].reduce((acc, item) => {
     if (item.type === 'element') {
       assignValueToObject(acc, item.defaults.type, item.clazz)
     } else {
@@ -69,9 +64,40 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
     drawGrid: true,
     interactive: isInteractive,
     cellViewNamespace: jointjsCustomNamespace,
+    ...paperHoverConnectToolOptions,
   })
 
   resizePaperObserver(paper).observe(el)
+
+  // register tools for links and elements
+  paper.on('link:mouseenter', linkView => {
+    linkView.addTools(globalLinkToolsView)
+  })
+
+  paper.on('element:mouseenter', elementView => {
+    if (elementView instanceof TextBlockView) {
+      elementView.addTools(internalElementToolsView)
+      return
+    }
+
+    elementView.addTools(globalElementToolsView)
+  })
+
+  paper.on('blank:mouseover', () => {
+    paper.removeTools()
+  })
+
+  paper.on('element:pointerdblclick', (elementView, evt) => {
+    const target = elementView.model
+    if (target instanceof UmlClass || target instanceof UseCase) {
+      const textBlock = target.userInput(evt)
+      if (textBlock) {
+        paper.model.addCell(textBlock)
+      }
+    } else {
+      throw new Error('elementView.model is not instanceof UmlClass')
+    }
+  })
 
   return paper
 }
