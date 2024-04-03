@@ -1,7 +1,6 @@
 import { shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { UmlClassifierModel } from './IUml-classifier.model'
-import { UmlClass } from './uml-class.model'
 
 type UmlClassSectors = 'header' | 'headerlabel' | 'functionsRect'
 
@@ -9,6 +8,15 @@ const initialWidth = 150
 const initialHeight = 80
 const listItemHeight = 20
 export class UmlEnum extends UmlClassifierModel {
+  override convertToInterface(): UmlClassifierModel {
+    throw new Error('Method not implemented.')
+  }
+  override convertToEnum(): UmlClassifierModel {
+    throw new Error('Method not implemented.')
+  }
+  override convertToClass(): UmlClassifierModel {
+    throw new Error('Method not implemented.')
+  }
   override readonly markup = [
     {
       tagName: 'rect',
@@ -27,12 +35,6 @@ export class UmlEnum extends UmlClassifierModel {
       selector: 'functionsRect',
     },
   ]
-
-  constructor(coordinates: { x: number; y: number }) {
-    super()
-
-    this.position(coordinates?.x || 0, coordinates?.y || 0)
-  }
 
   private get functionsComponentAllHeight(): number {
     return initialHeight - 2 * listItemHeight + (this.functionComponents?.length || 0) * listItemHeight
@@ -110,13 +112,5 @@ export class UmlEnum extends UmlClassifierModel {
       component.resize(super.listItemWidth, listItemHeight)
     })
     return this
-  }
-
-  convertToClass(): UmlClass {
-    return new UmlClass(/* Pass necessary parameters */)
-  }
-
-  convertToInterface(): UmlEnum {
-    return this // Already an interface
   }
 }

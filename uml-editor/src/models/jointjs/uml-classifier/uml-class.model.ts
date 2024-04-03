@@ -3,16 +3,27 @@ import { ClassifierConfigurationComponent } from '../../../shared/classifier-con
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
 import { UmlClassifierModel } from './IUml-classifier.model'
+import { UmlEnum } from './uml-enum.model'
 import { UmlInterface } from './uml-interface.model'
-
-//type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
 
 const initialWidth = 150
 const initialHeight = 100
 const listItemHeight = 20
 
 export class UmlClass extends UmlClassifierModel {
-  //override UmlClassSectors!: 'header' | 'variablesRect' | 'functionsRect'
+  override convertToInterface(): UmlInterface {
+    const interfacee = new UmlInterface()
+    interfacee.position(this.position())
+    console.log(this.position())
+    console.log(interfacee.position())
+    return interfacee
+  }
+  override convertToEnum(): UmlEnum {
+    return new UmlEnum()
+  }
+  override convertToClass(): UmlClassifierModel {
+    return this
+  }
 
   override readonly markup = [
     {
@@ -263,33 +274,5 @@ export class UmlClass extends UmlClassifierModel {
     })
 
     return this
-  }
-
-  convertToClass(): UmlClass {
-    return this
-  }
-
-  convertToInterface(): UmlInterface {
-    return new UmlInterface(this.position())
-  }
-
-  exportToSVG() {
-    const graph = new dia.Graph()
-
-    // Create a temporary paper to add the specific element
-    const paper = new dia.Paper({
-      //el: $('#paper'),
-      width: 200,
-      height: 200,
-      gridSize: 1,
-      model: graph,
-      interactive: false, // Disable interactivity to prevent dragging or resizing
-    })
-    this.addTo(graph)
-
-    // Export the content of the temporary paper as SVG
-    const svgString = paper.svg
-    paper.remove()
-    return svgString.outerHTML
   }
 }

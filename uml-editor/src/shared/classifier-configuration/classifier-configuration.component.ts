@@ -9,7 +9,6 @@ import { MatIcon } from '@angular/material/icon'
 import { MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
 import { UmlClassifierModel } from '../../models/jointjs/uml-classifier/IUml-classifier.model'
-import { UmlClass } from '../../models/jointjs/uml-classifier/uml-class.model'
 import ElementView = dia.ElementView
 import Graph = dia.Graph
 
@@ -50,13 +49,26 @@ export class ClassifierConfigurationComponent {
   }
 
   changeClassifierType(type: ClassifierType) {
-    if (this.model instanceof UmlClass && type === 'Interface') {
-      const newModel = this.model.convertToInterface()
-      this.graph.removeCells([this.elementView.model])
-      this.graph.addCell(newModel)
-      this.elementView.model = newModel
-      this.elementView.update()
-      this.model = newModel
+    let newModel
+    switch (type) {
+      case 'Interface': {
+        newModel = this.model.convertToInterface()
+        break
+      }
+      case 'Class': {
+        newModel = this.model.convertToClass()
+        break
+      }
+      case 'Enum': {
+        newModel = this.model.convertToEnum()
+        break
+      }
     }
+
+    this.graph.removeCells([this.elementView.model])
+    this.graph.addCell(newModel)
+    this.elementView.model = newModel
+    this.elementView.update()
+    this.model = newModel
   }
 }

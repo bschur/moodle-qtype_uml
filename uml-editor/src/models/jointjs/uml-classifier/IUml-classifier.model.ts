@@ -4,8 +4,8 @@ import { TextBlock } from '../text-block.model'
 const initialWidth = 150
 const listItemHeight = 20
 
-export class UmlClassifierModel extends shapes.standard.Rectangle {
-  protected readonly functionComponents: shapes.standard.TextBlock[] = []
+export abstract class UmlClassifierModel extends shapes.standard.Rectangle {
+  protected functionComponents: TextBlock[] = []
   protected headerComponent: TextBlock | null = null
   UmlClassSectors!: 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
 
@@ -80,4 +80,8 @@ export class UmlClassifierModel extends shapes.standard.Rectangle {
 
     this.resizeInlineContainer(-1, 'functionsRect')
   }
+
+  public abstract convertToInterface(): UmlClassifierModel
+  public abstract convertToEnum(): UmlClassifierModel
+  public abstract convertToClass(): UmlClassifierModel
 }
