@@ -1,6 +1,8 @@
 import { shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { UmlClassifierModel } from './IUml-classifier.model'
+import { UmlClass } from './uml-class.model'
+import { UmlEnum } from './uml-enum.model'
 
 type UmlClassSectors = 'header' | 'headerlabel' | 'functionsRect'
 
@@ -9,14 +11,18 @@ const initialHeight = 80
 const listItemHeight = 20
 
 export class UmlInterface extends UmlClassifierModel {
-  override convertToInterface(): UmlClassifierModel {
-    throw new Error('Method not implemented.')
+  override convertToInterface(): UmlInterface {
+    return this
   }
-  override convertToEnum(): UmlClassifierModel {
-    throw new Error('Method not implemented.')
+  override convertToEnum(): UmlEnum {
+    const umlEnum = new UmlEnum()
+    umlEnum.position(this.position().x, this.position().y)
+    return umlEnum
   }
-  override convertToClass(): UmlClassifierModel {
-    throw new Error('Method not implemented.')
+  override convertToClass(): UmlClass {
+    const umlClass = new UmlClass()
+    umlClass.position(this.position().x, this.position().y)
+    return umlClass
   }
   override readonly markup = [
     {

@@ -12,14 +12,14 @@ const listItemHeight = 20
 
 export class UmlClass extends UmlClassifierModel {
   override convertToInterface(): UmlInterface {
-    const interfacee = new UmlInterface()
-    interfacee.position(this.position())
-    console.log(this.position())
-    console.log(interfacee.position())
-    return interfacee
+    const it = new UmlInterface()
+    it.position(this.position().x, this.position().y)
+    return it
   }
   override convertToEnum(): UmlEnum {
-    return new UmlEnum()
+    const umlEnum = new UmlEnum()
+    umlEnum.position(this.position().x, this.position().y)
+    return umlEnum
   }
   override convertToClass(): UmlClassifierModel {
     return this
