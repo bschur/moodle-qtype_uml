@@ -1,16 +1,18 @@
 import { dia, shapes } from '@joint/core'
 import { TextBlock } from '../text-block.model'
 
-const initialWidth = 150
-const listItemHeight = 20
+export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
 
-export abstract class UmlClassifierModel extends shapes.standard.Rectangle {
+export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   protected functionComponents: TextBlock[] = []
   protected headerComponent: TextBlock | null = null
-  UmlClassSectors!: 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
+
+  protected abstract initialWidth: number
+
+  protected abstract listItemHeight: number
 
   protected get listItemWidth(): number {
-    let width = initialWidth
+    let width = this.initialWidth
     try {
       width = this.size().width
     } catch (e) {
@@ -23,26 +25,26 @@ export abstract class UmlClassifierModel extends shapes.standard.Rectangle {
     this.functionComponents.forEach((component, index) => {
       if (index >= indexOfComponentToRemove) {
         const p = component.position()
-        component.position(p.x, p.y - listItemHeight)
+        component.position(p.x, p.y - this.listItemHeight)
       }
     })
   }
 
   userInput(evt: dia.Event) {
-    const selectedRect = evt.target.attributes[0].value as this['UmlClassSectors'] | string
+    const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
 
     let positionY = 0
     switch (selectedRect) {
       case 'header':
-        newTextBlockElement.position(this.position().x, this.position().y + listItemHeight)
+        newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
         //newTextBlockElement.size(20, listItemHeight)
 
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
-        positionY = this.position().y + 2 * listItemHeight + this.functionComponents.length * listItemHeight
+        positionY = this.position().y + 2 * this.listItemHeight + this.functionComponents.length * this.listItemHeight
         newTextBlockElement.position(this.position().x, positionY)
         //newTextBlockElement.resize(this.size().width, listItemHeight)
         this.functionComponents.push(newTextBlockElement)
@@ -57,13 +59,13 @@ export abstract class UmlClassifierModel extends shapes.standard.Rectangle {
     return newTextBlockElement
   }
 
-  resizeInlineContainer(direction: number, container: this['UmlClassSectors']) {
-    const bodyheigth = (this.size().height += listItemHeight * direction)
+  resizeInlineContainer(direction: number, container: UmlClassSectors) {
+    const bodyheigth = (this.size().height += this.listItemHeight * direction)
     this.resize(this.size().width, bodyheigth)
-    this.attr(container + '/height', bodyheigth - 2 * listItemHeight)
+    this.attr(container + '/height', bodyheigth - 2 * this.listItemHeight)
   }
 
-  adjustByDelete(selectedRect: this['UmlClassSectors'], posY: number) {
+  adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
     let indexOfComponentToRemove = -1
 
     indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
@@ -81,7 +83,9 @@ export abstract class UmlClassifierModel extends shapes.standard.Rectangle {
     this.resizeInlineContainer(-1, 'functionsRect')
   }
 
-  public abstract convertToInterface(): UmlClassifierModel
-  public abstract convertToEnum(): UmlClassifierModel
-  public abstract convertToClass(): UmlClassifierModel
+  public abstract convertToInterface(): BaseUmlClassifierModel
+
+  public abstract convertToEnum(): BaseUmlClassifierModel
+
+  public abstract convertToClass(): BaseUmlClassifierModel
 }

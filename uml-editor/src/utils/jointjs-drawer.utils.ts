@@ -1,6 +1,6 @@
 import { dia, shapes } from '@joint/core'
 import { TextBlockView } from '../models/jointjs/text-block.model'
-import { UmlClassifierModel } from '../models/jointjs/uml-classifier/IUml-classifier.model'
+import { BaseUmlClassifierModel } from '../models/jointjs/uml-classifier/base-uml-classifier.model'
 import { UseCase } from '../models/jointjs/uml-use-case.model'
 import {
   globalElementToolsView,
@@ -90,7 +90,7 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
 
   paper.on('element:pointerdblclick', (elementView, evt) => {
     const target = elementView.model
-    if (target instanceof UmlClassifierModel || target instanceof UseCase) {
+    if (target instanceof BaseUmlClassifierModel || target instanceof UseCase) {
       const textBlock = target.userInput(evt)
       if (textBlock) {
         paper.model.addCell(textBlock)

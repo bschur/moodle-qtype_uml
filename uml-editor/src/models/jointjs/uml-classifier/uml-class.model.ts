@@ -2,7 +2,7 @@ import { dia, shapes, util } from '@joint/core'
 import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
-import { UmlClassifierModel } from './IUml-classifier.model'
+import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
 import { UmlEnum } from './uml-enum.model'
 import { UmlInterface } from './uml-interface.model'
 
@@ -10,7 +10,10 @@ const initialWidth = 150
 const initialHeight = 100
 const listItemHeight = 20
 
-export class UmlClass extends UmlClassifierModel {
+export class UmlClass extends BaseUmlClassifierModel {
+  override readonly initialWidth = initialWidth
+  override readonly listItemHeight = listItemHeight
+
   override convertToInterface(): UmlInterface {
     const it = new UmlInterface()
     it.position(this.position().x, this.position().y)
@@ -21,7 +24,8 @@ export class UmlClass extends UmlClassifierModel {
     umlEnum.position(this.position().x, this.position().y)
     return umlEnum
   }
-  override convertToClass(): UmlClassifierModel {
+
+  override convertToClass(): BaseUmlClassifierModel {
     return this
   }
 
@@ -52,7 +56,7 @@ export class UmlClass extends UmlClassifierModel {
     return (this.functionComponents?.length || 0) * listItemHeight
   }
 
-  private inlineContainerHeight(container: this['UmlClassSectors']): number {
+  private inlineContainerHeight(container: UmlClassSectors): number {
     const initialHeightPerContainer = (initialHeight - listItemHeight) / 2
 
     try {
@@ -94,7 +98,7 @@ export class UmlClass extends UmlClassifierModel {
           strokeWidth: 4,
           stroke: 'black',
         },
-        ['header' satisfies this['UmlClassSectors']]: {
+        ['header' satisfies UmlClassSectors]: {
           width: initialWidth,
           height: listItemHeight,
           fontSize: 12,
@@ -108,7 +112,7 @@ export class UmlClass extends UmlClassifierModel {
           strokeWidth: 3,
           fill: 'white',
         },
-        ['variablesRect' satisfies this['UmlClassSectors']]: {
+        ['variablesRect' satisfies UmlClassSectors]: {
           width: initialWidth,
           height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
@@ -118,7 +122,7 @@ export class UmlClass extends UmlClassifierModel {
           ref: 'body',
           fill: 'white',
         },
-        ['functionsRect' satisfies this['UmlClassSectors']]: {
+        ['functionsRect' satisfies UmlClassSectors]: {
           width: initialWidth,
           height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
@@ -136,7 +140,7 @@ export class UmlClass extends UmlClassifierModel {
   }
 
   override userInput(evt: dia.Event) {
-    const selectedRect = evt.target.attributes[0].value as this['UmlClassSectors'] | string
+    const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
     newTextBlockElement.attr('ref', selectedRect)
@@ -182,12 +186,12 @@ export class UmlClass extends UmlClassifierModel {
     return newTextBlockElement
   }
 
-  override resizeInlineContainer(direction: number, container: this['UmlClassSectors']) {
+  override resizeInlineContainer(direction: number, container: UmlClassSectors) {
     this.resize(this.size().width, (this.size().height += listItemHeight * direction))
     this.attr(container + '/height', this.inlineContainerHeight(container))
   }
 
-  override adjustByDelete(selectedRect: this['UmlClassSectors'], posY: number) {
+  override adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
     let indexOfComponentToRemove = -1
 
     switch (selectedRect) {
@@ -243,12 +247,12 @@ export class UmlClass extends UmlClassifierModel {
     // Update subelements
     this.attr('header/width', width)
 
-    this.attr('variablesRect' satisfies this['UmlClassSectors'], {
+    this.attr('variablesRect' satisfies UmlClassSectors, {
       width: width,
       height: this.inlineContainerHeight('variablesRect'),
       'ref-y': listItemHeight,
     })
-    this.attr('functionsRect' satisfies this['UmlClassSectors'], {
+    this.attr('functionsRect' satisfies UmlClassSectors, {
       width: width,
       height: this.inlineContainerHeight('functionsRect'),
       'ref-dy': -this.inlineContainerHeight('functionsRect'),

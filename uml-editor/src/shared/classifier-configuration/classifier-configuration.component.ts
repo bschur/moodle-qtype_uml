@@ -8,7 +8,7 @@ import { MatFormField, MatLabel } from '@angular/material/form-field'
 import { MatIcon } from '@angular/material/icon'
 import { MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
-import { UmlClassifierModel } from '../../models/jointjs/uml-classifier/IUml-classifier.model'
+import { BaseUmlClassifierModel } from '../../models/jointjs/uml-classifier/base-uml-classifier.model'
 import ElementView = dia.ElementView
 import Graph = dia.Graph
 
@@ -32,7 +32,7 @@ type ClassifierType = 'Class' | 'Enum' | 'Interface'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClassifierConfigurationComponent {
-  @Input({ required: true }) model!: UmlClassifierModel
+  @Input({ required: true }) model!: BaseUmlClassifierModel
   @Input({ required: true }) elementView!: ElementView
   @Input({ required: true }) graph!: Graph
 
