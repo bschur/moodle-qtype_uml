@@ -1,7 +1,6 @@
 import { dia, shapes } from '@joint/core'
 import { TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlClassifierModel } from '../models/jointjs/uml-classifier/IUml-classifier.model'
-import { UmlClass } from '../models/jointjs/uml-classifier/uml-class.model'
 import { UseCase } from '../models/jointjs/uml-use-case.model'
 import {
   globalElementToolsView,
@@ -98,14 +97,6 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
       }
     } else {
       throw new Error('elementView.model is not instanceof UmlClass')
-    }
-
-    if (target instanceof UmlClass) {
-      const newModel = target.convertToInterface()
-      graph.removeCells([elementView.model])
-      graph.addCell(newModel)
-      elementView.model = newModel
-      elementView.update()
     }
   })
 

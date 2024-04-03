@@ -3,7 +3,6 @@ import { ClassifierConfigurationComponent } from '../../../shared/classifier-con
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
 import { UmlClassifierModel } from './IUml-classifier.model'
-import { UmlEnum } from './uml-enum.model'
 import { UmlInterface } from './uml-interface.model'
 
 //type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
@@ -274,7 +273,23 @@ export class UmlClass extends UmlClassifierModel {
     return new UmlInterface(this.position())
   }
 
-  convertToEnum() {
-    return new UmlEnum(this.position())
+  exportToSVG() {
+    const graph = new dia.Graph()
+
+    // Create a temporary paper to add the specific element
+    const paper = new dia.Paper({
+      //el: $('#paper'),
+      width: 200,
+      height: 200,
+      gridSize: 1,
+      model: graph,
+      interactive: false, // Disable interactivity to prevent dragging or resizing
+    })
+    this.addTo(graph)
+
+    // Export the content of the temporary paper as SVG
+    const svgString = paper.svg
+    paper.remove()
+    return svgString.outerHTML
   }
 }
