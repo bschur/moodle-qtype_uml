@@ -89,11 +89,15 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       }
 
       // handle custom elements
-      const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
-      if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
-        this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
-          model: cell.model,
-        })
+      if (cell instanceof dia.ElementView) {
+        const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
+        if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
+          this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
+            model: cell.model,
+            graph: paperEditor.model,
+            elementView: cell,
+          })
+        }
       }
     })
 

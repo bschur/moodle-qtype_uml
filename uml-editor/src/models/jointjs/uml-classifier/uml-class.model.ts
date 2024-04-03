@@ -1,16 +1,34 @@
 import { dia, shapes, util } from '@joint/core'
-import { ClassifierConfigurationComponent } from '../../shared/classifier-configuration/classifier-configuration.component'
-import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock } from './text-block.model'
-
-type UmlClassSectors = 'header' | 'variablesRect' | 'functionsRect'
+import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
+import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
+import { TextBlock } from '../text-block.model'
+import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
+import { UmlEnum } from './uml-enum.model'
+import { UmlInterface } from './uml-interface.model'
 
 const initialWidth = 150
 const initialHeight = 100
-
 const listItemHeight = 20
 
-export class UmlClass extends shapes.standard.Rectangle {
+export class UmlClass extends BaseUmlClassifierModel {
+  override readonly initialWidth = initialWidth
+  override readonly listItemHeight = listItemHeight
+
+  override convertToInterface(): UmlInterface {
+    const it = new UmlInterface()
+    it.position(this.position().x, this.position().y)
+    return it
+  }
+  override convertToEnum(): UmlEnum {
+    const umlEnum = new UmlEnum()
+    umlEnum.position(this.position().x, this.position().y)
+    return umlEnum
+  }
+
+  override convertToClass(): BaseUmlClassifierModel {
+    return this
+  }
+
   override readonly markup = [
     {
       tagName: 'rect',
@@ -63,20 +81,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     }
   }
 
-  private get listItemWidth(): number {
-    let width = initialWidth
-    try {
-      width = this.size().width
-    } catch (e) {
-      console.debug(e)
-    }
-    return width - 1
-  }
-
-  private readonly functionComponents: shapes.standard.TextBlock[] = []
   private readonly variableComponents: shapes.standard.TextBlock[] = []
-
-  private headerComponent: TextBlock | null = null
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
@@ -134,7 +139,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     return elementAttributes
   }
 
-  userInput(evt: dia.Event) {
+  override userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
@@ -144,7 +149,7 @@ export class UmlClass extends shapes.standard.Rectangle {
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y)
-        newTextBlockElement.resize(this.size().width, listItemHeight)
+        newTextBlockElement.resize(this.size().width - 10, listItemHeight)
 
         this.headerComponent = newTextBlockElement
         break
@@ -181,12 +186,12 @@ export class UmlClass extends shapes.standard.Rectangle {
     return newTextBlockElement
   }
 
-  resizeInlineContainer(direction: number, container: UmlClassSectors) {
+  override resizeInlineContainer(direction: number, container: UmlClassSectors) {
     this.resize(this.size().width, (this.size().height += listItemHeight * direction))
     this.attr(container + '/height', this.inlineContainerHeight(container))
   }
 
-  adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
+  override adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
     let indexOfComponentToRemove = -1
 
     switch (selectedRect) {
@@ -228,15 +233,6 @@ export class UmlClass extends shapes.standard.Rectangle {
         this.resizeInlineContainer(-1, 'functionsRect')
         break
     }
-  }
-
-  shrinkFuncY(indexOfComponentToRemove: number) {
-    this.functionComponents.forEach((component, index) => {
-      if (index >= indexOfComponentToRemove) {
-        const p = component.position()
-        component.position(p.x, p.y - listItemHeight)
-      }
-    })
   }
 
   override resize(width: number, height: number) {
