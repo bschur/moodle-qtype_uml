@@ -9,7 +9,6 @@ import {
 } from './jointjs-element-tools.const'
 import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
-import ElementView = dia.ElementView
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {

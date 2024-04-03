@@ -9,8 +9,6 @@ import { MatIcon } from '@angular/material/icon'
 import { MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
 import { BaseUmlClassifierModel } from '../../models/jointjs/uml-classifier/base-uml-classifier.model'
-import ElementView = dia.ElementView
-import Graph = dia.Graph
 
 type ClassifierType = 'Class' | 'Enum' | 'Interface'
 
@@ -33,8 +31,8 @@ type ClassifierType = 'Class' | 'Enum' | 'Interface'
 })
 export class ClassifierConfigurationComponent {
   @Input({ required: true }) model!: BaseUmlClassifierModel
-  @Input({ required: true }) elementView!: ElementView
-  @Input({ required: true }) graph!: Graph
+  @Input({ required: true }) elementView!: dia.ElementView
+  @Input({ required: true }) graph!: dia.Graph
 
   readonly lines: ClassifierType[] = ['Class', 'Enum', 'Interface']
 

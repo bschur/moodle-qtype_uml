@@ -29,7 +29,6 @@ import { PropertyEditorService } from '../../shared/property-editor/property-edi
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
-import ElementView = dia.ElementView
 
 @Component({
   selector: 'app-uml-editor',
@@ -90,7 +89,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       }
 
       // handle custom elements
-      if (cell instanceof ElementView) {
+      if (cell instanceof dia.ElementView) {
         const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
         if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
           this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {

@@ -12,9 +12,7 @@ type LinkMarker = 'sourceMarker' | 'targetMarker'
 export type JointJSLinkArrowType = 'normal' | 'outlined'
 export type JointJSLinkLineType = 'normal' | 'dotted'
 
-// @ts-ignore
 export const jointJSArrows: JointJSLinkArrowType[] = ['normal', 'outlined'] as const
-// @ts-ignore
 export const jointJSLinks: JointJSLinkLineType[] = ['normal', 'dotted'] as const
 
 export function swapDirection(link: dia.Link) {

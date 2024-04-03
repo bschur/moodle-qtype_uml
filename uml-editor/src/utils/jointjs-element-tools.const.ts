@@ -1,7 +1,6 @@
 import { connectionStrategies, dia, elementTools, shapes } from '@joint/core'
 import { TextBlock } from '../models/jointjs/text-block.model'
 import { BaseUmlClassifierModel } from '../models/jointjs/uml-classifier/base-uml-classifier.model'
-import Paper = dia.Paper
 
 const ResizeTool = elementTools.Control.extend({
   children: [
@@ -39,7 +38,7 @@ const ResizeTool = elementTools.Control.extend({
   },
 })
 
-export const paperHoverConnectToolOptions: Paper.Options = {
+export const paperHoverConnectToolOptions: dia.Paper.Options = {
   defaultLink: () => new shapes.standard.Link(),
   validateConnection: (cellViewS, _, cellViewT) => {
     const src = cellViewS.model
