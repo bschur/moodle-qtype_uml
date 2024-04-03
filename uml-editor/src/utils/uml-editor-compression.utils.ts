@@ -1,3 +1,5 @@
+import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
+
 /**
  * Compress string to be used in Editor
  *
@@ -5,15 +7,13 @@
  * @returns Compressed string
  */
 function compressString(input: string): string {
-  return (
-    encodeURIComponent(input)
-      .replace(/%20/g, ' ') // Replace %20 with space
-      .replace(/%21/g, '!') // Replace %21 with !
-      .replace(/%23/g, '#') // Replace %23 with #
-      .replace(/%24/g, '$') // Replace %24 with $
-      // Add more replacements as needed
-      .replace(/%25/g, '%')
-  ) // Replace %25 with %
+  const escapedString = input
+    .replace(/ /g, '%20') // Replace space with %20
+    .replace(/!/g, '%21') // Replace ! with %21
+    .replace(/#/g, '%23') // Replace # with %23
+    .replace(/\$/g, '%24') // Replace $ with %24
+    .replace(/%/g, '%25') // Replace % with %25
+  return encodeURIComponent(escapedString)
 }
 
 /**
@@ -23,15 +23,13 @@ function compressString(input: string): string {
  * @returns Decompressed string
  */
 function decompressString(input: string): string {
-  return (
-    decodeURIComponent(input)
-      .replace(/ /g, '%20') // Replace space with %20
-      .replace(/!/g, '%21') // Replace ! with %21
-      .replace(/#/g, '%23') // Replace # with %23
-      .replace(/\$/g, '%24') // Replace $ with %24
-      // Add more replacements as needed
-      .replace(/%/g, '%25')
-  ) // Replace % with %25
+  const backEscaped = input
+    .replace(/%20/g, ' ') // Replace %20 with space
+    .replace(/%21/g, '!') // Replace %21 with !
+    .replace(/%23/g, '#') // Replace %23 with #
+    .replace(/%24/g, '$') // Replace %24 with $
+    .replace(/%25/g, '%') // Replace %25 with %
+  return decodeURIComponent(backEscaped)
 }
 
 /**
@@ -40,8 +38,7 @@ function decompressString(input: string): string {
  * @param diagram Diagram string
  * @returns diagram as object
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function decodeDiagram(diagram: string): any {
+export function decodeDiagram(diagram: string): JointJSDiagram {
   const diagramJson = decompressString(diagram)
   return JSON.parse(diagramJson)
 }
@@ -52,8 +49,7 @@ export function decodeDiagram(diagram: string): any {
  * @param diagram The diagram object
  * @returns Encoded diagram
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function encodeDiagram(diagram: any): string {
+export function encodeDiagram(diagram: JointJSDiagram): string {
   const diagramContent = JSON.stringify(diagram)
   return compressString(diagramContent)
 }

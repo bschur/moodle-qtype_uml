@@ -1,9 +1,5 @@
-import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject, Injector } from '@angular/core'
-import { FullscreenViewComponent } from '../elements/fullscreen-view/fullscreen-view.component'
-import { PropertyEditorComponent } from '../elements/property-editor/property-editor.component'
-import { UmlEditorToolboxComponent } from '../elements/uml-editor-toolbox/uml-editor-toolbox.component'
-import { UmlEditorComponent } from '../elements/uml-editor/uml-editor.component'
-import { setupCustomElementWithInjector } from '../utils/bootstrap-element.function'
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
+import { ElementsComponent } from '../elements/elements.component'
 
 /**
  * This component is used to bootstrap all the custom elements
@@ -21,13 +17,4 @@ import { setupCustomElementWithInjector } from '../utils/bootstrap-element.funct
   imports: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppComponent {
-  private readonly injector = inject(Injector)
-
-  constructor() {
-    setupCustomElementWithInjector('fullscreen-view', FullscreenViewComponent, this.injector)
-    setupCustomElementWithInjector('property-editor', PropertyEditorComponent, this.injector)
-    setupCustomElementWithInjector('uml-editor-toolbox', UmlEditorToolboxComponent, this.injector)
-    setupCustomElementWithInjector('uml-editor', UmlEditorComponent, this.injector)
-  }
-}
+export class AppComponent extends ElementsComponent {}
