@@ -47,20 +47,8 @@ export class TextBlock extends dia.Element {
 
   changeTextSize(fontSize: number) {
     const markup = this.markup
-    //this.headerComponent?.useCSSSelectors()
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-
-    // Accessing the input element within the object structure
-
-    const newStyle = parsedMarkup[0].children[0].children[0].attributes.style.replace(
-      /font-size: \dpx/,
-      'font-size: 16px;'
-    )
-
-    parsedMarkup[0].children[0].children[0].attributes.style = newStyle
-    console.log(parsedMarkup[0].children[0])
-    //this.set('markup', parsedMarkup)
-    this.markup = parsedMarkup
-    console.log(this.markup)
+    parsedMarkup[0].children[0].children[0].style['font-size'] = '20px'
+    this.prop('markup', parsedMarkup)
   }
 }

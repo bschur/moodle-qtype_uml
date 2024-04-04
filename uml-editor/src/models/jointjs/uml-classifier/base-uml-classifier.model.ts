@@ -6,7 +6,7 @@ export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'func
 
 export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   protected functionComponents: TextBlock[] = []
-  protected headerComponent: TextBlock | null = null
+  headerComponent: TextBlock | null = null
 
   protected abstract initialWidth: number
 

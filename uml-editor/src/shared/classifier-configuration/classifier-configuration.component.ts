@@ -76,7 +76,6 @@ export class ClassifierConfigurationComponent {
   }
 
   private changeAbsract(value: boolean) {
-    console.log(value)
     this.model.setAbstract()
   }
 }
