@@ -21,13 +21,6 @@
  * @copyright  2023 Luca Bösch <luca.boesch@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-/**
- * Test helper class for the uml question type.
- *
- * @copyright  2023 Luca Bösch <luca.boesch@bfh.ch>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class qtype_uml_test_helper extends question_test_helper {
 
     /**
@@ -50,11 +43,9 @@ class qtype_uml_test_helper extends question_test_helper {
         $q = new qtype_uml_question();
         test_question_maker::initialise_a_question($q);
         $q->qtype = question_bank::get_qtype('uml');
-        $q->contextid = context_system::instance()->id;
-        $q->penalty = 0.2; // The default.
-        test_question_maker::set_standard_combined_feedback_fields($q);
-        $q->graderinfo = '';
-        $q->graderinfoformat = FORMAT_HTML;
+        $q->name = 'UML Question';
+        $q->questiontext = 'Draw an UML diagram';
+        $q->generalfeedback = 'You should do this and that';
         return $q;
     }
 
@@ -67,5 +58,43 @@ class qtype_uml_test_helper extends question_test_helper {
     public static function make_uml_question_basic() {
         $q = self::make_a_uml_question();
         return $q;
+    }
+
+    /**
+     * Get the form data that corresponds to an uml question.
+     *
+     * @return stdClass simulated question form data.
+     */
+    public function get_uml_question_form_data_basic() {
+        $form = new stdClass();
+        $form->name = 'UML Question';
+        $form->questiontext = ['text' => 'Draw an UML diagram', 'format' => FORMAT_HTML];
+        $form->defaultmark = 1;
+        $form->generalfeedback = [
+            'text' => 'You should do this and that',
+            'format' => FORMAT_HTML,
+        ];
+
+        $form->qtype = 'uml';
+        return $form;
+    }
+
+    /**
+     * Get the raw data that corresponds to an uml question.
+     *
+     * @return stdClass simulated question form data.
+     */
+    public function get_uml_question_data_basic() {
+        $questiondata = new stdClass();
+        test_question_maker::initialise_question_data($questiondata);
+        $questiondata->qtype = 'uml';
+        $questiondata->name = 'UML Question';
+        $questiondata->questiontext = 'Draw an UML diagram';
+        $questiondata->generalfeedback = 'You should do this and that';
+
+        $questiondata->options = new stdClass();
+        test_question_maker::set_standard_combined_feedback_fields($questiondata->options);
+        $questiondata->options->showgrading = true;
+        return $questiondata;
     }
 }
