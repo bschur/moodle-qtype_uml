@@ -23,35 +23,49 @@ export function cleanupObject<T>(obj: T, ignoredProperties: string[] = []): T {
   return cleanedObject
 }
 
-export function extractPropertiesByName(object: unknown, nameToMatch: string): [string, string | number][] {
+export function extractPropertiesByName(
+  object: unknown,
+  nameToMatch: string,
+  parentPath: string = ''
+): [string, string, string | number][] {
   if (typeof object !== 'object' || !object) {
     return []
   }
 
-  const returnObject: [string, string | number][] = []
+  const returnObject: [string, string, string | number][] = []
+  const forceOnlyParentPath = Array.isArray(object)
   for (const [key, value] of Object.entries(object)) {
     if (key === nameToMatch && typeof value !== 'object') {
-      returnObject.push([key, value])
+      returnObject.push([key, parentPath, value])
     } else {
-      returnObject.push(...extractPropertiesByName(value, nameToMatch))
+      returnObject.push(
+        ...extractPropertiesByName(
+          value,
+          nameToMatch,
+          forceOnlyParentPath ? parentPath : `${parentPath}${parentPath ? '.' : ''}${key}`
+        )
+      )
     }
   }
 
   return returnObject
 }
 
-export function extractPropertyOccurrences(object: unknown, nameToMatch: string): [string | number, number][] {
+export function extractPropertyWithPathOccurrences(
+  object: unknown,
+  nameToMatch: string
+): [string | number, string, number][] {
   return extractPropertiesByName(object, nameToMatch)
-    .reduce<Array<[string | number, number]>>((acc, [, value]) => {
-      const result = acc.find(([id]) => id === value)
+    .reduce<Array<[string | number, string, number]>>((acc, [, key, value]) => {
+      const result = acc.find(([id, path]) => id === value && path === key)
       if (result) {
-        result[1]++
+        result[2]++
       } else {
-        acc.push([value, 1])
+        acc.push([value, key, 1])
       }
       return acc
     }, [])
-    .sort((a, b) => b[1] - a[1])
+    .sort((a, b) => b[2] - a[2])
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

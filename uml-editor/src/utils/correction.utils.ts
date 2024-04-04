@@ -1,7 +1,7 @@
 import { diff } from 'just-diff'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
-import { cleanupObject, extractPropertyOccurrences } from './object.utils'
+import { cleanupObject, extractPropertyWithPathOccurrences } from './object.utils'
 
 const ignoredProperties: string[] = [
   'size',
@@ -32,11 +32,49 @@ function normalizeDiagrams(
   cleanedAnswer: JointJSDiagram,
   cleanedSolution: JointJSDiagram
 ): { normalizedAnswer: JointJSDiagram; normalizedSolution: JointJSDiagram } {
-  const answerIdsGrouped = extractPropertyOccurrences(cleanedAnswer, 'id')
-  const solutionIdsGrouped = extractPropertyOccurrences(cleanedSolution, 'id')
+  const answerIdsGrouped = extractPropertyWithPathOccurrences(cleanedAnswer, 'id').map(
+    ([id, path, count], ix) =>
+      ({
+        ix,
+        id,
+        path,
+        count,
+      }) as const
+  )
+  const solutionIdsGrouped = extractPropertyWithPathOccurrences(cleanedSolution, 'id').map(
+    ([id, path, count], ix) =>
+      ({
+        ix,
+        id,
+        path,
+        count,
+      }) as const
+  )
 
-  // sort by id
-  console.warn('disGrouped', answerIdsGrouped, solutionIdsGrouped)
+  // FIXME remove test
+  answerIdsGrouped.push({ ix: 0, id: 'test', path: 'test.1', count: 1 })
+  solutionIdsGrouped.push({ ix: 0, id: 'test', path: 'test.2', count: 1 })
+
+  // check for 100% match
+  const allIds = [...answerIdsGrouped, ...solutionIdsGrouped]
+  const nonOverlappingIds = allIds.filter(entry => {
+    const existingInAnswer = answerIdsGrouped.some(a => a.path === entry.path && a.count === entry.count)
+    const existingInSolution = solutionIdsGrouped.some(s => s.path === entry.path && s.count === entry.count)
+    return !(existingInAnswer && existingInSolution)
+  })
+
+  const lookupMap = new Map<string, string>(
+    allIds
+      // ignore non-overlapping ids
+      .filter(entry => !nonOverlappingIds.includes(entry))
+      .map((entry, ix, self) => {
+        const existingIndex = self.findIndex(l => l.path === entry.path && l.count === entry.count)
+        return existingIndex !== ix ? [entry.id, self[existingIndex].id] : null
+      })
+      .filter((entry): entry is [string, string] => !!entry)
+  )
+
+  console.debug('nonExisting', nonOverlappingIds, 'lookupIds', lookupMap)
 
   return { normalizedAnswer: cleanedAnswer, normalizedSolution: cleanedSolution }
 }
@@ -48,6 +86,9 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
 
   // normalize diagrams (e.g. order of elements in arrays, ids, etc.)
   const { normalizedAnswer, normalizedSolution } = normalizeDiagrams(cleanedAnswer, cleanedSolution)
+
+  console.debug(JSON.stringify(normalizedAnswer))
+  console.debug(JSON.stringify(normalizedSolution))
 
   // calculate differences between normalized diagrams
   const differences = diff(normalizedAnswer, normalizedSolution)
