@@ -9,11 +9,11 @@ import { dia } from '@joint/core'
 type LinkTargets = 'source' | 'target'
 type LinkMarker = 'sourceMarker' | 'targetMarker'
 
-export type JointJSLinkArrowType = 'normal' | 'outlined' | 'none'
-export type JointJSLinkLineType = 'normal' | 'dotted'
+export const jointJSArrows = ['none', 'normal', 'aggregation', 'composition', 'outlined'] as const
+export const jointJSLinks = ['normal', 'dotted'] as const
 
-export const jointJSArrows: JointJSLinkArrowType[] = ['none', 'normal', 'outlined'] as const
-export const jointJSLinks: JointJSLinkLineType[] = ['normal', 'dotted'] as const
+export type JointJSLinkArrowType = (typeof jointJSArrows)[number]
+export type JointJSLinkLineType = (typeof jointJSLinks)[number]
 
 export function swapDirection(link: dia.Link) {
   const source = link.prop('source' satisfies LinkTargets)
@@ -65,9 +65,20 @@ const arrows: Record<JointJSLinkArrowType, { arrowType: JointJSLinkArrowType } &
   outlined: {
     arrowType: 'outlined',
     type: 'path',
-    'stroke-width': 2,
-    fill: 'none',
-    d: 'M 20 -10 0 0 20 10 Z',
+    fill: 'white',
+    d: 'M14-9 0 0 14 9Z',
+  },
+  aggregation: {
+    arrowType: 'aggregation',
+    type: 'path',
+    fill: 'white',
+    d: 'M0 0 10 6 20 0 10-6Z',
+  },
+  composition: {
+    arrowType: 'composition',
+    type: 'path',
+    fill: 'black',
+    d: 'M0 0 10 6 20 0 10-6Z',
   },
   none: {},
 }
