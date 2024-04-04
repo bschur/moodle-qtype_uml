@@ -7,10 +7,6 @@ import SVGAttributes = attributes.SVGAttributes
  * For configurations possible with jointjs links ee: https://resources.jointjs.com/tutorial/links
  */
 
-type LinkTargets = 'source' | 'target'
-type LinkMarker = 'sourceMarker' | 'targetMarker'
-type LinkLabelType = 'name' | 'multiplicitySource' | 'multiplicityTarget'
-
 type Label = dia.Link.Label & {
   attrs: dia.Cell.Selectors & {
     text: {
@@ -19,19 +15,34 @@ type Label = dia.Link.Label & {
     }
   }
 }
+type LinkTargets = 'source' | 'target'
+type LinkMarker = 'sourceMarker' | 'targetMarker'
+type LinkLabelType = 'name' | 'multiplicitySource' | 'multiplicityTarget'
 
+export const suggestedLinkMultiplicities = ['1', 'n', '0..0', '0..1', '1..1', '0..*', '1..*', 'm..n'] as const
 export const jointJSArrows = ['none', 'normal', 'aggregation', 'composition', 'outlined'] as const
 export const jointJSLinks = ['normal', 'dotted'] as const
-export const suggestedLinkMultiplicities = ['1', 'n', '0..0', '0..1', '1..1', '0..*', '1..*', 'm..n'] as const
 
+export type JointJSLinkMultiplicity = (typeof suggestedLinkMultiplicities)[number] | string
 export type JointJSLinkArrowType = (typeof jointJSArrows)[number]
 export type JointJSLinkLineType = (typeof jointJSLinks)[number]
-export type JointJSLinkMultiplicity = (typeof suggestedLinkMultiplicities)[number] | string
 
 export function swapDirection(link: dia.Link) {
   const source = link.prop('source' satisfies LinkTargets)
   link.prop('source' satisfies LinkTargets, link.prop('target' satisfies LinkTargets))
   link.prop('target' satisfies LinkTargets, source)
+}
+
+// region Label config
+
+const labels: Record<LinkLabelType, dia.ModelSetOptions> = {
+  name: {},
+  multiplicityTarget: {
+    position: { distance: 0.9 },
+  },
+  multiplicitySource: {
+    position: { distance: 0.1 },
+  },
 }
 
 function getTargetLabel(link: dia.Link, type: LinkLabelType): Label | null {
@@ -61,6 +72,7 @@ export function changeLinkLabelText(link: dia.Link, text: string | null, type: L
     link.removeLabel(index)
   }
 
+  const config = labels[type]
   if (text) {
     link.appendLabel({
       attrs: {
@@ -69,9 +81,12 @@ export function changeLinkLabelText(link: dia.Link, text: string | null, type: L
           text,
         },
       },
+      ...config,
     } satisfies Label)
   }
 }
+
+// endregion
 
 // region lines config
 
