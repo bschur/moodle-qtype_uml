@@ -9,10 +9,10 @@ import { dia } from '@joint/core'
 type LinkTargets = 'source' | 'target'
 type LinkMarker = 'sourceMarker' | 'targetMarker'
 
-export type JointJSLinkArrowType = 'normal' | 'outlined'
+export type JointJSLinkArrowType = 'normal' | 'outlined' | 'none'
 export type JointJSLinkLineType = 'normal' | 'dotted'
 
-export const jointJSArrows: JointJSLinkArrowType[] = ['normal', 'outlined'] as const
+export const jointJSArrows: JointJSLinkArrowType[] = ['none', 'normal', 'outlined'] as const
 export const jointJSLinks: JointJSLinkLineType[] = ['normal', 'dotted'] as const
 
 export function swapDirection(link: dia.Link) {
@@ -69,20 +69,38 @@ const arrows: Record<JointJSLinkArrowType, { arrowType: JointJSLinkArrowType } &
     fill: 'none',
     d: 'M 20 -10 0 0 20 10 Z',
   },
+  none: {},
 }
 
 export function readLinkArrowType(link: dia.Link, target: LinkTargets): JointJSLinkArrowType {
   const markerTarget: LinkMarker = target === 'target' ? 'targetMarker' : 'sourceMarker'
-  const markerType = link.attr(`line/${markerTarget}/arrowType`)
+
+  // check if there is even a marker present
+  const marker = link.attr(`line/${markerTarget}`)
+  if (!marker) {
+    return 'none'
+  }
+
+  // if a marker is present, check the type
+  // for freshly initialized links, the type is not set yet so we need to return 'normal' as default
+  const markerType: JointJSLinkArrowType | undefined = marker.arrowType
   if (!markerType) {
     return 'normal'
   }
 
-  return markerType as JointJSLinkArrowType
+  return markerType
 }
 
 export function changeLinkArrowType(link: dia.Link, type: JointJSLinkArrowType, target: LinkTargets) {
   const markerTarget: LinkMarker = target === 'target' ? 'targetMarker' : 'sourceMarker'
+
+  // special case none, we need to remove the marker
+  if (type === 'none') {
+    link.removeAttr(`line/${markerTarget}`)
+    return
+  }
+
+  // otherwise set the config to the target marker
   const config = arrows[type]
   link.attr(`line/${markerTarget}`, config)
 }

@@ -34,8 +34,8 @@ export class LinkConfigurationComponent implements OnInit {
   readonly swapDirection = () => swapDirection(this.model)
 
   readonly form = new FormGroup({
-    arrowTarget: new FormControl<JointJSLinkArrowType>('normal', { nonNullable: true }),
-    arrowSource: new FormControl<JointJSLinkArrowType>('normal', { nonNullable: true }),
+    arrowTarget: new FormControl<JointJSLinkArrowType>('none', { nonNullable: true }),
+    arrowSource: new FormControl<JointJSLinkArrowType>('none', { nonNullable: true }),
     line: new FormControl<JointJSLinkLineType>('normal', { nonNullable: true }),
   })
 
