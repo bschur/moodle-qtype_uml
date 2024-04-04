@@ -57,9 +57,6 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
           return
         }
 
-        console.log('cleaned correction', JSON.stringify(correction.answer))
-        console.log('cleaned solution', JSON.stringify(correction.solution))
-
         const emittedCorrection = {
           inputId: this.inputId,
           // TODO human readable comment

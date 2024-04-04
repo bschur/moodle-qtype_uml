@@ -2,23 +2,19 @@ import { diff } from 'just-diff'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
 
-const ignoredProperties = [
-  'id',
-  'position',
+const ignoredProperties: string[] = [
   'size',
+  'position',
   'angle',
-  'args',
   'z',
-  'dx',
-  'dy',
-  'rotated',
+  'anchor',
   'd',
   'fill',
-  'anchor',
-  'vertices',
   'strokeDasharray',
   'strokeDashoffset',
 ]
+
+const ignoredPropertiesForPoints: (string | number)[] = [...ignoredProperties]
 
 type PropertyValueType =
   | string
@@ -91,9 +87,9 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
   const cleanedAnswer = cleanupDiagram(answer)
   const cleanedSolution = cleanupDiagram(solution)
 
-  const differences = diff(cleanedAnswer, cleanedSolution)
-
-  // TODO do some additional stuff cleanup differences
+  const differences = diff(cleanedAnswer, cleanedSolution).filter(
+    diff => !ignoredPropertiesForPoints.includes(diff.path[diff.path.length - 1])
+  )
 
   return {
     differences,
