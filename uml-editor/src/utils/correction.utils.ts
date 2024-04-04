@@ -1,7 +1,7 @@
 import { diff } from 'just-diff'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
-import { cleanupProperty } from './object.utils'
+import { cleanupObject, extractPropertyOccurrences } from './object.utils'
 
 const ignoredProperties: string[] = [
   'size',
@@ -14,13 +14,6 @@ const ignoredProperties: string[] = [
   'strokeDasharray',
   'strokeDashoffset',
 ]
-
-function cleanupDiagram(diagram: JointJSDiagram): JointJSDiagram {
-  // remove metadata on diagram level by just returning the cells
-  return Object.fromEntries(
-    Object.entries(diagram).map(entry => cleanupProperty(entry, ignoredProperties))
-  ) as unknown as JointJSDiagram
-}
 
 function calculatePoints(referenceDiagram: JointJSDiagram, differences: JustDiff[], maxPoints: number): number {
   const correctProperties = referenceDiagram.cells.length - differences.length
@@ -39,15 +32,19 @@ function normalizeDiagrams(
   cleanedAnswer: JointJSDiagram,
   cleanedSolution: JointJSDiagram
 ): { normalizedAnswer: JointJSDiagram; normalizedSolution: JointJSDiagram } {
+  const answerIdsGrouped = extractPropertyOccurrences(cleanedAnswer, 'id')
+  const solutionIdsGrouped = extractPropertyOccurrences(cleanedSolution, 'id')
+
+  // sort by id
+  console.warn('disGrouped', answerIdsGrouped, solutionIdsGrouped)
+
   return { normalizedAnswer: cleanedAnswer, normalizedSolution: cleanedSolution }
 }
 
 export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
   // cleanup unnecessary properties (metadata like position, size, etc.)
-  const cleanedAnswer = cleanupDiagram(answer)
-  const cleanedSolution = cleanupDiagram(solution)
-
-  console.log(JSON.stringify(cleanedAnswer))
+  const cleanedAnswer = cleanupObject(answer, ignoredProperties)
+  const cleanedSolution = cleanupObject(solution, ignoredProperties)
 
   // normalize diagrams (e.g. order of elements in arrays, ids, etc.)
   const { normalizedAnswer, normalizedSolution } = normalizeDiagrams(cleanedAnswer, cleanedSolution)

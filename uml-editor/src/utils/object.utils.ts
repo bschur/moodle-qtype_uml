@@ -1,51 +1,57 @@
-export type PropertyValueType =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | PropertyValueType[]
-  | { [key: string]: PropertyValueType }
+export function cleanupObject<T>(obj: T, ignoredProperties: string[] = []): T {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cleanedObject: any = {}
 
-export const cleanupProperty = (
-  [key, value]: [string, PropertyValueType],
-  ignoredProperties: string[] = []
-): [string, PropertyValueType] | [] => {
-  if (value === null || value === undefined || ignoredProperties.includes(key)) {
-    return []
-  }
-
-  // if the value is not an object, we can return the key value pair
-  if (typeof value !== 'object') {
-    return [key, value]
-  }
-
-  // handle arrays
-  if (Array.isArray(value)) {
-    if (value.length === 0) {
-      return []
+  for (const [key, value] of Object.entries(obj || {})) {
+    if (value !== null && value !== undefined && !ignoredProperties.includes(key)) {
+      if (typeof value !== 'object') {
+        cleanedObject[key] = value
+      } else if (Array.isArray(value)) {
+        const cleanedArray = value.map((val, index) => cleanupObject({ [index]: val }, ignoredProperties)[index])
+        if (cleanedArray.length > 0) {
+          cleanedObject[key] = cleanedArray
+        }
+      } else {
+        const cleanedInnerObject = cleanupObject(value, ignoredProperties)
+        if (Object.keys(cleanedInnerObject || {}).length > 0) {
+          cleanedObject[key] = cleanedInnerObject
+        }
+      }
     }
+  }
 
-    const cleaned = value.map((value, ix) => cleanupProperty([ix.toString(), value], ignoredProperties)[1] || null)
-    if (cleaned.length > 0) {
-      return [key, cleaned]
+  return cleanedObject
+}
+
+export function extractPropertiesByName(object: unknown, nameToMatch: string): [string, string | number][] {
+  if (typeof object !== 'object' || !object) {
+    return []
+  }
+
+  const returnObject: [string, string | number][] = []
+  for (const [key, value] of Object.entries(object)) {
+    if (key === nameToMatch && typeof value !== 'object') {
+      returnObject.push([key, value])
+    } else {
+      returnObject.push(...extractPropertiesByName(value, nameToMatch))
     }
-
-    return []
   }
 
-  // otherwise we have an object
-  if (Object.keys(value).length === 0) {
-    // if the object is empty, we can remove it
-    return []
-  }
+  return returnObject
+}
 
-  const cleaned = Object.fromEntries(Object.entries(value).map(entry => cleanupProperty(entry, ignoredProperties)))
-  if (Object.keys(cleaned).length > 0) {
-    return [key, cleaned]
-  }
-
-  return []
+export function extractPropertyOccurrences(object: unknown, nameToMatch: string): [string | number, number][] {
+  return extractPropertiesByName(object, nameToMatch)
+    .reduce<Array<[string | number, number]>>((acc, [, value]) => {
+      const result = acc.find(([id]) => id === value)
+      if (result) {
+        result[1]++
+      } else {
+        acc.push([value, 1])
+      }
+      return acc
+    }, [])
+    .sort((a, b) => b[1] - a[1])
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
