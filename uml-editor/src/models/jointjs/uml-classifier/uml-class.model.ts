@@ -16,7 +16,7 @@ export class UmlClass extends BaseUmlClassifierModel {
 
   override convertToInterface(): UmlInterface {
     const it = new UmlInterface()
-    it.position(this.position().x, this.position().y)
+    it.initialize(this.attributes, undefined, this.position(), this.size(), this.functionComponents)
     return it
   }
   override convertToEnum(): UmlEnum {

@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
 import { MatOption } from '@angular/material/autocomplete'
 import { MatButton } from '@angular/material/button'
+import { MatCheckbox } from '@angular/material/checkbox'
 import { MatFormField, MatLabel } from '@angular/material/form-field'
 import { MatIcon } from '@angular/material/icon'
 import { MatSelect } from '@angular/material/select'
@@ -24,6 +25,7 @@ type ClassifierType = 'Class' | 'Enum' | 'Interface'
     MatOption,
     MatSelect,
     ReactiveFormsModule,
+    MatCheckbox,
   ],
   templateUrl: './classifier-configuration.component.html',
   styleUrl: './classifier-configuration.component.scss',
@@ -38,12 +40,15 @@ export class ClassifierConfigurationComponent {
 
   readonly form = new FormGroup({
     classifier: new FormControl<ClassifierType>('Class', { nonNullable: true }),
+    abstract: new FormControl<boolean>(false, { nonNullable: true }),
   })
 
   constructor() {
     this.form.controls.classifier.valueChanges
       .pipe(takeUntilDestroyed())
       .subscribe(value => this.changeClassifierType(value))
+
+    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => this.changeAbsract(value))
   }
 
   changeClassifierType(type: ClassifierType) {
@@ -68,5 +73,10 @@ export class ClassifierConfigurationComponent {
     this.elementView.model = newModel
     this.elementView.update()
     this.model = newModel
+  }
+
+  private changeAbsract(value: boolean) {
+    console.log(value)
+    this.model.setAbstract()
   }
 }

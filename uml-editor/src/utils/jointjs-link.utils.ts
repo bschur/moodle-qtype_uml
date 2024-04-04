@@ -12,8 +12,8 @@ type LinkMarker = 'sourceMarker' | 'targetMarker'
 export type JointJSLinkArrowType = 'normal' | 'outlined'
 export type JointJSLinkLineType = 'normal' | 'dotted'
 
-export const jointJSArrows: JointJSLinkArrowType[] = ['normal', 'outlined'] as const
-export const jointJSLinks: JointJSLinkLineType[] = ['normal', 'dotted'] as const
+export const jointJSArrows: JointJSLinkArrowType[] = ['normal', 'outlined']
+export const jointJSLinks: JointJSLinkLineType[] = ['normal', 'dotted']
 
 export function swapDirection(link: dia.Link) {
   const source = link.prop('source' satisfies LinkTargets)

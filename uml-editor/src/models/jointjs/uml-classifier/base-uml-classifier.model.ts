@@ -1,5 +1,6 @@
-import { dia, shapes } from '@joint/core'
+import { dia, mvc, shapes } from '@joint/core'
 import { TextBlock } from '../text-block.model'
+import Size = dia.Size
 
 export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
 
@@ -88,4 +89,21 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   public abstract convertToEnum(): BaseUmlClassifierModel
 
   public abstract convertToClass(): BaseUmlClassifierModel
+
+  public override initialize(
+    attributes?: shapes.standard.RectangleAttributes,
+    options?: mvc.CombinedModelConstructorOptions<never, this>,
+    position?: { x: number; y: number },
+    size?: Size,
+    functionComponents?: TextBlock[]
+  ) {
+    super.initialize(attributes, options)
+    if (position != undefined) this.position(position.x, position.y)
+    if (size != undefined) this.resize(size.width, size.height)
+    if (functionComponents != undefined) this.functionComponents = functionComponents
+  }
+
+  setAbstract() {
+    this.headerComponent?.changeTextSize(5)
+  }
 }
