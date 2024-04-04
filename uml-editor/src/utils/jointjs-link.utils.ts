@@ -1,4 +1,5 @@
-import { dia } from '@joint/core'
+import { attributes, dia } from '@joint/core'
+import SVGAttributes = attributes.SVGAttributes
 
 /**
  * Utils for configuring link properties.
@@ -8,6 +9,16 @@ import { dia } from '@joint/core'
 
 type LinkTargets = 'source' | 'target'
 type LinkMarker = 'sourceMarker' | 'targetMarker'
+type LinkLabelType = 'name' | 'multiplicityEnd' | 'multiplicityStart'
+
+type Label = dia.Link.Label & {
+  attrs: dia.Cell.Selectors & {
+    text: {
+      id: LinkLabelType
+      text: string
+    }
+  }
+}
 
 export const jointJSArrows = ['none', 'normal', 'aggregation', 'composition', 'outlined'] as const
 export const jointJSLinks = ['normal', 'dotted'] as const
@@ -19,6 +30,45 @@ export function swapDirection(link: dia.Link) {
   const source = link.prop('source' satisfies LinkTargets)
   link.prop('source' satisfies LinkTargets, link.prop('target' satisfies LinkTargets))
   link.prop('target' satisfies LinkTargets, source)
+}
+
+function getTargetLabel(link: dia.Link, type: LinkLabelType): Label | null {
+  return (
+    link
+      .labels()
+      .filter((label): label is Label => !!label)
+      .find(label => label.attrs.text.id === type) || null
+  )
+}
+
+export function readLinkLabelText(link: dia.Link, type: LinkLabelType): string | null {
+  const label = getTargetLabel(link, type)
+  if (!label) {
+    return null
+  }
+
+  return label.attrs.text.text
+}
+
+export function changeLinkLabelText(link: dia.Link, text: string | null, type: LinkLabelType) {
+  const label = getTargetLabel(link, type)
+
+  // always remove the existing label
+  if (label) {
+    const index = link.labels().indexOf(label)
+    link.removeLabel(index)
+  }
+
+  if (text) {
+    link.appendLabel({
+      attrs: {
+        text: {
+          id: type,
+          text,
+        },
+      },
+    } satisfies Label)
+  }
 }
 
 // region lines config
@@ -54,8 +104,7 @@ export function changeLinkLineType(link: dia.Link, type: JointJSLinkLineType) {
 
 // region arrows config
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const arrows: Record<JointJSLinkArrowType, { arrowType: JointJSLinkArrowType } & any> = {
+const arrows: Record<JointJSLinkArrowType, ({ arrowType: JointJSLinkArrowType } & SVGAttributes) | null> = {
   normal: {
     arrowType: 'normal',
     type: 'path',
@@ -80,7 +129,7 @@ const arrows: Record<JointJSLinkArrowType, { arrowType: JointJSLinkArrowType } &
     fill: 'black',
     d: 'M0 0 10 6 20 0 10-6Z',
   },
-  none: {},
+  none: null,
 }
 
 export function readLinkArrowType(link: dia.Link, target: LinkTargets): JointJSLinkArrowType {
