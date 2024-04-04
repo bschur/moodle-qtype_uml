@@ -1,6 +1,7 @@
 import { diff } from 'just-diff'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
+import { cleanupProperty } from './object.utils'
 
 const ignoredProperties: string[] = [
   'size',
@@ -14,59 +15,10 @@ const ignoredProperties: string[] = [
   'strokeDashoffset',
 ]
 
-const ignoredPropertiesForPoints: (string | number)[] = [...ignoredProperties]
-
-type PropertyValueType =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | PropertyValueType[]
-  | { [key: string]: PropertyValueType }
-
-const cleanupProperty = ([key, value]: [string, PropertyValueType]): [string, PropertyValueType] | null => {
-  if (value === null || value === undefined || ignoredProperties.includes(key)) {
-    return null
-  }
-
-  // if the value is not an object, we can return the key value pair
-  if (typeof value !== 'object') {
-    return [key, value]
-  }
-
-  // handle arrays
-  if (Array.isArray(value)) {
-    if (value.length === 0) {
-      return null
-    }
-
-    return [key, value.map((value, ix) => cleanupProperty([ix.toString(), value])?.[1] || null).filter(val => !!val)]
-  }
-
-  // otherwise we have an object
-  if (Object.keys(value).length === 0) {
-    // if the object is empty, we can remove it
-    return null
-  }
-
-  const cleaned = Object.fromEntries(
-    Object.entries(value)
-      .map(cleanupProperty)
-      .filter((entry): entry is [string, PropertyValueType] => !!entry)
-  )
-  if (Object.keys(cleaned).length > 0) {
-    return [key, cleaned]
-  }
-  return null
-}
-
 function cleanupDiagram(diagram: JointJSDiagram): JointJSDiagram {
   // remove metadata on diagram level by just returning the cells
   return Object.fromEntries(
-    Object.entries(diagram)
-      .map(cleanupProperty)
-      .filter((entry): entry is [string, PropertyValueType] => !!entry)
+    Object.entries(diagram).map(entry => cleanupProperty(entry, ignoredProperties))
   ) as unknown as JointJSDiagram
 }
 
@@ -83,14 +35,29 @@ function calculatePoints(referenceDiagram: JointJSDiagram, differences: JustDiff
   return receivedPoints < 0 ? 0 : receivedPoints
 }
 
+function normalizeDiagrams(
+  cleanedAnswer: JointJSDiagram,
+  cleanedSolution: JointJSDiagram
+): { normalizedAnswer: JointJSDiagram; normalizedSolution: JointJSDiagram } {
+  return { normalizedAnswer: cleanedAnswer, normalizedSolution: cleanedSolution }
+}
+
 export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
+  // cleanup unnecessary properties (metadata like position, size, etc.)
   const cleanedAnswer = cleanupDiagram(answer)
   const cleanedSolution = cleanupDiagram(solution)
 
-  const differences = diff(cleanedAnswer, cleanedSolution).filter(
-    diff => !ignoredPropertiesForPoints.includes(diff.path[diff.path.length - 1])
-  )
+  console.log(JSON.stringify(cleanedAnswer))
 
+  // normalize diagrams (e.g. order of elements in arrays, ids, etc.)
+  const { normalizedAnswer, normalizedSolution } = normalizeDiagrams(cleanedAnswer, cleanedSolution)
+
+  // calculate differences between normalized diagrams
+  const differences = diff(normalizedAnswer, normalizedSolution)
+
+  // TODO: potentially LLM normalize by ignoring other languages
+
+  // calculate points based on differences
   return {
     differences,
     points: calculatePoints(cleanedSolution, differences, maxPoints),
