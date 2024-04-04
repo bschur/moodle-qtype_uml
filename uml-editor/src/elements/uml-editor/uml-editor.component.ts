@@ -1,6 +1,6 @@
-import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
@@ -23,7 +23,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
-import { JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
+import { EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { LinkConfigurationComponent } from '../../shared/link-configuration/link-configuration.component'
 import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
@@ -40,10 +40,10 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorComponent implements OnChanges, AfterViewInit {
-  readonly diagramControl = new FormControl<JointJSDiagram>({ cells: [] }, { nonNullable: true })
+  readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
   readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
 
-  @Input({ transform: coerceBooleanProperty }) allowEdit = false
+  @Input({ transform: booleanAttribute }) allowEdit = false
   @Input({ required: true }) inputId: string | null = null
   @Input({ required: true }) diagram: string | null = null
 

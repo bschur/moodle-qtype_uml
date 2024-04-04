@@ -39,7 +39,7 @@ function getTargetLabel(link: dia.Link, type: JointJSLinkLabelType): JointJSLink
     link
       .labels()
       .filter((label): label is JointJSLinkLabel => !!label)
-      .find(label => label.attrs.text.id === type) || null
+      .find(label => label.attrs.text.type === type) || null
   )
 }
 
@@ -66,7 +66,7 @@ export function changeLinkLabelText(link: dia.Link, text: string | null, type: J
     link.appendLabel({
       attrs: {
         text: {
-          id: type,
+          type,
           text,
         },
       },

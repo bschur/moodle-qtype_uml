@@ -13,8 +13,9 @@ import {
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { MatListModule } from '@angular/material/list'
 import { combineLatest, delay } from 'rxjs'
-import { EMPTY_DIAGRAM } from '../../models/jointjs/jointjs-diagram.model'
-import { evaluateCorrection, UmlCorrection } from '../../utils/correction.utils'
+import { UmlCorrection } from '../../models/correction.model'
+import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
+import { evaluateCorrection } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
@@ -39,7 +40,12 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
     maxPoints: number
   }>()
 
-  private readonly correction = signal<UmlCorrection>({ differences: [], points: 0 })
+  private readonly correction = signal<UmlCorrection>({
+    differences: [],
+    points: 0,
+    answer: EMPTY_DIAGRAM_OBJECT,
+    solution: EMPTY_DIAGRAM_OBJECT,
+  })
   private readonly readyState = signal<typeof document.readyState>('loading')
 
   constructor() {
@@ -50,6 +56,9 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
           console.warn(`Document is not ready yet. It's in state '${document.readyState}'`)
           return
         }
+
+        console.log('cleaned correction', JSON.stringify(correction.answer))
+        console.log('cleaned solution', JSON.stringify(correction.solution))
 
         const emittedCorrection = {
           inputId: this.inputId,

@@ -3,7 +3,7 @@ import { dia } from '@joint/core'
 export type JointJSLinkLabel = dia.Link.Label & {
   attrs: dia.Cell.Selectors & {
     text: {
-      id: JointJSLinkLabelType
+      type: JointJSLinkLabelType
       text: string
     }
   }

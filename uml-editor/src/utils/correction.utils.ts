@@ -1,26 +1,50 @@
-import { dia } from '@joint/core'
-import { diff, Operation } from 'just-diff'
+import { diff } from 'just-diff'
+import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
 
-function cleanupCell(cell: dia.Cell): dia.Cell {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cleanedCell: any = {
-    ...cell,
+const ignoredProperties = [
+  'id',
+  'position',
+  'size',
+  'angle',
+  'args',
+  'z',
+  'dx',
+  'dy',
+  'rotated',
+  'd',
+  'fill',
+  'anchor',
+  'strokeDasharray',
+  'strokeDashoffset',
+]
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const cleanupObjectProperties = (acc: any, [key, value]: [string, any]): any => {
+  if (value === null || value === undefined || ignoredProperties.includes(key)) {
+    return acc
   }
 
-  // remove metadata on cell level
-  delete cleanedCell.angle
-  delete cleanedCell.id
-  delete cleanedCell.position
-  delete cleanedCell.size
-  delete cleanedCell.z
+  if (typeof value === 'object') {
+    const cleaned = Object.entries(value).reduce(cleanupObjectProperties, {})
+    if (Object.keys(cleaned).length > 0) {
+      acc[key] = cleaned
+    }
+    return acc
+  }
 
-  return cleanedCell
+  if (Array.isArray(value)) {
+    acc[key] = Array.from(value).reduce(cleanupObjectProperties)
+    return acc
+  }
+
+  acc[key] = value
+  return acc
 }
 
 function cleanupDiagram(diagram: JointJSDiagram): JointJSDiagram {
   // remove metadata on diagram level by just returning the cells
-  return { cells: diagram.cells.map(cleanupCell) }
+  return Object.entries(diagram).reduce(cleanupObjectProperties, {})
 }
 
 function calculatePoints(referenceDiagram: JointJSDiagram, differences: JustDiff[], maxPoints: number): number {
@@ -36,14 +60,6 @@ function calculatePoints(referenceDiagram: JointJSDiagram, differences: JustDiff
   return receivedPoints < 0 ? 0 : receivedPoints
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type JustDiff = { readonly op: Operation; readonly path: readonly (string | number)[]; readonly value: any }
-
-export interface UmlCorrection {
-  readonly differences: JustDiff[]
-  readonly points: number
-}
-
 export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
   const cleanedAnswer = cleanupDiagram(answer)
   const cleanedSolution = cleanupDiagram(solution)
@@ -55,5 +71,7 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
   return {
     differences,
     points: calculatePoints(cleanedSolution, differences, maxPoints),
+    answer: cleanedAnswer,
+    solution: cleanedSolution,
   }
 }
