@@ -9,7 +9,7 @@ import SVGAttributes = attributes.SVGAttributes
 
 type LinkTargets = 'source' | 'target'
 type LinkMarker = 'sourceMarker' | 'targetMarker'
-type LinkLabelType = 'name' | 'multiplicityEnd' | 'multiplicityStart'
+type LinkLabelType = 'name' | 'multiplicitySource' | 'multiplicityTarget'
 
 type Label = dia.Link.Label & {
   attrs: dia.Cell.Selectors & {
@@ -22,9 +22,11 @@ type Label = dia.Link.Label & {
 
 export const jointJSArrows = ['none', 'normal', 'aggregation', 'composition', 'outlined'] as const
 export const jointJSLinks = ['normal', 'dotted'] as const
+export const suggestedLinkMultiplicities = ['1', 'n', '0..0', '0..1', '1..1', '0..*', '1..*', 'm..n'] as const
 
 export type JointJSLinkArrowType = (typeof jointJSArrows)[number]
 export type JointJSLinkLineType = (typeof jointJSLinks)[number]
+export type JointJSLinkMultiplicity = (typeof suggestedLinkMultiplicities)[number] | string
 
 export function swapDirection(link: dia.Link) {
   const source = link.prop('source' satisfies LinkTargets)

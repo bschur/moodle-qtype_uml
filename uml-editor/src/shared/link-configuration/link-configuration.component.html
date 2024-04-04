@@ -37,4 +37,24 @@
       }
     </mat-select>
   </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Multiplicity (End)</mat-label>
+    <input type="text" matInput [formControl]="form.controls.multiplicityTarget" [matAutocomplete]="multiplicityTarget">
+    <mat-autocomplete autoActiveFirstOption #multiplicityTarget="matAutocomplete">
+      @for (option of suggestedTargetLinkMultiplicities(); track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Multiplicity (Start)</mat-label>
+    <input type="text" matInput [formControl]="form.controls.multiplicitySource" [matAutocomplete]="multiplicitySource">
+    <mat-autocomplete autoActiveFirstOption #multiplicitySource="matAutocomplete">
+      @for (option of suggestedSourceLinkMultiplicities(); track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
 </section>
