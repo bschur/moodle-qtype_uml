@@ -9,18 +9,20 @@ import { MatInput } from '@angular/material/input'
 import { MatOption, MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
 import {
-  changeLinkArrowType,
-  changeLinkLabelText,
-  changeLinkLineType,
   jointJSArrows,
   JointJSLinkArrowType,
   JointJSLinkLineType,
   JointJSLinkMultiplicity,
   jointJSLinks,
+  jointJSSuggestedLinkMultiplicities,
+} from '../../models/jointjs/jointjs-link.model'
+import {
+  changeLinkArrowType,
+  changeLinkLabelText,
+  changeLinkLineType,
   readLinkArrowType,
   readLinkLabelText,
   readLinkLineType,
-  suggestedLinkMultiplicities,
   swapDirection,
 } from '../../utils/jointjs-link.utils'
 
@@ -59,12 +61,12 @@ export class LinkConfigurationComponent implements OnInit {
 
   readonly suggestedTargetLinkMultiplicities = computed(() => {
     const value = this.multiplicityTargetValue()
-    return suggestedLinkMultiplicities.filter(multiplicity => multiplicity.includes(value))
+    return jointJSSuggestedLinkMultiplicities.filter(multiplicity => multiplicity.includes(value))
   })
 
   readonly suggestedSourceLinkMultiplicities = computed(() => {
     const value = this.multiplicitySourceValue()
-    return suggestedLinkMultiplicities.filter(multiplicity => multiplicity.includes(value))
+    return jointJSSuggestedLinkMultiplicities.filter(multiplicity => multiplicity.includes(value))
   })
 
   private readonly multiplicityTargetValue = toSignal(this.form.controls.multiplicityTarget.valueChanges, {

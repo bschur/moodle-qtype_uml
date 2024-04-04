@@ -1,5 +1,12 @@
 import { attributes, dia } from '@joint/core'
-import SVGAttributes = attributes.SVGAttributes
+import {
+  JointJSLinkArrowType,
+  JointJSLinkLabel,
+  JointJSLinkLabelType,
+  JointJSLinkLineType,
+  JointJSLinkMarker,
+  JointJSLinkTargets,
+} from '../models/jointjs/jointjs-link.model'
 
 /**
  * Utils for configuring link properties.
@@ -7,36 +14,18 @@ import SVGAttributes = attributes.SVGAttributes
  * For configurations possible with jointjs links ee: https://resources.jointjs.com/tutorial/links
  */
 
-type Label = dia.Link.Label & {
-  attrs: dia.Cell.Selectors & {
-    text: {
-      id: LinkLabelType
-      text: string
-    }
-  }
-}
-type LinkTargets = 'source' | 'target'
-type LinkMarker = 'sourceMarker' | 'targetMarker'
-type LinkLabelType = 'name' | 'multiplicitySource' | 'multiplicityTarget'
-
-export const suggestedLinkMultiplicities = ['1', 'n', '0..0', '0..1', '1..1', '0..*', '1..*', 'm..n'] as const
-export const jointJSArrows = ['none', 'normal', 'aggregation', 'composition', 'outlined'] as const
-export const jointJSLinks = ['normal', 'dotted'] as const
-
-export type JointJSLinkMultiplicity = (typeof suggestedLinkMultiplicities)[number] | string
-export type JointJSLinkArrowType = (typeof jointJSArrows)[number]
-export type JointJSLinkLineType = (typeof jointJSLinks)[number]
-
 export function swapDirection(link: dia.Link) {
-  const source = link.prop('source' satisfies LinkTargets)
-  link.prop('source' satisfies LinkTargets, link.prop('target' satisfies LinkTargets))
-  link.prop('target' satisfies LinkTargets, source)
+  const source = link.prop('source' satisfies JointJSLinkTargets)
+  link.prop('source' satisfies JointJSLinkTargets, link.prop('target' satisfies JointJSLinkTargets))
+  link.prop('target' satisfies JointJSLinkTargets, source)
 }
 
 // region Label config
 
-const labels: Record<LinkLabelType, dia.ModelSetOptions> = {
-  name: {},
+const labels: Record<JointJSLinkLabelType, dia.ModelSetOptions> = {
+  name: {
+    position: { distance: 0.5 },
+  },
   multiplicityTarget: {
     position: { distance: 0.9 },
   },
@@ -45,16 +34,16 @@ const labels: Record<LinkLabelType, dia.ModelSetOptions> = {
   },
 }
 
-function getTargetLabel(link: dia.Link, type: LinkLabelType): Label | null {
+function getTargetLabel(link: dia.Link, type: JointJSLinkLabelType): JointJSLinkLabel | null {
   return (
     link
       .labels()
-      .filter((label): label is Label => !!label)
+      .filter((label): label is JointJSLinkLabel => !!label)
       .find(label => label.attrs.text.id === type) || null
   )
 }
 
-export function readLinkLabelText(link: dia.Link, type: LinkLabelType): string | null {
+export function readLinkLabelText(link: dia.Link, type: JointJSLinkLabelType): string | null {
   const label = getTargetLabel(link, type)
   if (!label) {
     return null
@@ -63,7 +52,7 @@ export function readLinkLabelText(link: dia.Link, type: LinkLabelType): string |
   return label.attrs.text.text
 }
 
-export function changeLinkLabelText(link: dia.Link, text: string | null, type: LinkLabelType) {
+export function changeLinkLabelText(link: dia.Link, text: string | null, type: JointJSLinkLabelType) {
   const label = getTargetLabel(link, type)
 
   // always remove the existing label
@@ -82,7 +71,7 @@ export function changeLinkLabelText(link: dia.Link, text: string | null, type: L
         },
       },
       ...config,
-    } satisfies Label)
+    } satisfies JointJSLinkLabel)
   }
 }
 
@@ -121,7 +110,7 @@ export function changeLinkLineType(link: dia.Link, type: JointJSLinkLineType) {
 
 // region arrows config
 
-const arrows: Record<JointJSLinkArrowType, ({ arrowType: JointJSLinkArrowType } & SVGAttributes) | null> = {
+const arrows: Record<JointJSLinkArrowType, ({ arrowType: JointJSLinkArrowType } & attributes.SVGAttributes) | null> = {
   normal: {
     arrowType: 'normal',
     type: 'path',
@@ -149,8 +138,8 @@ const arrows: Record<JointJSLinkArrowType, ({ arrowType: JointJSLinkArrowType } 
   none: null,
 }
 
-export function readLinkArrowType(link: dia.Link, target: LinkTargets): JointJSLinkArrowType {
-  const markerTarget: LinkMarker = target === 'target' ? 'targetMarker' : 'sourceMarker'
+export function readLinkArrowType(link: dia.Link, target: JointJSLinkTargets): JointJSLinkArrowType {
+  const markerTarget: JointJSLinkMarker = target === 'target' ? 'targetMarker' : 'sourceMarker'
 
   // check if there is even a marker present
   const marker = link.attr(`line/${markerTarget}`)
@@ -168,8 +157,8 @@ export function readLinkArrowType(link: dia.Link, target: LinkTargets): JointJSL
   return markerType
 }
 
-export function changeLinkArrowType(link: dia.Link, type: JointJSLinkArrowType, target: LinkTargets) {
-  const markerTarget: LinkMarker = target === 'target' ? 'targetMarker' : 'sourceMarker'
+export function changeLinkArrowType(link: dia.Link, type: JointJSLinkArrowType, target: JointJSLinkTargets) {
+  const markerTarget: JointJSLinkMarker = target === 'target' ? 'targetMarker' : 'sourceMarker'
 
   // special case none, we need to remove the marker
   if (type === 'none') {
