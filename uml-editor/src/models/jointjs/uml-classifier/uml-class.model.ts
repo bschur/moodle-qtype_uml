@@ -13,10 +13,12 @@ const listItemHeight = 20
 export class UmlClass extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
+  private readonly variableComponents: TextBlock[] = []
 
-  override convertToInterface(): UmlInterface {
+  override convertToInterface(paper?: dia.Paper): UmlInterface {
     const it = new UmlInterface()
-    it.initialize(this.attributes, undefined, this.position(), this.size(), this.functionComponents)
+    console.log(this.functionComponents)
+    it.initialize(this.attributes, undefined, this.position(), this.size(), this.variableComponents)
     return it
   }
   override convertToEnum(): UmlEnum {
@@ -80,8 +82,6 @@ export class UmlClass extends BaseUmlClassifierModel {
       }
     }
   }
-
-  private readonly variableComponents: shapes.standard.TextBlock[] = []
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {

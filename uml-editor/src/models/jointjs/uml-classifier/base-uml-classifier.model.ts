@@ -98,20 +98,24 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     super.initialize(attributes, options)
     if (position != undefined) this.position(position.x, position.y)
     if (size != undefined) this.resize(size.width, size.height)
-    if (functionComponents != undefined) this.initFunctions(functionComponents)
+    if (functionComponents != undefined) this.addFunction(functionComponents)
   }
 
-  initFunctions(functionComponents: TextBlock[]) {
-    let counter = 0
+  addFunction(functionComponents: TextBlock[]) {
     functionComponents?.forEach(value => {
-      const newTextBlockElement = value
-      newTextBlockElement.attr('ref', 'functionsRect')
-      const positionY = this.position().y + 20 + counter
+      console.log(value)
+      const newTextBlockElement = new TextBlock()
+      const positionY =
+        this.position().y + 2 * this.listItemHeight + this.functionComponents.length * this.listItemHeight
       newTextBlockElement.position(this.position().x, positionY)
-      newTextBlockElement.resize(this.listItemWidth, 20)
-      //this.resizeInlineContainer(1, 'variablesRect')
-      counter += 20
+      this.functionComponents.push(newTextBlockElement)
+      this.resizeInlineContainer(1, 'functionsRect')
+      this.embed(newTextBlockElement)
     })
+  }
+
+  public getFunctions(): TextBlock[] {
+    return this.functionComponents
   }
 
   setAbstract() {

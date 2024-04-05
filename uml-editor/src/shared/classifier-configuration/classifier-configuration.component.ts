@@ -35,6 +35,7 @@ export class ClassifierConfigurationComponent {
   @Input({ required: true }) model!: BaseUmlClassifierModel
   @Input({ required: true }) elementView!: dia.ElementView
   @Input({ required: true }) graph!: dia.Graph
+  @Input({ required: true }) paper!: dia.Paper
 
   readonly lines: ClassifierType[] = ['Class', 'Enum', 'Interface']
 
@@ -56,6 +57,8 @@ export class ClassifierConfigurationComponent {
     switch (type) {
       case 'Interface': {
         newModel = this.model.convertToInterface()
+
+        this.model
         break
       }
       case 'Class': {
@@ -73,6 +76,9 @@ export class ClassifierConfigurationComponent {
     this.elementView.model = newModel
     this.elementView.update()
     this.model = newModel
+    newModel.getFunctions().forEach(value => {
+      this.paper.model.addCell(value)
+    })
   }
 
   private changeAbsract() {
