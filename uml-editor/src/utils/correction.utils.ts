@@ -1,7 +1,7 @@
 import { diff } from 'just-diff'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
-import { cleanupObject, extractPropertyWithPathOccurrences } from './object.utils'
+import { cleanupObject, extractPropertyWithPathOccurrences, replacePropertyWithValue } from './object.utils'
 
 const ignoredProperties: string[] = [
   'size',
@@ -51,10 +51,6 @@ function normalizeDiagrams(
       }) as const
   )
 
-  // FIXME remove test
-  answerIdsGrouped.push({ ix: 0, id: 'test', path: 'test.1', count: 1 })
-  solutionIdsGrouped.push({ ix: 0, id: 'test', path: 'test.2', count: 1 })
-
   // check for 100% match
   const allIds = [...answerIdsGrouped, ...solutionIdsGrouped]
   const nonOverlappingIds = allIds.filter(entry => {
@@ -63,10 +59,12 @@ function normalizeDiagrams(
     return !(existingInAnswer && existingInSolution)
   })
 
-  const lookupMap = new Map<string, string>(
-    allIds
-      // ignore non-overlapping ids
-      .filter(entry => !nonOverlappingIds.includes(entry))
+  // find overlapping ids (100% match by id)
+  const overlappingIds = allIds.filter(entry => !nonOverlappingIds.some(({ id }) => id === entry.id))
+
+  // create map of ids to lookup
+  const lookupIdMap = new Map<string, string>(
+    overlappingIds
       .map((entry, ix, self) => {
         const existingIndex = self.findIndex(l => l.path === entry.path && l.count === entry.count)
         return existingIndex !== ix ? [entry.id, self[existingIndex].id] : null
@@ -74,9 +72,11 @@ function normalizeDiagrams(
       .filter((entry): entry is [string, string] => !!entry)
   )
 
-  console.debug('nonExisting', nonOverlappingIds, 'lookupIds', lookupMap)
+  // replace ids in answer diagram
+  const normalizedAnswer = replacePropertyWithValue(cleanedAnswer, 'id', lookupIdMap)
+  const normalizedSolution = replacePropertyWithValue(cleanedSolution, 'id', lookupIdMap)
 
-  return { normalizedAnswer: cleanedAnswer, normalizedSolution: cleanedSolution }
+  return { normalizedAnswer, normalizedSolution }
 }
 
 export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
@@ -86,9 +86,6 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
 
   // normalize diagrams (e.g. order of elements in arrays, ids, etc.)
   const { normalizedAnswer, normalizedSolution } = normalizeDiagrams(cleanedAnswer, cleanedSolution)
-
-  console.debug(JSON.stringify(normalizedAnswer))
-  console.debug(JSON.stringify(normalizedSolution))
 
   // calculate differences between normalized diagrams
   const differences = diff(normalizedAnswer, normalizedSolution)

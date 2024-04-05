@@ -65,7 +65,14 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
           maxPoints: this.maxPoints,
         }
 
-        console.debug('correction changed', emittedCorrection)
+        console.debug(
+          'correction changed',
+          emittedCorrection,
+          'answer',
+          correction.answer,
+          'solution',
+          correction.solution
+        )
         this.correctionChanged.emit(emittedCorrection)
       })
 

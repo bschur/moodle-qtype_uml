@@ -1,4 +1,4 @@
-export function cleanupObject<T>(obj: T, ignoredProperties: string[] = []): T {
+export function cleanupObject<T extends object>(obj: T, ignoredProperties: string[] = []): T {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanedObject: any = {}
 
@@ -23,8 +23,8 @@ export function cleanupObject<T>(obj: T, ignoredProperties: string[] = []): T {
   return cleanedObject
 }
 
-export function extractPropertiesByName(
-  object: unknown,
+export function extractPropertiesByName<T extends object>(
+  object: T,
   nameToMatch: string,
   parentPath: string = ''
 ): [string, string, string | number][] {
@@ -51,8 +51,8 @@ export function extractPropertiesByName(
   return returnObject
 }
 
-export function extractPropertyWithPathOccurrences(
-  object: unknown,
+export function extractPropertyWithPathOccurrences<T extends object>(
+  object: T,
   nameToMatch: string
 ): [string | number, string, number][] {
   return extractPropertiesByName(object, nameToMatch)
@@ -66,6 +66,32 @@ export function extractPropertyWithPathOccurrences(
       return acc
     }, [])
     .sort((a, b) => b[2] - a[2])
+}
+
+export function replacePropertyWithValue<T extends object>(
+  object: T,
+  nameToMatch: string,
+  lookupMap: Map<unknown, unknown>
+): T {
+  if (typeof object !== 'object' || !object) {
+    return object
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const newObject: any = { ...object }
+  for (const [key, value] of Object.entries(newObject)) {
+    if (key === nameToMatch) {
+      const replacementValue = lookupMap.get(value)
+      if (replacementValue) {
+        newObject[key] = lookupMap.get(value) || value
+      }
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      newObject[key] = replacePropertyWithValue(<any>value, nameToMatch, lookupMap)
+    }
+  }
+
+  return newObject
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
