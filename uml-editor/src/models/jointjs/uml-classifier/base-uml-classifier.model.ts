@@ -104,6 +104,6 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   setAbstract() {
-    this.headerComponent?.changeTextSize(5)
+    this.headerComponent?.changeAbstract()
   }
 }
