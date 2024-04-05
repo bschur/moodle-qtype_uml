@@ -60,10 +60,6 @@ export const init = (basePath) => {
     mainStyle.href = `${basePath}/styles.css`;
     mainStyle.rel = 'stylesheet';
 
-    // Used for angular initialization
-    const umlEditorLoader = document.createElement('uml-elements');
-    document.body.appendChild(umlEditorLoader);
-
     // Load script and style tag for custom elements
     document.head.appendChild(mainScript);
     document.head.appendChild(mainStyle);

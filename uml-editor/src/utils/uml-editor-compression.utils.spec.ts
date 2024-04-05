@@ -1,4 +1,3 @@
-import { diff } from 'just-diff'
 import { decodeDiagram, encodeDiagram } from './uml-editor-compression.utils'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,6 +19,6 @@ describe('uml-editor-compression.utils', () => {
     const encoded = encodeDiagram(diagram)
     const decoded = decodeDiagram(encoded)
 
-    expect(diff(decoded, diagram)).toEqual([])
+    expect(decoded).toEqual(diagram)
   })
 })

@@ -5,6 +5,9 @@ import { provideAnimations } from '@angular/platform-browser/animations'
 import 'zone.js'
 import { ElementsComponent } from './elements/elements.component'
 
+const node = document.createElement('uml-elements')
+document.body.appendChild(node)
+
 bootstrapApplication(ElementsComponent, {
   providers: [
     provideAnimations(),
