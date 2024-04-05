@@ -1,7 +1,7 @@
 import { diff } from 'just-diff'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
-import { cleanupObject, extractPropertyWithPathOccurrences, replacePropertyWithValue } from './object.utils'
+import { cleanupObject, extractPropertyValueByOccurrence, replacePropertyWithValue } from './object.utils'
 
 const ignoredProperties: string[] = [
   'size',
@@ -32,7 +32,7 @@ function normalizeDiagrams(
   cleanedAnswer: JointJSDiagram,
   cleanedSolution: JointJSDiagram
 ): { normalizedAnswer: JointJSDiagram; normalizedSolution: JointJSDiagram } {
-  const answerIdsGrouped = extractPropertyWithPathOccurrences(cleanedAnswer, 'id').map(
+  const answerIdsGrouped = extractPropertyValueByOccurrence(cleanedAnswer, 'id').map(
     ([id, path, count], ix) =>
       ({
         ix,
@@ -41,7 +41,7 @@ function normalizeDiagrams(
         count,
       }) as const
   )
-  const solutionIdsGrouped = extractPropertyWithPathOccurrences(cleanedSolution, 'id').map(
+  const solutionIdsGrouped = extractPropertyValueByOccurrence(cleanedSolution, 'id').map(
     ([id, path, count], ix) =>
       ({
         ix,

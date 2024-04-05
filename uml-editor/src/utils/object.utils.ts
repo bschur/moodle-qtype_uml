@@ -51,7 +51,7 @@ export function extractPropertiesByName<T extends object>(
   return returnObject
 }
 
-export function extractPropertyWithPathOccurrences<T extends object>(
+export function extractPropertyValueByOccurrence<T extends object>(
   object: T,
   nameToMatch: string
 ): [string | number, string, number][] {
