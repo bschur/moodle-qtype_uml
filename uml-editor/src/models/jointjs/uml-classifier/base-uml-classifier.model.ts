@@ -67,9 +67,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
-    let indexOfComponentToRemove = -1
-
-    indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
+    const indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
 
     if (indexOfComponentToRemove !== -1) {
       // Remove the component from the array
@@ -100,7 +98,20 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     super.initialize(attributes, options)
     if (position != undefined) this.position(position.x, position.y)
     if (size != undefined) this.resize(size.width, size.height)
-    if (functionComponents != undefined) this.functionComponents = functionComponents
+    if (functionComponents != undefined) this.initFunctions(functionComponents)
+  }
+
+  initFunctions(functionComponents: TextBlock[]) {
+    let counter = 0
+    functionComponents?.forEach(value => {
+      const newTextBlockElement = value
+      newTextBlockElement.attr('ref', 'functionsRect')
+      const positionY = this.position().y + 20 + counter
+      newTextBlockElement.position(this.position().x, positionY)
+      newTextBlockElement.resize(this.listItemWidth, 20)
+      //this.resizeInlineContainer(1, 'variablesRect')
+      counter += 20
+    })
   }
 
   setAbstract() {

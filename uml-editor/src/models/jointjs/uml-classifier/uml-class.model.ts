@@ -139,8 +139,8 @@ export class UmlClass extends BaseUmlClassifierModel {
     return elementAttributes
   }
 
-  override userInput(evt: dia.Event) {
-    const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
+  override userInput(evt: dia.Event, rect?: string) {
+    const selectedRect = rect || (evt.target.attributes[0].value as UmlClassSectors | string)
 
     const newTextBlockElement = new TextBlock()
     newTextBlockElement.attr('ref', selectedRect)

@@ -48,7 +48,7 @@ export class ClassifierConfigurationComponent {
       .pipe(takeUntilDestroyed())
       .subscribe(value => this.changeClassifierType(value))
 
-    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => this.changeAbsract(value))
+    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeAbsract())
   }
 
   changeClassifierType(type: ClassifierType) {
@@ -75,7 +75,7 @@ export class ClassifierConfigurationComponent {
     this.model = newModel
   }
 
-  private changeAbsract(value: boolean) {
+  private changeAbsract() {
     this.model.setAbstract()
   }
 }
