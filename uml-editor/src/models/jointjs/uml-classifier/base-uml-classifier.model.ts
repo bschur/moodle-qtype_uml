@@ -13,7 +13,7 @@ export function convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>, mode
 
 export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   protected functionComponents: TextBlock[] = []
-  headerComponent: TextBlock | null = null
+  headerComponent: TextBlock = new TextBlock()
 
   protected abstract initialWidth: number
 
@@ -40,7 +40,14 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
 
   convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>) {
     const newObj = convertTo(clazz, this)
-    newObj.initialize(this.attributes, undefined, this.position(), this.size(), this.functionComponents)
+    newObj.initialize(
+      this.attributes,
+      undefined,
+      this.position(),
+      this.size(),
+      this.functionComponents,
+      this.headerComponent
+    )
     return newObj
   }
 
@@ -48,11 +55,11 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
-
     let positionY = 0
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
+        newTextBlockElement.resize(this.size().width - 10, this.listItemHeight)
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
@@ -98,12 +105,14 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     options?: mvc.CombinedModelConstructorOptions<never, this>,
     position?: { x: number; y: number },
     size?: Size,
-    functionComponents?: TextBlock[]
+    functionComponents?: TextBlock[],
+    headerComponent?: TextBlock
   ) {
     super.initialize(attributes, options)
     if (position != undefined) this.position(position.x, position.y)
     if (size != undefined) this.resize(size.width, size.height)
     if (functionComponents != undefined) this.addFunction(functionComponents)
+    if (headerComponent != undefined) this.addHeader(headerComponent)
   }
 
   addFunction(functionComponents: TextBlock[]) {
@@ -117,6 +126,20 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
       this.resizeInlineContainer(1, 'functionsRect')
       this.embed(newTextBlockElement)
     })
+  }
+
+  addHeader(header: TextBlock) {
+    if (header == undefined || null) {
+      const hc = new TextBlock()
+      hc.position(this.position().x, this.position().y + 20)
+      hc.resize(this.initialWidth, this.listItemHeight)
+      this.headerComponent = hc
+      this.embed(hc)
+    } else {
+      this.headerComponent.position(header.position())
+      this.headerComponent.attr('text/props/value', header.attr('text/props/value'))
+      //this.embed(newTextBlockElement)
+    }
   }
 
   public getFunctions(): TextBlock[] {

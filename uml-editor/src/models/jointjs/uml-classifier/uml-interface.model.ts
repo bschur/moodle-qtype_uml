@@ -20,7 +20,7 @@ export class UmlInterface extends BaseUmlClassifierModel {
       selector: 'headerlabel',
     },
     {
-      tagName: 'TextBlock',
+      tagName: 'rect',
       selector: 'header',
     },
     {
@@ -58,13 +58,13 @@ export class UmlInterface extends BaseUmlClassifierModel {
           fill: 'black',
         },
         ['header' satisfies UmlClassSectors]: {
-          width: initialWidth - 8,
+          width: initialWidth,
           height: listItemHeight,
           'ref-y': listItemHeight,
-
+          'ref-x': 0,
           'text-anchor': 'middle',
           ref: 'body',
-          fill: 'white',
+          fillOpacity: 0,
         },
         ['functionsRect' satisfies UmlClassSectors]: {
           width: initialWidth,
