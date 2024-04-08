@@ -12,10 +12,10 @@ export const TextBlockView = dia.ElementView.extend({
 
 export class TextBlock extends dia.Element {
   override markup = util.svg`
-    <foreignObject @selector="foreignObject" style=" position: relative;">
+    <foreignObject [@selector]="foreignObject" style=" position: relative;">
       <div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute;  left: 4px; width: 100%; height: 100%;">
         <input 
-            @selector="text" 
+            [@selector]="text" 
             type="text" 
             name="text" 
             placeholder="Type something"
@@ -42,13 +42,14 @@ export class TextBlock extends dia.Element {
           height: 'calc(h)',
         },
       },
+      text: '',
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
   }
 
-  changeTextSize(fontSize: number) {
+  changeTextSize() {
     const markup = this.markup
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
     parsedMarkup[0].children[0].children[0].style['font-size'] = '20px'

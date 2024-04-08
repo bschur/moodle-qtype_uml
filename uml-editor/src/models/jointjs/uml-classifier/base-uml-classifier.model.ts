@@ -1,8 +1,15 @@
+import { Type } from '@angular/core'
 import { dia, mvc, shapes } from '@joint/core'
 import { TextBlock } from '../text-block.model'
 import Size = dia.Size
 
 export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
+
+export function convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>, model: BaseUmlClassifierModel): T {
+  const element = new clazz()
+  element.position(model.position().x, model.position().y)
+  return element
+}
 
 export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   protected functionComponents: TextBlock[] = []
@@ -31,6 +38,12 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     })
   }
 
+  convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>) {
+    const newObj = convertTo(clazz, this)
+    newObj.initialize(this.attributes, undefined, this.position(), this.size(), this.functionComponents)
+    return newObj
+  }
+
   userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
@@ -40,8 +53,6 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
-        //newTextBlockElement.size(20, listItemHeight)
-
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
@@ -82,12 +93,6 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.resizeInlineContainer(-1, 'functionsRect')
   }
 
-  public abstract convertToInterface(): BaseUmlClassifierModel
-
-  public abstract convertToEnum(): BaseUmlClassifierModel
-
-  public abstract convertToClass(): BaseUmlClassifierModel
-
   public override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>,
@@ -103,11 +108,11 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
 
   addFunction(functionComponents: TextBlock[]) {
     functionComponents?.forEach(value => {
-      console.log(value)
       const newTextBlockElement = new TextBlock()
       const positionY =
         this.position().y + 2 * this.listItemHeight + this.functionComponents.length * this.listItemHeight
       newTextBlockElement.position(this.position().x, positionY)
+      newTextBlockElement.attr('text/props/value', value.attr('text/props/value'))
       this.functionComponents.push(newTextBlockElement)
       this.resizeInlineContainer(1, 'functionsRect')
       this.embed(newTextBlockElement)

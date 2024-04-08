@@ -10,6 +10,9 @@ import { MatIcon } from '@angular/material/icon'
 import { MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
 import { BaseUmlClassifierModel } from '../../models/jointjs/uml-classifier/base-uml-classifier.model'
+import { UmlClass } from '../../models/jointjs/uml-classifier/uml-class.model'
+import { UmlEnum } from '../../models/jointjs/uml-classifier/uml-enum.model'
+import { UmlInterface } from '../../models/jointjs/uml-classifier/uml-interface.model'
 
 type ClassifierType = 'Class' | 'Enum' | 'Interface'
 
@@ -31,8 +34,8 @@ type ClassifierType = 'Class' | 'Enum' | 'Interface'
   styleUrl: './classifier-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassifierConfigurationComponent {
-  @Input({ required: true }) model!: BaseUmlClassifierModel
+export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> {
+  @Input({ required: true }) model!: T
   @Input({ required: true }) elementView!: dia.ElementView
   @Input({ required: true }) graph!: dia.Graph
   @Input({ required: true }) paper!: dia.Paper
@@ -55,27 +58,22 @@ export class ClassifierConfigurationComponent {
   changeClassifierType(type: ClassifierType) {
     let newModel
     switch (type) {
-      case 'Interface': {
-        newModel = this.model.convertToInterface()
-
-        this.model
+      case 'Interface':
+        newModel = this.model.convertTo(UmlInterface)
         break
-      }
-      case 'Class': {
-        newModel = this.model.convertToClass()
+      case 'Class':
+        newModel = this.model.convertTo(UmlClass)
         break
-      }
-      case 'Enum': {
-        newModel = this.model.convertToEnum()
+      case 'Enum':
+        newModel = this.model.convertTo(UmlEnum)
         break
-      }
     }
 
     this.graph.removeCells([this.elementView.model])
     this.graph.addCell(newModel)
     this.elementView.model = newModel
     this.elementView.update()
-    this.model = newModel
+    this.model = newModel as unknown as T
     newModel.getFunctions().forEach(value => {
       this.paper.model.addCell(value)
     })

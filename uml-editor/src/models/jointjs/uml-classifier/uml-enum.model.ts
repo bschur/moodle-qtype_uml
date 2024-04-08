@@ -1,8 +1,6 @@
 import { shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
-import { UmlClass } from './uml-class.model'
-import { UmlInterface } from './uml-interface.model'
 
 const initialWidth = 150
 const initialHeight = 80
@@ -12,19 +10,6 @@ export class UmlEnum extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
 
-  override convertToInterface(): UmlInterface {
-    const it = new UmlInterface()
-    it.position(this.position().x, this.position().y)
-    return it
-  }
-  override convertToEnum(): UmlEnum {
-    return this
-  }
-  override convertToClass(): UmlClass {
-    const umlClass = new UmlClass()
-    umlClass.position(this.position().x, this.position().y)
-    return umlClass
-  }
   override readonly markup = [
     {
       tagName: 'rect',

@@ -3,8 +3,6 @@ import { ClassifierConfigurationComponent } from '../../../shared/classifier-con
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
 import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
-import { UmlEnum } from './uml-enum.model'
-import { UmlInterface } from './uml-interface.model'
 
 const initialWidth = 150
 const initialHeight = 100
@@ -14,22 +12,6 @@ export class UmlClass extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
   private readonly variableComponents: TextBlock[] = []
-
-  override convertToInterface(paper?: dia.Paper): UmlInterface {
-    const it = new UmlInterface()
-    console.log(this.functionComponents)
-    it.initialize(this.attributes, undefined, this.position(), this.size(), this.variableComponents)
-    return it
-  }
-  override convertToEnum(): UmlEnum {
-    const umlEnum = new UmlEnum()
-    umlEnum.position(this.position().x, this.position().y)
-    return umlEnum
-  }
-
-  override convertToClass(): BaseUmlClassifierModel {
-    return this
-  }
 
   override readonly markup = [
     {
