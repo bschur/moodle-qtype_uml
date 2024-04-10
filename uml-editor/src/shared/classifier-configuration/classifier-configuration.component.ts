@@ -77,6 +77,7 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
     newModel.getFunctions().forEach(value => {
       this.paper.model.addCell(value)
     })
+    this.paper.model.addCell(newModel.getHeader())
   }
 
   private changeAbsract() {

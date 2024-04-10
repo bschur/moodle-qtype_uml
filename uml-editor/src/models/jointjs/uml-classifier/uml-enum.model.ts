@@ -1,4 +1,5 @@
 import { shapes, util } from '@joint/core'
+import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
 
@@ -36,6 +37,7 @@ export class UmlEnum extends BaseUmlClassifierModel {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
       type: 'custom.uml.Enum',
+      propertyView: ClassifierConfigurationComponent,
       size: {
         width: initialWidth,
         height: initialHeight,
