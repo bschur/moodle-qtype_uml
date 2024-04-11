@@ -45,16 +45,33 @@ class qtype_uml_renderer extends qtype_renderer {
      * @return string HTML fragment.
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
-        $result = parent::formulation_and_controls($qa, $options);
+        $question = $qa->get_question();
+        $response = $qa->get_last_qt_var('answer', '');
 
-        $answerdiagram = $qa->get_last_qt_var('answer', '');
+        $result = html_writer::tag('div', $question->format_questiontext($qa), ['class' => 'qtext']);
+
+        // Render manual comment view when requested.
+        if ($options->manualcomment == question_display_options::EDITABLE) {
+            $correctresponse = self::correct_response($qa);
+            $manualcommentid = uniqid('manualCommentInput');
+            $options->manualcommentlink->id = $manualcommentid;
+            $maxpoints = $question->defaultmark;
+
+            return $result
+                . EditorHelper::load_editor_correctness_html_for_id(
+                    $manualcommentid,
+                    $response,
+                    $correctresponse,
+                    $maxpoints
+                );
+        }
 
         // Generate the input field.
         $answerattributes = [
                 'type' => 'hidden',
                 'id' => uniqid('diagramInput'),
                 'name' => $qa->get_qt_field_name('answer'),
-                'value' => $answerdiagram,
+                'value' => $response,
         ];
         if ($options->readonly) {
             $answerattributes['disabled'] = 'disabled';
@@ -62,8 +79,41 @@ class qtype_uml_renderer extends qtype_renderer {
 
         $answerinput = html_writer::empty_tag('input', $answerattributes);
 
-        return $result . EditorHelper::load_editor_html_for_id($answerattributes['id'], !$options->readonly, $answerdiagram) .
-                $answerinput;
+        return $result
+            . EditorHelper::load_editor_html_for_id(
+                $answerattributes['id'],
+                !$options->readonly,
+                $response
+            )
+            . $answerinput;
+    }
+
+    /**
+     * Add additional hidden input field to the manual comment section for mapping the suggested grading to the moodle input.
+     *
+     * @param question_attempt $qa the question attempt to display.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return string HTML fragment.
+     */
+    public function manual_comment(question_attempt $qa, question_display_options $options): string {
+        if ($options->manualcomment != question_display_options::EDITABLE) {
+            return '';
+        }
+
+        // Generate the input fields.
+        $suggestedcommentattributes = [
+            'id' => $options->manualcommentlink->id . '__expected-comment',
+        ];
+
+        $suggestedpointsattributes = [
+            'id' => $options->manualcommentlink->id . '__expected-points',
+        ];
+
+        $question = $qa->get_question();
+        return html_writer::nonempty_tag('div', get_string("suggested_comment", "qtype_uml"))
+            . html_writer::nonempty_tag('div', '...', $suggestedcommentattributes)
+            . html_writer::nonempty_tag('div', get_string("suggested_points", "qtype_uml"))
+            . html_writer::nonempty_tag('div', '...', $suggestedpointsattributes);
     }
 
     /**

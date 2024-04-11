@@ -1,0 +1,68 @@
+<h2 class="mat-h2">Link Config</h2>
+
+<section class="link-configuration">
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput placeholder="..." [formControl]="form.controls.name" />
+  </mat-form-field>
+
+  <button mat-raised-button color="basic" (click)="swapDirection()">
+    <mat-icon>swap_horiz</mat-icon>
+    Direction
+  </button>
+
+  <mat-form-field>
+    <mat-label>Arrow type (end)</mat-label>
+    <mat-select [formControl]="form.controls.arrowTarget">
+      @for (arrow of arrows; track arrow) {
+        <mat-option [value]="arrow">{{ arrow }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Arrow type (start)</mat-label>
+    <mat-select [formControl]="form.controls.arrowSource">
+      @for (arrow of arrows; track arrow) {
+        <mat-option [value]="arrow">{{ arrow }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Line type</mat-label>
+    <mat-select [formControl]="form.controls.line">
+      @for (line of lines; track line) {
+        <mat-option [value]="line">{{ line }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Multiplicity (End)</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="form.controls.multiplicityTarget"
+      [matAutocomplete]="multiplicityTarget" />
+    <mat-autocomplete autoActiveFirstOption #multiplicityTarget="matAutocomplete">
+      @for (option of suggestedTargetLinkMultiplicities(); track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Multiplicity (Start)</mat-label>
+    <input
+      type="text"
+      matInput
+      [formControl]="form.controls.multiplicitySource"
+      [matAutocomplete]="multiplicitySource" />
+    <mat-autocomplete autoActiveFirstOption #multiplicitySource="matAutocomplete">
+      @for (option of suggestedSourceLinkMultiplicities(); track option) {
+        <mat-option [value]="option">{{ option }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+</section>

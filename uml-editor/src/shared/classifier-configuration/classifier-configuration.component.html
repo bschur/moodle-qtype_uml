@@ -1,0 +1,12 @@
+<h2 class="mat-h2">Classifier Config</h2>
+
+<section class="link-configuration">
+  <mat-form-field>
+    <mat-label>Line type</mat-label>
+    <mat-select [formControl]="form.controls.classifier">
+      @for (line of lines; track line) {
+        <mat-option [value]="line">{{ line }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+</section>

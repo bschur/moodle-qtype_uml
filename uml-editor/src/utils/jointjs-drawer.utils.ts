@@ -1,6 +1,6 @@
 import { dia, shapes } from '@joint/core'
 import { TextBlockView } from '../models/jointjs/text-block.model'
-import { UmlClass } from '../models/jointjs/uml-class.model'
+import { BaseUmlClassifierModel } from '../models/jointjs/uml-classifier/base-uml-classifier.model'
 import { UseCase } from '../models/jointjs/uml-use-case.model'
 import {
   globalElementToolsView,
@@ -9,6 +9,7 @@ import {
 } from './jointjs-element-tools.const'
 import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
+import { assignValueToObject } from './object.utils'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -21,24 +22,7 @@ const resizePaperObserver = (paper: dia.Paper) =>
     })
   })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function assignValueToObject(existingObject: any, inputString: string, value: any) {
-  const parts = inputString.split('.')
-  let currentObject = existingObject
-
-  for (const part of parts.slice(0, -1)) {
-    currentObject[part] = currentObject[part] || {}
-    currentObject = currentObject[part]
-  }
-
-  // Assign the value to the last part in the path
-  currentObject[parts[parts.length - 1]] = value
-
-  return existingObject
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const jointjsCustomNamespace: any = {
+const jointjsCustomNamespace: unknown = {
   ...shapes,
   ...[...jointJSCustomUmlElements, ...jointJSCustomUmlElementViews].reduce((acc, item) => {
     if (item.type === 'element') {
@@ -89,7 +73,7 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
 
   paper.on('element:pointerdblclick', (elementView, evt) => {
     const target = elementView.model
-    if (target instanceof UmlClass || target instanceof UseCase) {
+    if (target instanceof BaseUmlClassifierModel || target instanceof UseCase) {
       const textBlock = target.userInput(evt)
       if (textBlock) {
         paper.model.addCell(textBlock)

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, Injector } from '@angular/core'
 import { setupCustomElementWithInjector } from '../utils/bootstrap-element.function'
 import { FullscreenViewComponent } from './fullscreen-view/fullscreen-view.component'
-import { PropertyEditorComponent } from './property-editor/property-editor.component'
+import { UmlEditorCorrectnessComponent } from './uml-editor-correctness/uml-editor-correctness.component'
 import { UmlEditorToolboxComponent } from './uml-editor-toolbox/uml-editor-toolbox.component'
 import { UmlEditorComponent } from './uml-editor/uml-editor.component'
 
@@ -22,8 +22,8 @@ export class ElementsComponent {
 
   constructor() {
     setupCustomElementWithInjector('fullscreen-view', FullscreenViewComponent, this.injector)
-    setupCustomElementWithInjector('property-editor', PropertyEditorComponent, this.injector)
     setupCustomElementWithInjector('uml-editor-toolbox', UmlEditorToolboxComponent, this.injector)
     setupCustomElementWithInjector('uml-editor', UmlEditorComponent, this.injector)
+    setupCustomElementWithInjector('uml-editor-correctness', UmlEditorCorrectnessComponent, this.injector)
   }
 }

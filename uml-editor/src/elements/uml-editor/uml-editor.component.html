@@ -1,10 +1,6 @@
 <mat-drawer-container class="uml-editor" autosize>
   <mat-drawer #drawer class="uml-editor__menu" mode="side" [opened]="allowEdit">
-    <uml-editor-toolbox #toolbox [class.--hide]="showPropertyEditor()"></uml-editor-toolbox>
-
-    @if (showPropertyEditor()) {
-      <property-editor></property-editor>
-    }
+    <uml-editor-toolbox #toolbox></uml-editor-toolbox>
   </mat-drawer>
 
   @if (allowEdit) {
@@ -19,5 +15,5 @@
     </button>
   }
 
-  <div #editor class="uml-editor__canvas"></div>
+  <div #editor class="uml-editor__canvas" [class.--hide-controls]="!allowEdit"></div>
 </mat-drawer-container>

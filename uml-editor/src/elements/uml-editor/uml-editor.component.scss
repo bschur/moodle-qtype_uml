@@ -27,8 +27,10 @@
     width: 300px;
   }
 
-  .--hide {
-    visibility: hidden;
+  .uml-editor__canvas {
+    &.--hide-controls {
+      pointer-events: none;
+    }
   }
 
   ::ng-deep .mat-drawer-content {

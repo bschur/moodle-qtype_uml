@@ -1,0 +1,6 @@
+<button type="button" mat-fab color="basic" (click)="propertyEditorService.hide()" class="property-editor__toggle">
+  <mat-icon>close</mat-icon>
+</button>
+<div class="property-editor">
+  <ng-container *ngComponentOutlet="type; inputs: initProperties"></ng-container>
+</div>

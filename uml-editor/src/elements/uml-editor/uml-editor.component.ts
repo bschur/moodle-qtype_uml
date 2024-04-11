@@ -1,19 +1,19 @@
-import { coerceBooleanProperty } from '@angular/cdk/coercion'
 import {
   AfterViewInit,
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  computed,
   CUSTOM_ELEMENTS_SCHEMA,
-  DestroyRef,
-  effect,
   ElementRef,
   EventEmitter,
   inject,
   Input,
+  OnChanges,
   Output,
   signal,
+  SimpleChanges,
   ViewChild,
+  ViewContainerRef,
 } from '@angular/core'
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop'
 import { FormControl } from '@angular/forms'
@@ -22,7 +22,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
-import { PropertyEditorService } from '../../core/serices/property-editor.service'
+import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
+import { EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
+import { LinkConfigurationComponent } from '../../shared/link-configuration/link-configuration.component'
+import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
@@ -36,45 +39,36 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   imports: [MatSidenavModule, MatButtonModule, MatIconModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class UmlEditorComponent implements AfterViewInit {
-  readonly diagramControl = new FormControl<{ cells: dia.Cell[] }>({ cells: [] }, { nonNullable: true })
+export class UmlEditorComponent implements OnChanges, AfterViewInit {
+  readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
   readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
-  @Input({ transform: coerceBooleanProperty }) allowEdit = false
+
+  @Input({ transform: booleanAttribute }) allowEdit = false
+  @Input({ required: true }) inputId: string | null = null
+  @Input({ required: true }) diagram: string | null = null
+
   @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
-  @ViewChild('toolbox', { static: true })
-  toolboxRef!: ElementRef<HTMLDivElement>
+  @ViewChild('toolbox', { static: true }) toolboxRef!: ElementRef<HTMLDivElement>
+
   @Output() readonly diagramChanged = new EventEmitter<{
     inputId: string
     diagram: string
   }>()
 
-  readonly showPropertyEditor = computed(() => this.showPropertyEditorService.showPropertyEditor())
-
-  private readonly destroyRef = inject(DestroyRef)
+  private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly showPropertyEditorService = inject(PropertyEditorService)
-  private readonly _inputId = signal<string | null>(null)
-  private readonly _inputDiagram = signal<string | null>(null)
+
   private readonly _paperEditor = signal<dia.Paper | null>(null)
 
   constructor() {
-    // listen to diagram input and draw it on editor
-    effect(() => {
-      const diagram = this._inputDiagram()
-      this.setDiagramToEditor(diagram, { emitEvent: false })
-    })
-
     // listen to diagram changes and emit value
-    this.diagramControl.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(200))
-      .subscribe(this.encodeAndEmitDiagram)
+    this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(this.encodeAndEmitDiagram)
   }
 
-  @Input() set inputId(value: string | null) {
-    this._inputId.set(value)
-  }
-
-  @Input() set diagram(value: string | null) {
-    this._inputDiagram.set(value)
+  ngOnChanges(changes: SimpleChanges) {
+    if (('diagram' satisfies keyof this) in changes) {
+      this.setDiagramToEditor(this.diagram, { emitEvent: false })
+    }
   }
 
   ngAfterViewInit() {
@@ -85,11 +79,31 @@ export class UmlEditorComponent implements AfterViewInit {
       this.diagramControl.markAsDirty()
     })
 
-    paperEditor.on('cell:pointerdblclick', () => {
-      this.showPropertyEditorService.show()
+    paperEditor.on('cell:pointerdblclick', cell => {
+      this.showPropertyEditorService.hide()
+
+      // handle generic link from jointjs
+      if (cell instanceof dia.LinkView) {
+        this.showPropertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, { model: cell.model })
+        return
+      }
+
+      // handle custom elements
+      if (cell instanceof dia.ElementView) {
+        const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
+        if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
+          this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
+            model: cell.model,
+            graph: paperEditor.model,
+            elementView: cell,
+          })
+        }
+      }
     })
 
     this._paperEditor.set(paperEditor)
+
+    this.setDiagramToEditor(this.diagram, { emitEvent: false })
 
     this.toolboxRef.nativeElement.addEventListener('itemSelected', <EventListenerOrEventListenerObject>(
       ((event: CustomEvent) => this.addItemFromToolboxToEditor(event.detail))
@@ -107,11 +121,11 @@ export class UmlEditorComponent implements AfterViewInit {
     clickedClass.position(tmpX, tmpY)
 
     this._paperEditor()?.model.addCell(clickedClass)
+    this.diagramControl.setValue(this._paperEditor()?.model.toJSON())
   }
 
   resetDiagram() {
-    const resetValue = this._inputDiagram()
-    this.setDiagramToEditor(resetValue)
+    this.setDiagramToEditor(this.diagram)
   }
 
   private readonly setDiagramToEditor = (
@@ -136,9 +150,9 @@ export class UmlEditorComponent implements AfterViewInit {
     }
   }
 
-  private readonly encodeAndEmitDiagram = (diagram: { cells: dia.Cell[] }) => {
+  private readonly encodeAndEmitDiagram = (diagram: JointJSDiagram) => {
     // the value was changed
-    const inputId = this._inputId()
+    const inputId = this.inputId
     if (!inputId || !diagram) {
       console.warn('inputId or diagram not set')
       return
