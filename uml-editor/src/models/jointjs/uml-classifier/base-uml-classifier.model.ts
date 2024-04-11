@@ -99,7 +99,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.resizeInlineContainer(-1, 'functionsRect')
   }
 
-  public override initialize(
+  override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>,
     position?: { x: number; y: number },
@@ -137,11 +137,11 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.embed(hc)
   }
 
-  public getFunctions(): TextBlock[] {
+  getFunctions(): TextBlock[] {
     return this.functionComponents
   }
 
-  public getHeader(): TextBlock {
+  getHeader(): TextBlock {
     return this.headerComponent
   }
 
