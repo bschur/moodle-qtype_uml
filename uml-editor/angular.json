@@ -19,9 +19,7 @@
             "tsConfig": "tsconfig.elements.json",
             "inlineStyleLanguage": "scss",
             "outputHashing": "none",
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "assets": [
               {
                 "glob": "**/*",
@@ -40,9 +38,7 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "assets": [
               {
                 "glob": "**/*",
