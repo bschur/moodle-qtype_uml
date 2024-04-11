@@ -1,0 +1,40 @@
+{
+  "differences": [
+    {
+      "op": "replace",
+      "path": [
+        "cells",
+        2,
+        "attrs",
+        "line",
+        "targetMarker",
+        "arrowType"
+      ],
+      "value": "normal"
+    },
+    {
+      "op": "replace",
+      "path": [
+        "cells",
+        4,
+        "attrs",
+        "line",
+        "targetMarker",
+        "arrowType"
+      ],
+      "value": "aggregation"
+    },
+    {
+      "op": "replace",
+      "path": [
+        "cells",
+        4,
+        "attrs",
+        "line",
+        "type"
+      ],
+      "value": "dotted"
+    }
+  ],
+  "points": 2
+}

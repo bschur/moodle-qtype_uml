@@ -1,5 +1,5 @@
-import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
-import { decodeDiagram, encodeDiagram } from './uml-editor-compression.utils'
+import { JointJSDiagram } from '../src/models/jointjs/jointjs-diagram.model'
+import { decodeDiagram, encodeDiagram } from '../src/utils/uml-editor-compression.utils'
 
 const diagram = <JointJSDiagram>{
   cells: [

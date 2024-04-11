@@ -4,7 +4,7 @@ import {
   extractPropertiesByName,
   extractPropertyValueByOccurrence,
   replacePropertyWithValue,
-} from './object.utils'
+} from '../src/utils/object.utils'
 
 const object = {
   id: '1',

@@ -96,7 +96,5 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
   return {
     differences,
     points: calculatePoints(cleanedSolution, differences, maxPoints),
-    answer: cleanedAnswer,
-    solution: cleanedSolution,
   }
 }

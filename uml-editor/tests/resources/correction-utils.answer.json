@@ -1,0 +1,170 @@
+{
+  "cells": [
+    {
+      "type": "custom.uml.UseCase",
+      "size": {
+        "width": 95,
+        "height": 45
+      },
+      "position": {
+        "x": 270,
+        "y": 260
+      },
+      "angle": 0,
+      "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+      "z": 1,
+      "attrs": {}
+    },
+    {
+      "type": "custom.uml.Classifier",
+      "size": {
+        "width": 150,
+        "height": 100
+      },
+      "position": {
+        "x": 780,
+        "y": 140
+      },
+      "angle": 0,
+      "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4",
+      "z": 4,
+      "attrs": {}
+    },
+    {
+      "type": "standard.Link",
+      "source": {
+        "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4",
+        "anchor": {
+          "name": "topLeft",
+          "args": {
+            "dx": "0%",
+            "dy": "52%",
+            "rotate": true
+          }
+        }
+      },
+      "target": {
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+        "anchor": {
+          "name": "topLeft",
+          "args": {
+            "dx": "100%",
+            "dy": "66.667%",
+            "rotate": true
+          }
+        }
+      },
+      "id": "fcb7e7dc-1cc2-4829-a461-0bce02aa994f",
+      "z": 5,
+      "vertices": [],
+      "labels": [
+        {
+          "attrs": {
+            "text": {
+              "type": "name",
+              "text": "Test +/-"
+            }
+          },
+          "position": {
+            "distance": 0.5
+          }
+        }
+      ],
+      "attrs": {
+        "line": {
+          "targetMarker": {
+            "d": "M0 0 10 6 20 0 10-6Z",
+            "arrowType": "aggregation",
+            "fill": "white"
+          },
+          "type": "dotted",
+          "strokeDasharray": "5 5",
+          "strokeDashoffset": 7.5
+        }
+      }
+    },
+    {
+      "type": "custom.uml.Actor",
+      "size": {
+        "width": 40,
+        "height": 80
+      },
+      "position": {
+        "x": 250,
+        "y": -90
+      },
+      "angle": 0,
+      "id": "cbcd615e-2fd0-460b-a027-1717c6654786",
+      "z": 6,
+      "attrs": {}
+    },
+    {
+      "type": "standard.Link",
+      "source": {
+        "id": "cbcd615e-2fd0-460b-a027-1717c6654786",
+        "anchor": {
+          "name": "topLeft",
+          "args": {
+            "dx": "67.5%",
+            "dy": "100%",
+            "rotate": true
+          }
+        }
+      },
+      "target": {
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+        "anchor": {
+          "name": "topLeft",
+          "args": {
+            "dx": "31.579%",
+            "dy": "0%",
+            "rotate": true
+          }
+        }
+      },
+      "id": "eca3473f-35e8-4eec-9f5f-1754205c879e",
+      "z": 7,
+      "vertices": [],
+      "labels": [
+        {
+          "attrs": {
+            "text": {
+              "type": "name",
+              "text": "User"
+            }
+          },
+          "position": {
+            "distance": 0.5
+          }
+        }
+      ],
+      "attrs": {
+        "line": {
+          "targetMarker": {
+            "d": "M0 0 10 6 20 0 10-6Z",
+            "arrowType": "composition",
+            "fill": "black"
+          },
+          "type": "normal",
+          "strokeDasharray": "none",
+          "strokeDashoffset": "none"
+        }
+      }
+    },
+    {
+      "type": "custom.uml.Classifier",
+      "size": {
+        "width": 150,
+        "height": 100
+      },
+      "position": {
+        "x": 25,
+        "y": 122
+      },
+      "angle": 0,
+      "id": "5b530eb9-be0d-485a-afb0-e1ba194bc52e",
+      "z": 8,
+      "attrs": {}
+    }
+  ]
+}

@@ -19,7 +19,16 @@
             "tsConfig": "tsconfig.elements.json",
             "inlineStyleLanguage": "scss",
             "outputHashing": "none",
-            "styles": ["src/styles.scss"]
+            "styles": [
+              "src/styles.scss"
+            ],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/"
+              }
+            ]
           }
         },
         "build-app": {
@@ -31,7 +40,16 @@
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "styles": ["src/styles.scss"]
+            "styles": [
+              "src/styles.scss"
+            ],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "src/assets/",
+                "output": "/"
+              }
+            ]
           },
           "configurations": {
             "production": {
