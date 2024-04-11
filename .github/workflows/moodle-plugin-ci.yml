@@ -4,7 +4,7 @@ on:
   # push only for branches (ignore tags)
   push:
     branches:
-      - "main"
+      - "**"
     tags-ignore:
       - "**"
   # pull request only for branches (ignore tags)
@@ -103,7 +103,7 @@ jobs:
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: plugin
 

@@ -9,6 +9,7 @@ import {
 } from './jointjs-element-tools.const'
 import { jointJSCustomUmlElementViews, jointJSCustomUmlElements } from './jointjs-extension.const'
 import { globalLinkToolsView } from './jointjs-link-tools.const'
+import { assignValueToObject } from './object.utils'
 
 const resizePaperObserver = (paper: dia.Paper) =>
   new ResizeObserver(() => {
@@ -20,22 +21,6 @@ const resizePaperObserver = (paper: dia.Paper) =>
       verticalAlign: 'middle',
     })
   })
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function assignValueToObject(existingObject: any, inputString: string, value: any) {
-  const parts = inputString.split('.')
-  let currentObject = existingObject
-
-  for (const part of parts.slice(0, -1)) {
-    currentObject[part] = currentObject[part] || {}
-    currentObject = currentObject[part]
-  }
-
-  // Assign the value to the last part in the path
-  currentObject[parts[parts.length - 1]] = value
-
-  return existingObject
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const jointjsCustomNamespace: any = {

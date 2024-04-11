@@ -20,6 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/uml/question.php');
 require_once($CFG->dirroot . '/question/type/uml/tests/helper.php');
 
 /**
@@ -41,5 +42,87 @@ class question_test extends \advanced_testcase {
         $uml = new \qtype_uml_question();
         $uml->questiontext = 'UML';
         $this->assertEquals('UML', $uml->get_question_summary());
+    }
+
+    /**
+     * Test summarise response
+     *
+     * @covers ::summarise_response
+     * @return void
+     */
+    public function test_summarise_response(): void {
+        $longstring = str_repeat('0123456789', 50);
+        $uml = \test_question_maker::make_question('uml');
+        $this->assertEquals($longstring, $uml->summarise_response(
+            ['answer' => $longstring, 'answerformat' => FORMAT_HTML]));
+    }
+
+    /**
+     * Test is same response
+     *
+     * @covers ::is_same_response
+     * @return void
+     */
+    public function test_is_same_response(): void {
+        $uml = \test_question_maker::make_question('uml');
+
+        $uml->start_attempt(new \question_attempt_step(), 1);
+
+        $this->assertTrue($uml->is_same_response(
+            [],
+            ['answer' => '']));
+
+        $this->assertTrue($uml->is_same_response(
+            ['answer' => ''],
+            ['answer' => '']));
+
+        $this->assertTrue($uml->is_same_response(
+            ['answer' => ''],
+            []));
+
+        $this->assertFalse($uml->is_same_response(
+            ['answer' => 'Hello'],
+            []));
+
+        $this->assertFalse($uml->is_same_response(
+            ['answer' => 'Hello'],
+            ['answer' => '']));
+
+        $this->assertFalse($uml->is_same_response(
+            ['answer' => 0],
+            ['answer' => '']));
+
+        $this->assertFalse($uml->is_same_response(
+            ['answer' => ''],
+            ['answer' => 0]));
+
+        $this->assertFalse($uml->is_same_response(
+            ['answer' => '0'],
+            ['answer' => '']));
+
+        $this->assertFalse($uml->is_same_response(
+            ['answer' => ''],
+            ['answer' => '0']));
+    }
+
+    /**
+     *  Test is complete response
+     *
+     * @covers ::is_complete_response
+     * @return void
+     */
+    public function test_is_complete_response(): void {
+
+        $uml = \test_question_maker::make_question('uml');
+        $uml->start_attempt(new \question_attempt_step(), 1);
+
+        // The empty string should be considered an empty response, as should a lack of a response.
+        $this->assertFalse($uml->is_complete_response(['answer' => '']));
+        $this->assertFalse($uml->is_complete_response([]));
+
+        // Any nonempty string should be considered a complete response.
+        $this->assertTrue($uml->is_complete_response(['answer' => 'A student response.']));
+        $this->assertTrue($uml->is_complete_response(['answer' => '0 times.']));
+        $this->assertTrue($uml->is_complete_response(['answer' => '0']));
     }
 }
