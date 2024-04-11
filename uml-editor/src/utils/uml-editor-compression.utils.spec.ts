@@ -1,7 +1,7 @@
+import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
 import { decodeDiagram, encodeDiagram } from './uml-editor-compression.utils'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const diagram: any = {
+const diagram = <JointJSDiagram>{
   cells: [
     {
       id: '1',

@@ -93,7 +93,7 @@ export function replacePropertyWithValue<T extends object>(
   return newObject
 }
 
-export function assignValueToObject<T extends object>(existingObject: T, inputString: string, value: T[keyof T]) {
+export function assignValueToObject<T extends object>(existingObject: T, inputString: string, value: unknown) {
   const parts = inputString.split('.')
   let currentObject = existingObject
 
@@ -105,7 +105,7 @@ export function assignValueToObject<T extends object>(existingObject: T, inputSt
 
   // Assign the value to the last part in the path
   const parsedPart = parts[parts.length - 1] as keyof T
-  currentObject[parsedPart] = value
+  currentObject[parsedPart] = <T[keyof T]>value
 
   return existingObject
 }
