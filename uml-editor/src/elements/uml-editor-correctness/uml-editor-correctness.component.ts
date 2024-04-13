@@ -14,7 +14,7 @@ import { MatIcon } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
 import { skip } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
-import { EMPTY_DIAGRAM } from '../../models/jointjs/jointjs-diagram.model'
+import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
 import { injectEvaluateCorrectionFn } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
 
@@ -45,6 +45,8 @@ export class UmlEditorCorrectnessComponent {
   private readonly correction = signal<UmlCorrection>({
     differences: [],
     points: 0,
+    normalizedAnswer: EMPTY_DIAGRAM_OBJECT,
+    normalizedSolution: EMPTY_DIAGRAM_OBJECT,
   })
 
   private readonly evaluateCorrection = injectEvaluateCorrectionFn()

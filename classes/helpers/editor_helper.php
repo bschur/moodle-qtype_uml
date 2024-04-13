@@ -70,7 +70,7 @@ class EditorHelper {
         $fp = @fsockopen('localhost', '11434');
         if (is_resource($fp)) {
             // If yes, provide the according endpoint to the web component.
-            $promptendpoint = $CFG->wwwroot . '/question/type/uml/rest/post-prompt.php';
+            $promptendpoint = '/question/type/uml/rest/post-prompt.php';
         }
 
         return '<fullscreen-view style="min-height: 300px; height: 1px;"><uml-editor-correctness

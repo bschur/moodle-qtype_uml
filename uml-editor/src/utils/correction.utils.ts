@@ -107,6 +107,8 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
   return {
     differences,
     points,
+    normalizedAnswer,
+    normalizedSolution,
   }
 }
 
@@ -127,7 +129,12 @@ export function injectEvaluateCorrectionFn() {
       return correction
     }
 
-    const summary = await aiCorrectionService.promptForCorrectionSummary(answer, solution, maxPoints, endpoint)
+    const summary = await aiCorrectionService.promptForCorrectionSummary(
+      correction.normalizedAnswer,
+      correction.normalizedSolution,
+      maxPoints,
+      endpoint
+    )
 
     return {
       ...correction,

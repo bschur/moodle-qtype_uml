@@ -2,19 +2,191 @@
   "differences": [
     {
       "op": "replace",
-      "path": ["cells", 2, "attrs", "line", "targetMarker", "arrowType"],
+      "path": [
+        "cells",
+        2,
+        "attrs",
+        "line",
+        "targetMarker",
+        "arrowType"
+      ],
       "value": "normal"
     },
     {
       "op": "replace",
-      "path": ["cells", 4, "attrs", "line", "targetMarker", "arrowType"],
+      "path": [
+        "cells",
+        4,
+        "attrs",
+        "line",
+        "targetMarker",
+        "arrowType"
+      ],
       "value": "aggregation"
     },
     {
       "op": "replace",
-      "path": ["cells", 4, "attrs", "line", "type"],
+      "path": [
+        "cells",
+        4,
+        "attrs",
+        "line",
+        "type"
+      ],
       "value": "dotted"
     }
   ],
-  "points": 2
+  "points": 2,
+  "normalizedAnswer": {
+    "cells": [
+      {
+        "type": "custom.uml.UseCase",
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+      },
+      {
+        "type": "custom.uml.Classifier",
+        "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+      },
+      {
+        "type": "standard.Link",
+        "source": {
+          "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+        },
+        "target": {
+          "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+        },
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+        "labels": [
+          {
+            "attrs": {
+              "text": {
+                "type": "name",
+                "text": "Test +/-"
+              }
+            }
+          }
+        ],
+        "attrs": {
+          "line": {
+            "targetMarker": {
+              "arrowType": "aggregation"
+            },
+            "type": "dotted"
+          }
+        }
+      },
+      {
+        "type": "custom.uml.Actor",
+        "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+      },
+      {
+        "type": "standard.Link",
+        "source": {
+          "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+        },
+        "target": {
+          "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+        },
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+        "labels": [
+          {
+            "attrs": {
+              "text": {
+                "type": "name",
+                "text": "User"
+              }
+            }
+          }
+        ],
+        "attrs": {
+          "line": {
+            "targetMarker": {
+              "arrowType": "composition"
+            },
+            "type": "normal"
+          }
+        }
+      },
+      {
+        "type": "custom.uml.Classifier",
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+      }
+    ]
+  },
+  "normalizedSolution": {
+    "cells": [
+      {
+        "type": "custom.uml.UseCase",
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+      },
+      {
+        "type": "custom.uml.Classifier",
+        "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+      },
+      {
+        "type": "standard.Link",
+        "source": {
+          "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+        },
+        "target": {
+          "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+        },
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+        "labels": [
+          {
+            "attrs": {
+              "text": {
+                "type": "name",
+                "text": "Test +/-"
+              }
+            }
+          }
+        ],
+        "attrs": {
+          "line": {
+            "type": "dotted",
+            "targetMarker": {
+              "arrowType": "normal"
+            }
+          }
+        }
+      },
+      {
+        "type": "custom.uml.Actor",
+        "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+      },
+      {
+        "type": "standard.Link",
+        "source": {
+          "id": "b6aee05a-efe1-4ece-ae1e-88780caf36b4"
+        },
+        "target": {
+          "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+        },
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0",
+        "labels": [
+          {
+            "attrs": {
+              "text": {
+                "type": "name",
+                "text": "User"
+              }
+            }
+          }
+        ],
+        "attrs": {
+          "line": {
+            "targetMarker": {
+              "arrowType": "aggregation"
+            },
+            "type": "dotted"
+          }
+        }
+      },
+      {
+        "type": "custom.uml.Classifier",
+        "id": "5bf0744c-b2bf-49c9-9e8c-1cc08d1567c0"
+      }
+    ]
+  }
 }

@@ -44,7 +44,7 @@ function setCorrectionToInputField(event) {
             } else {
                 // in the case of an AI summary we need to add the AI summary to the comment section
                 if (element.id.endsWith('__expected-comment')) {
-                    element.innerHTML = event.detail.comment;
+                    element.innerHTML = event.detail.summary;
                 }
             }
         });
