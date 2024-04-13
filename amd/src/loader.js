@@ -34,10 +34,18 @@ function setCorrectionToInputField(event) {
     const elements = document.querySelectorAll(`[id^='${event.detail?.inputId}__']`);
     if (elements) {
         elements.forEach((element) => {
-            if (element.id.endsWith('__expected-comment')) {
-                element.innerHTML = event.detail.comment;
-            } else if (element.id.endsWith('__expected-points')) {
-                element.innerHTML = `${event.detail.points} / ${event.detail.maxPoints}`;
+            // if there is no AI summary we need to add the static evaluation to the expected comment and points
+            if (!event.detail.summary) {
+                if (element.id.endsWith('__expected-comment')) {
+                    element.innerHTML = event.detail.comment;
+                } else if (element.id.endsWith('__expected-points')) {
+                    element.innerHTML = `${event.detail.points} / ${event.detail.maxPoints}`;
+                }
+            } else {
+                // in the case of an AI summary we need to add the AI summary to the comment section
+                if (element.id.endsWith('__expected-comment')) {
+                    element.innerHTML = event.detail.comment;
+                }
             }
         });
     }

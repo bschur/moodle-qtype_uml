@@ -1,4 +1,6 @@
+import { inject } from '@angular/core'
 import { diff } from 'just-diff'
+import { AiCorrectionService } from '../core/ai-correction.service'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
 import { cleanupObject, extractPropertyValueByOccurrence, replacePropertyWithValue } from './object.utils'
@@ -79,22 +81,57 @@ function normalizeDiagrams(
   return { normalizedAnswer, normalizedSolution }
 }
 
-export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
+function cleanupAndNormalizeDiagrams(
+  answer: JointJSDiagram,
+  solution: JointJSDiagram
+): { normalizedAnswer: JointJSDiagram; normalizedSolution: JointJSDiagram } {
   // cleanup unnecessary properties (metadata like position, size, etc.)
   const cleanedAnswer = cleanupObject(answer, ignoredProperties)
   const cleanedSolution = cleanupObject(solution, ignoredProperties)
 
   // normalize diagrams (e.g. order of elements in arrays, ids, etc.)
-  const { normalizedAnswer, normalizedSolution } = normalizeDiagrams(cleanedAnswer, cleanedSolution)
+  return normalizeDiagrams(cleanedAnswer, cleanedSolution)
+}
+
+export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiagram, maxPoints: number): UmlCorrection {
+  // cleanup unnecessary properties (metadata like position, size, etc.)
+  // normalize diagrams (e.g. order of elements in arrays, ids, etc.)
+  const { normalizedAnswer, normalizedSolution } = cleanupAndNormalizeDiagrams(answer, solution)
 
   // calculate differences between normalized diagrams
   const differences = diff(normalizedAnswer, normalizedSolution)
 
-  // TODO: potentially LLM normalize by ignoring other languages
+  const points = calculatePoints(normalizedSolution, differences, maxPoints)
 
   // calculate points based on differences
   return {
     differences,
-    points: calculatePoints(cleanedSolution, differences, maxPoints),
+    points,
+  }
+}
+
+export function injectEvaluateCorrectionFn() {
+  const aiCorrectionService = inject(AiCorrectionService)
+
+  return async (
+    answer: JointJSDiagram,
+    solution: JointJSDiagram,
+    maxPoints: number,
+    endpoint?: string | null | undefined
+  ): Promise<UmlCorrection> => {
+    const correction = evaluateCorrection(answer, solution, maxPoints)
+
+    // if there is an endpoint, use the AI service to calculate the correction
+    if (!endpoint) {
+      // calculate points based on differences
+      return correction
+    }
+
+    const summary = await aiCorrectionService.promptForCorrectionSummary(answer, solution, maxPoints, endpoint)
+
+    return {
+      ...correction,
+      summary,
+    }
   }
 }

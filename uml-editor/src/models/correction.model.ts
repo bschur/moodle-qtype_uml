@@ -5,4 +5,5 @@ export type JustDiff = { readonly op: Operation; readonly path: readonly (string
 export interface UmlCorrection {
   readonly differences: JustDiff[]
   readonly points: number
+  readonly summary?: string
 }
