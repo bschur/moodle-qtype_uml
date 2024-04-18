@@ -9,12 +9,14 @@ import { MatFormField, MatLabel } from '@angular/material/form-field'
 import { MatIcon } from '@angular/material/icon'
 import { MatSelect } from '@angular/material/select'
 import { dia } from '@joint/core'
-import { BaseUmlClassifierModel } from '../../models/jointjs/uml-classifier/base-uml-classifier.model'
+import {
+  BaseUmlClassifierModel,
+  ClassifierType,
+  classifierTypes,
+} from '../../models/jointjs/uml-classifier/base-uml-classifier.model'
 import { UmlClass } from '../../models/jointjs/uml-classifier/uml-class.model'
 import { UmlEnum } from '../../models/jointjs/uml-classifier/uml-enum.model'
 import { UmlInterface } from '../../models/jointjs/uml-classifier/uml-interface.model'
-
-type ClassifierType = 'Class' | 'Enum' | 'Interface'
 
 @Component({
   standalone: true,
@@ -40,7 +42,7 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
   @Input({ required: true }) graph!: dia.Graph
   @Input({ required: true }) paper!: dia.Paper
 
-  readonly lines: ClassifierType[] = ['Class', 'Enum', 'Interface']
+  readonly lines = classifierTypes
 
   readonly form = new FormGroup({
     classifier: new FormControl<ClassifierType>('Class', { nonNullable: true }),
