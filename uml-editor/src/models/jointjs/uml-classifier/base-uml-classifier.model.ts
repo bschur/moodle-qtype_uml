@@ -4,6 +4,7 @@ import { TextBlock } from '../text-block.model'
 import Size = dia.Size
 
 export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
+export type UmlClassifierType = 'Class' | 'Enum' | 'Interface'
 
 export function convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>, model: BaseUmlClassifierModel): T {
   const element = new clazz()
@@ -17,6 +18,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
 
   protected abstract initialWidth: number
   protected abstract listItemHeight: number
+  abstract readonly type: UmlClassifierType
 
   protected get listItemWidth(): number {
     let width = this.initialWidth

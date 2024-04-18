@@ -1,5 +1,5 @@
 import { CommonModule, JsonPipe } from '@angular/common'
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
 import { MatOption } from '@angular/material/autocomplete'
@@ -34,7 +34,7 @@ type ClassifierType = 'Class' | 'Enum' | 'Interface'
   styleUrl: './classifier-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> {
+export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> implements OnInit {
   @Input({ required: true }) model!: T
   @Input({ required: true }) elementView!: dia.ElementView
   @Input({ required: true }) graph!: dia.Graph
@@ -53,6 +53,10 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
       .subscribe(value => this.changeClassifierType(value))
 
     this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeAbsract())
+  }
+
+  ngOnInit() {
+    this.form.controls.classifier.setValue(this.model.type)
   }
 
   changeClassifierType(type: ClassifierType) {

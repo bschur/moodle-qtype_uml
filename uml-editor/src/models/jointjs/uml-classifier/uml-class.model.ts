@@ -2,7 +2,7 @@ import { dia, shapes, util } from '@joint/core'
 import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
-import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
+import { BaseUmlClassifierModel, UmlClassSectors, UmlClassifierType } from './base-uml-classifier.model'
 
 const initialWidth = 150
 const initialHeight = 120
@@ -12,6 +12,7 @@ const headerHeigth = 40
 export class UmlClass extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
+  override readonly type: UmlClassifierType = 'Class'
 
   private readonly variableComponents: TextBlock[] = []
 
