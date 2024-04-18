@@ -11,7 +11,7 @@ export const TextBlockView = dia.ElementView.extend({
 })
 
 export class TextBlock extends dia.Element {
-  override markup = util.svg`
+  override readonly markup = util.svg`
     <foreignObject @selector="foreignObject" style=" position: relative;">
       <div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute;  left: 4px; width: 100%; height: 100%;">
         <input 
