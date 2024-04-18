@@ -1,8 +1,7 @@
 import { shapes, util } from '@joint/core'
+import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
-import { UmlClass } from './uml-class.model'
-import { UmlInterface } from './uml-interface.model'
 
 const initialWidth = 150
 const initialHeight = 80
@@ -12,19 +11,6 @@ export class UmlEnum extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
 
-  override convertToInterface(): UmlInterface {
-    const it = new UmlInterface()
-    it.position(this.position().x, this.position().y)
-    return it
-  }
-  override convertToEnum(): UmlEnum {
-    return this
-  }
-  override convertToClass(): UmlClass {
-    const umlClass = new UmlClass()
-    umlClass.position(this.position().x, this.position().y)
-    return umlClass
-  }
   override readonly markup = [
     {
       tagName: 'rect',
@@ -35,7 +21,7 @@ export class UmlEnum extends BaseUmlClassifierModel {
       selector: 'headerlabel',
     },
     {
-      tagName: 'TextBlock',
+      tagName: 'rect',
       selector: 'header',
     },
     {
@@ -51,6 +37,7 @@ export class UmlEnum extends BaseUmlClassifierModel {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
       type: 'custom.uml.Enum',
+      propertyView: ClassifierConfigurationComponent,
       size: {
         width: initialWidth,
         height: initialHeight,
@@ -73,13 +60,13 @@ export class UmlEnum extends BaseUmlClassifierModel {
           fill: 'black',
         },
         ['header' satisfies UmlClassSectors]: {
-          width: initialWidth - 8,
+          width: initialWidth,
           height: listItemHeight,
           'ref-y': listItemHeight,
-
+          'ref-x': 0,
           'text-anchor': 'middle',
           ref: 'body',
-          fill: 'white',
+          fillOpacity: 0,
         },
         ['functionsRect' satisfies UmlClassSectors]: {
           width: initialWidth,

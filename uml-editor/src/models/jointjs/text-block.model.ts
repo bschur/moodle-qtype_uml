@@ -21,7 +21,11 @@ export class TextBlock extends dia.Element {
             placeholder="Type something"
             style="width: 100%; height: 100%;  border: none;
             outline: none;
-            background: none;"
+            background: none;
+            font-size: 12px;
+            font-family: sans-serif;
+             ;"
+            
         />
       </div>
     </foreignObject>
@@ -38,9 +42,25 @@ export class TextBlock extends dia.Element {
           height: 'calc(h)',
         },
       },
+      text: '',
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
+  }
+
+  changeTextSize() {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    parsedMarkup[0].children[0].children[0].style['font-size'] = '20px'
+    this.prop('markup', parsedMarkup)
+  }
+
+  changeAbstract() {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    const actualValue = parsedMarkup[0].children[0].children[0].style.fontFamily || 'sans-serif'
+    parsedMarkup[0].children[0].children[0].style.fontFamily = actualValue === 'sans-serif' ? 'cursive' : 'sans-serif'
+    this.prop('markup', parsedMarkup)
   }
 }
