@@ -36,4 +36,11 @@
       background-color: var(--background-color);
     }
   }
+
+  .uml-editor-correctness__fab-section {
+    position: absolute;
+    bottom: 16px;
+    right: 100px;
+    z-index: 9999;
+  }
 }

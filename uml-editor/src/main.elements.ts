@@ -1,4 +1,5 @@
 import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay'
+import { provideHttpClient } from '@angular/common/http'
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field'
 import { bootstrapApplication } from '@angular/platform-browser'
 import { provideAnimations } from '@angular/platform-browser/animations'
@@ -11,6 +12,7 @@ document.body.appendChild(node)
 bootstrapApplication(ElementsComponent, {
   providers: [
     provideAnimations(),
+    provideHttpClient(),
     { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
