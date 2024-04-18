@@ -96,6 +96,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
             model: cell.model,
             graph: paperEditor.model,
             elementView: cell,
+            paper: paperEditor,
           })
         }
       }

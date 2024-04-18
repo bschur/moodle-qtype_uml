@@ -1,14 +1,21 @@
-import { dia, shapes } from '@joint/core'
+import { Type } from '@angular/core'
+import { dia, mvc, shapes } from '@joint/core'
 import { TextBlock } from '../text-block.model'
+import Size = dia.Size
 
 export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
 
+export function convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>, model: BaseUmlClassifierModel): T {
+  const element = new clazz()
+  element.position(model.position().x, model.position().y)
+  return element
+}
+
 export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   protected functionComponents: TextBlock[] = []
-  protected headerComponent: TextBlock | null = null
+  protected headerComponent: TextBlock = new TextBlock()
 
   protected abstract initialWidth: number
-
   protected abstract listItemHeight: number
 
   protected get listItemWidth(): number {
@@ -30,17 +37,28 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     })
   }
 
+  convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>) {
+    const newObj = convertTo(clazz, this)
+    newObj.initialize(
+      this.attributes,
+      undefined,
+      this.position(),
+      this.size(),
+      this.functionComponents,
+      this.headerComponent
+    )
+    return newObj
+  }
+
   userInput(evt: dia.Event) {
     const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
 
     const newTextBlockElement = new TextBlock()
-
     let positionY = 0
     switch (selectedRect) {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
-        //newTextBlockElement.size(20, listItemHeight)
-
+        newTextBlockElement.resize(this.size().width - 10, this.listItemHeight)
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
@@ -66,9 +84,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
-    let indexOfComponentToRemove = -1
-
-    indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
+    const indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
 
     if (indexOfComponentToRemove !== -1) {
       // Remove the component from the array
@@ -83,9 +99,53 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.resizeInlineContainer(-1, 'functionsRect')
   }
 
-  public abstract convertToInterface(): BaseUmlClassifierModel
+  override initialize(
+    attributes?: shapes.standard.RectangleAttributes,
+    options?: mvc.CombinedModelConstructorOptions<never, this>,
+    position?: { x: number; y: number },
+    size?: Size,
+    functionComponents?: TextBlock[],
+    headerComponent?: TextBlock
+  ) {
+    super.initialize(attributes, options)
+    if (position != undefined) this.position(position.x, position.y)
+    if (size != undefined) this.resize(size.width, size.height)
+    if (functionComponents != undefined) this.addFunction(functionComponents)
+    if (headerComponent != undefined) this.addHeader(headerComponent)
+  }
 
-  public abstract convertToEnum(): BaseUmlClassifierModel
+  addFunction(functionComponents: TextBlock[]) {
+    functionComponents?.forEach(value => {
+      const newTextBlockElement = new TextBlock()
+      const positionY =
+        this.position().y + 2 * this.listItemHeight + this.functionComponents.length * this.listItemHeight
+      newTextBlockElement.position(this.position().x, positionY)
+      newTextBlockElement.attr('text/props/value', value.attr('text/props/value'))
+      this.functionComponents.push(newTextBlockElement)
+      this.resizeInlineContainer(1, 'functionsRect')
+      this.embed(newTextBlockElement)
+    })
+  }
 
-  public abstract convertToClass(): BaseUmlClassifierModel
+  addHeader(header: TextBlock) {
+    const hc = new TextBlock()
+
+    hc.position(header.position().x, header.position().y)
+    hc.resize(this.initialWidth, this.listItemHeight)
+    hc.attr('text/props/value', header.attr('text/props/value'))
+    this.headerComponent = hc
+    this.embed(hc)
+  }
+
+  getFunctions(): TextBlock[] {
+    return this.functionComponents
+  }
+
+  getHeader(): TextBlock {
+    return this.headerComponent
+  }
+
+  setAbstract() {
+    this.headerComponent?.changeAbstract()
+  }
 }
