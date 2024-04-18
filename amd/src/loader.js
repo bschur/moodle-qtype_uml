@@ -34,7 +34,7 @@ function setCorrectionToInputField(event) {
     const elements = document.querySelectorAll(`[id^='${event.detail?.inputId}__']`);
     if (elements) {
         elements.forEach((element) => {
-            // if there is no AI summary we need to add the static evaluation to the expected comment and points
+            // If there is no AI summary we need to add the static evaluation to the expected comment and points
             if (!event.detail.summary) {
                 if (element.id.endsWith('__expected-comment')) {
                     element.innerHTML = event.detail.comment;
@@ -42,7 +42,7 @@ function setCorrectionToInputField(event) {
                     element.innerHTML = `${event.detail.points} / ${event.detail.maxPoints}`;
                 }
             } else {
-                // in the case of an AI summary we need to add the AI summary to the comment section
+                // In the case of an AI summary we need to add the AI summary to the comment section
                 if (element.id.endsWith('__expected-comment')) {
                     element.innerHTML = event.detail.summary;
                 }
@@ -56,7 +56,6 @@ function setCorrectionToInputField(event) {
  *
  * @param {String} basePath path to the dist folder of the uml-element
  */
-// Eslint-disable-next-line no-unused-vars
 export const init = (basePath) => {
     // Create script and style tag for custom elements
     const mainScript = document.createElement('script');
