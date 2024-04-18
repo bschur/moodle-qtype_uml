@@ -22,8 +22,7 @@ const resizePaperObserver = (paper: dia.Paper) =>
     })
   })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const jointjsCustomNamespace: any = {
+const jointjsCustomNamespace: unknown = {
   ...shapes,
   ...[...jointJSCustomUmlElements, ...jointJSCustomUmlElementViews].reduce((acc, item) => {
     if (item.type === 'element') {

@@ -1,20 +1,20 @@
 export function cleanupObject<T extends object>(obj: T, ignoredProperties: string[] = []): T {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cleanedObject: any = {}
+  const cleanedObject: T = Array.isArray(obj) ? <T>[] : <T>{}
 
   for (const [key, value] of Object.entries(obj || {})) {
     if (value !== null && value !== undefined && !ignoredProperties.includes(key)) {
+      const parsedKey = key as keyof T
       if (typeof value !== 'object') {
-        cleanedObject[key] = value
+        cleanedObject[parsedKey] = value
       } else if (Array.isArray(value)) {
         const cleanedArray = value.map((val, index) => cleanupObject({ [index]: val }, ignoredProperties)[index])
         if (cleanedArray.length > 0) {
-          cleanedObject[key] = cleanedArray
+          cleanedObject[parsedKey] = <T[keyof T]>cleanedArray
         }
       } else {
         const cleanedInnerObject = cleanupObject(value, ignoredProperties)
         if (Object.keys(cleanedInnerObject || {}).length > 0) {
-          cleanedObject[key] = cleanedInnerObject
+          cleanedObject[parsedKey] = cleanedInnerObject
         }
       }
     }
@@ -51,7 +51,7 @@ export function extractPropertiesByName<T extends object>(
   return returnObject
 }
 
-export function extractPropertyWithPathOccurrences<T extends object>(
+export function extractPropertyValueByOccurrence<T extends object>(
   object: T,
   nameToMatch: string
 ): [string | number, string, number][] {
@@ -77,35 +77,35 @@ export function replacePropertyWithValue<T extends object>(
     return object
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const newObject: any = { ...object }
+  const newObject: T = Array.isArray(object) ? <T>[...object] : { ...object }
   for (const [key, value] of Object.entries(newObject)) {
+    const parsedKey = key as keyof T
     if (key === nameToMatch) {
       const replacementValue = lookupMap.get(value)
       if (replacementValue) {
-        newObject[key] = lookupMap.get(value) || value
+        newObject[parsedKey] = lookupMap.get(value) || value
       }
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      newObject[key] = replacePropertyWithValue(<any>value, nameToMatch, lookupMap)
+      newObject[parsedKey] = replacePropertyWithValue(value, nameToMatch, lookupMap)
     }
   }
 
   return newObject
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function assignValueToObject(existingObject: any, inputString: string, value: any) {
+export function assignValueToObject<T extends object>(existingObject: T, inputString: string, value: unknown) {
   const parts = inputString.split('.')
   let currentObject = existingObject
 
   for (const part of parts.slice(0, -1)) {
-    currentObject[part] = currentObject[part] || {}
-    currentObject = currentObject[part]
+    const parsedPart = part as keyof T
+    currentObject[parsedPart] = <T[keyof T]>(currentObject[parsedPart] || {})
+    currentObject = <T>currentObject[parsedPart]
   }
 
   // Assign the value to the last part in the path
-  currentObject[parts[parts.length - 1]] = value
+  const parsedPart = parts[parts.length - 1] as keyof T
+  currentObject[parsedPart] = <T[keyof T]>value
 
   return existingObject
 }

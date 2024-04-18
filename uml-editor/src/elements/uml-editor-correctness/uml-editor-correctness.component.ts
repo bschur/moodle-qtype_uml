@@ -14,7 +14,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { MatListModule } from '@angular/material/list'
 import { combineLatest, delay } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
-import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
+import { EMPTY_DIAGRAM } from '../../models/jointjs/jointjs-diagram.model'
 import { evaluateCorrection } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
 
@@ -43,8 +43,6 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
   private readonly correction = signal<UmlCorrection>({
     differences: [],
     points: 0,
-    answer: EMPTY_DIAGRAM_OBJECT,
-    solution: EMPTY_DIAGRAM_OBJECT,
   })
   private readonly readyState = signal<typeof document.readyState>('loading')
 
@@ -65,14 +63,7 @@ export class UmlEditorCorrectnessComponent implements OnChanges {
           maxPoints: this.maxPoints,
         }
 
-        console.debug(
-          'correction changed',
-          emittedCorrection,
-          'answer',
-          correction.answer,
-          'solution',
-          correction.solution
-        )
+        console.debug('correction changed', correction, 'emitting', emittedCorrection)
         this.correctionChanged.emit(emittedCorrection)
       })
 
