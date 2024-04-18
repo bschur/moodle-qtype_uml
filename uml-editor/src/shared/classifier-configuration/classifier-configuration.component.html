@@ -11,4 +11,8 @@
   </mat-form-field>
 
   <mat-checkbox [formControl]="form.controls.abstract">Abstract</mat-checkbox>
+  @if (model.type === 'Class') {
+    <mat-checkbox  [formControl]="form.controls.abstract">Static</mat-checkbox>
+  }
+
 </section>
