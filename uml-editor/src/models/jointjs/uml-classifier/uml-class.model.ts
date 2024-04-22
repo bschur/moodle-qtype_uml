@@ -163,7 +163,6 @@ export class UmlClass extends BaseUmlClassifierModel {
           headerHeigth +
           this.inlineContainerHeight('variablesRect') +
           this.functionsComponentAllHeight
-
         newTextBlockElement.position(this.position().x, positionY)
         newTextBlockElement.resize(this.listItemWidth, listItemHeight)
         this.functionComponents.push(newTextBlockElement)
@@ -235,7 +234,6 @@ export class UmlClass extends BaseUmlClassifierModel {
       height = minHeigth
     }
 
-    console.log(height)
     super.resize(width, height)
 
     // Update subelements

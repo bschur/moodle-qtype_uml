@@ -1,5 +1,5 @@
 import { CommonModule, JsonPipe } from '@angular/common'
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core'
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
 import { MatOption } from '@angular/material/autocomplete'
@@ -34,7 +34,7 @@ type ClassifierType = 'Class' | 'Enum' | 'Interface'
   styleUrl: './classifier-configuration.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> implements OnInit {
+export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> {
   @Input({ required: true }) model!: T
   @Input({ required: true }) elementView!: dia.ElementView
   @Input({ required: true }) graph!: dia.Graph
@@ -55,20 +55,6 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
     this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeAbsract())
   }
 
-  ngOnInit() {
-    //const allLinks[int];
-
-    // Iterate through each link on the paper
-    this.paper.model.getLinks().forEach(function (link) {
-      const linkId = link.id
-      //allLinks[linkId] = link;
-      console.log(link)
-    })
-
-    //console.log(allLinks)
-    console.log(this.model)
-  }
-
   changeClassifierType(type: ClassifierType) {
     let newModel
     switch (type) {
@@ -83,11 +69,23 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
         break
     }
 
-    this.graph.removeCells([this.elementView.model])
     this.graph.addCell(newModel)
+    const classifierID = this.model.id
+    this.paper.model.getLinks().forEach(function (link) {
+      if (link.target().id === classifierID) {
+        link.target(newModel)
+      } else if (link.source().id === classifierID) {
+        link.source(newModel)
+      }
+    })
+
+    this.graph.removeCells([this.elementView.model])
+
     this.elementView.model = newModel
+
     this.elementView.update()
     this.model = newModel as unknown as T
+
     newModel.getFunctions().forEach(value => {
       this.paper.model.addCell(value)
     })
