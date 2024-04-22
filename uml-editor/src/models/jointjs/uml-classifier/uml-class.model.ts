@@ -88,7 +88,7 @@ export class UmlClass extends BaseUmlClassifierModel {
           stroke: 'black',
         },
         ['headerlabel' satisfies UmlClassSectors]: {
-          text: '<<Static>>',
+          text: '',
           width: '100%', // Assuming you want the label to occupy the entire width of the body
           height: listItemHeight,
           'ref-y': 0,
@@ -273,5 +273,14 @@ export class UmlClass extends BaseUmlClassifierModel {
     })
 
     return this
+  }
+
+  setStatic() {
+    const selector = 'headerlabel/text'
+    if (this.attr(selector) != '') {
+      this.attr(selector, '')
+    } else {
+      this.attr(selector, '<<Static>>')
+    }
   }
 }

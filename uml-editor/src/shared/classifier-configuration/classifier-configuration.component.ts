@@ -47,6 +47,7 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
   readonly form = new FormGroup({
     classifier: new FormControl<ClassifierType>('Class', { nonNullable: true }),
     abstract: new FormControl<boolean>(false, { nonNullable: true }),
+    static: new FormControl<boolean>(false, { nonNullable: true }),
   })
 
   constructor() {
@@ -55,6 +56,7 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
       .subscribe(value => this.changeClassifierType(value))
 
     this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeAbsract())
+    this.form.controls.static.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeStatic())
   }
 
   ngOnInit() {
@@ -88,5 +90,11 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
 
   private changeAbsract() {
     this.model.setAbstract()
+  }
+
+  private changeStatic() {
+    if (this.model instanceof UmlClass) {
+      this.model.setStatic()
+    }
   }
 }
