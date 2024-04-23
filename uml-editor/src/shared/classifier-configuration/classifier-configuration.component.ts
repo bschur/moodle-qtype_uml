@@ -73,9 +73,12 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
     const classifierID = this.model.id
     this.paper.model.getLinks().forEach(function (link) {
       if (link.target().id === classifierID) {
-        link.target(newModel)
+        console.log(link.target())
+        link.target(newModel, link.target().anchor)
+        //link.prop('target', newModel)
       } else if (link.source().id === classifierID) {
-        link.source(newModel)
+        link.source(newModel, link.target().anchor)
+        //link.prop('source', newModel)
       }
     })
 
