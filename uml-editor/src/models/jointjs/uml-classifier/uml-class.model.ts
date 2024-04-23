@@ -144,7 +144,7 @@ export class UmlClass extends BaseUmlClassifierModel {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + listItemHeight)
         newTextBlockElement.resize(this.size().width - 10, listItemHeight)
-
+        newTextBlockElement.setToTitle()
         this.headerComponent = newTextBlockElement
         break
       case 'variablesRect':

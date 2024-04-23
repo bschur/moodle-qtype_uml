@@ -22,7 +22,7 @@ export class TextBlock extends dia.Element {
             style="width: 100%; height: 100%;  border: none;
             outline: none;
             background: none;
-            font-size: 12px;
+            font-size: 14px;
             font-family: sans-serif;
              ;"
             
@@ -61,6 +61,15 @@ export class TextBlock extends dia.Element {
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
     const actualValue = parsedMarkup[0].children[0].children[0].style.fontFamily || 'sans-serif'
     parsedMarkup[0].children[0].children[0].style.fontFamily = actualValue === 'sans-serif' ? 'cursive' : 'sans-serif'
+    this.prop('markup', parsedMarkup)
+  }
+
+  setToTitle() {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    parsedMarkup[0].children[0].children[0].style['font-weight'] = 'bold'
+    parsedMarkup[0].children[0].children[0].style['text-align'] = 'center'
+    parsedMarkup[0].children[0].children[0].style['font-size'] = '16px'
     this.prop('markup', parsedMarkup)
   }
 }

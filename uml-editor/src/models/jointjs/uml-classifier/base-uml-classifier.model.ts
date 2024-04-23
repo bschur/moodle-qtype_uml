@@ -63,6 +63,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
         newTextBlockElement.resize(this.size().width - 10, this.listItemHeight)
+        newTextBlockElement.setToTitle()
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
@@ -132,13 +133,15 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   addHeader(header: TextBlock) {
-    const hc = new TextBlock()
+    //const hc = new TextBlock()
+    this.headerComponent.position(header.position().x, header.position().y)
+    this.headerComponent.resize(this.initialWidth, this.listItemHeight)
 
-    hc.position(header.position().x, header.position().y)
-    hc.resize(this.initialWidth, this.listItemHeight)
-    hc.attr('text/props/value', header.attr('text/props/value'))
-    this.headerComponent = hc
-    this.embed(hc)
+    this.headerComponent.prop('markup', header.markup)
+    this.headerComponent.attr('text/props/value', header.attr('text/props/value'))
+    // this.headerComponent = hc
+
+    this.embed(this.headerComponent)
   }
 
   getFunctions(): TextBlock[] {
