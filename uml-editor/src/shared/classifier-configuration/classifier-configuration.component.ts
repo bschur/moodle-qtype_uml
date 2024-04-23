@@ -64,28 +64,30 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
   }
 
   changeClassifierType(type: ClassifierType) {
-    let newModel
-    switch (type) {
-      case 'Interface':
-        newModel = this.model.convertTo(UmlInterface)
-        break
-      case 'Class':
-        newModel = this.model.convertTo(UmlClass)
-        break
-      case 'Enum':
-        newModel = this.model.convertTo(UmlEnum)
-        break
-    }
+    if (type != this.model.type) {
+      let newModel
+      switch (type) {
+        case 'Interface':
+          newModel = this.model.convertTo(UmlInterface)
+          break
+        case 'Class':
+          newModel = this.model.convertTo(UmlClass)
+          break
+        case 'Enum':
+          newModel = this.model.convertTo(UmlEnum)
+          break
+      }
 
-    this.graph.removeCells([this.elementView.model])
-    this.graph.addCell(newModel)
-    this.elementView.model = newModel
-    this.elementView.update()
-    this.model = newModel as unknown as T
-    newModel.getFunctions().forEach(value => {
-      this.paper.model.addCell(value)
-    })
-    this.paper.model.addCell(newModel.getHeader())
+      this.graph.removeCells([this.elementView.model])
+      this.graph.addCell(newModel)
+      this.elementView.model = newModel
+      this.elementView.update()
+      this.model = newModel as unknown as T
+      newModel.getFunctions().forEach(value => {
+        this.paper.model.addCell(value)
+      })
+      this.paper.model.addCell(newModel.getHeader())
+    }
   }
 
   private changeAbsract() {
