@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @copyright  2023 Luca Bösch <luca.boesch@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Test feedback with deferredfeedback question behaviour

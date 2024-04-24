@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/question/type/uml/tests/helper.php');
  * @copyright  2023 Luca Bösch <luca.boesch@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_test extends \advanced_testcase {
+final class question_test extends \advanced_testcase {
 
     /**
      * Test get_question_summary
