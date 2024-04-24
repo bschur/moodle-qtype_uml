@@ -69,11 +69,25 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
         break
     }
 
-    this.graph.removeCells([this.elementView.model])
     this.graph.addCell(newModel)
+    const classifierID = this.model.id
+    this.paper.model.getLinks().forEach(function (link) {
+      if (link.target().id === classifierID) {
+        const anchor = link.target().anchor
+        link.target(newModel, { anchor })
+      } else if (link.source().id === classifierID) {
+        const anchor = link.source().anchor
+        link.source(newModel, { anchor })
+      }
+    })
+
+    this.graph.removeCells([this.elementView.model])
+
     this.elementView.model = newModel
+
     this.elementView.update()
     this.model = newModel as unknown as T
+
     newModel.getFunctions().forEach(value => {
       this.paper.model.addCell(value)
     })
