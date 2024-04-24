@@ -5,6 +5,7 @@ import { TextBlock } from './text-block.model'
 
 let width = 150
 let heigth = 100
+let isTextBox = false
 export class UseCase extends shapes.standard.Rectangle {
   override readonly markup = [
     {
@@ -33,9 +34,7 @@ export class UseCase extends shapes.standard.Rectangle {
       },
       attrs: {
         body: {
-          //opacity: '100%',
-          strokeWidth: 4,
-          stroke: 'black',
+          opacity: 0,
         },
         ['ellipse']: {
           width: '100%',
@@ -49,7 +48,7 @@ export class UseCase extends shapes.standard.Rectangle {
           'ref-Cy': 0.5,
           'ref-Cx': 0.5,
           ref: 'body',
-          fill: 'red',
+          fill: 'white',
         },
       },
     }
@@ -58,16 +57,21 @@ export class UseCase extends shapes.standard.Rectangle {
   }
 
   userInput() {
-    const ctb = new TextBlock()
+    if (!isTextBox) {
+      const ctb = new TextBlock()
 
-    ctb.position().x = this.position().x
-    ctb.position().y = this.position().y + (this.size().width - 5) / 4
-    ctb.size().width = this.size().width - 5
-    ctb.size().height = this.size().height / 2
+      ctb.size(this.size().width - 5, this.size().height / 2)
+      const tbWidth = this.position().x + width / 2 - ctb.size().width / 2
+      const tbHeight = this.position().y + heigth / 2 - ctb.size().height / 2
+      ctb.position(tbWidth, tbHeight)
 
-    // Alternatively, store the textbox reference for further manipulation
-    this.embed(ctb)
-    return ctb
+      ctb.attr('ref', 'ellipse')
+
+      isTextBox = true
+      this.embed(ctb)
+      return ctb
+    }
+    return null
   }
 
   override resize(widthNew: number, heightNew: number) {
