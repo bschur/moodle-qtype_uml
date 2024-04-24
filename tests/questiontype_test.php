@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/question/format/xml/format.php');
  * @copyright  2023 Luca Bösch <luca.boesch@bfh.ch>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questiontype_test extends \advanced_testcase {
+final class questiontype_test extends \advanced_testcase {
 
     /** @var uml instance of the question type class to test. */
     protected $qtype;
@@ -114,7 +114,7 @@ class questiontype_test extends \advanced_testcase {
      * @covers \qtype_uml::make_question
      * @return void
      */
-    public function test_initialise_question_instance() {
+    public function test_initialise_question_instance(): void {
         $qdata = \test_question_maker::get_question_data('uml', 'basic');
         $expectedq = \test_question_maker::make_question('uml', 'basic');
         $qdata->stamp = $expectedq->stamp;
@@ -134,7 +134,7 @@ class questiontype_test extends \advanced_testcase {
      * @return void
      * @throws \coding_exception
      */
-    public function test_xml_import() {
+    public function test_xml_import(): void {
         $xml = '  <question type="uml">
     <name>
       <text>UML question</text>
@@ -176,7 +176,7 @@ class questiontype_test extends \advanced_testcase {
      * @covers \qtype_uml::export_to_xml
      * @return void
      */
-    public function test_xml_export() {
+    public function test_xml_export(): void {
         $qdata = \test_question_maker::get_question_data('uml', 'basic');
         $qdata->defaultmark = 6;
 
