@@ -31,30 +31,31 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
-## Optionally setup AI correction ##
+## Optionally Set Up AI Correction ##
 
-Out of the box this plugin only supports static analysis over an given answer and the correct solution.
-There is support for LLMs (Large Language Models) to provide a more sophisticated correction.
+By default, this plugin supports only static analysis of a given answer and its correct solution. However, it also has support for Large Language Models (LLMs), allowing for more
+advanced correction capabilities.
 
-To enable this feature, you can either use the predefined Llama2 correction or setup your own service yourself.
+To enable this feature, follow the steps outlined below.
 
-### Setup Llama2 locally ###
+### Setting Up Llama 2 Locally ###
 
-We setup the LLM feature with [Ollama](https://ollama.com/). Follow the guide to setup Ollama on the Moodle server.
-Finally download the Llama2 model. When the service is running you can configure the prompt text for a given UML question.
+We will set up LLM support using [Ollama](https://ollama.com/). Begin by following the Ollama setup guide on the Moodle server. Once installed, download the Llama 2 model. When
+everything is running, go to a UML question and edit it to check if the setup is correct. You should see a section labeled "prompt configuration." If it appears, your setup is
+successful.
 
-### Use other model instead ###
+### Using Other Models ###
 
-You don't want to use Llama2? No problem, you can use other models as well.
-Just download one of the many [models](https://ollama.com/library) provided by Ollama.
-Then use the model identifier in the `post-prompt.php` file.
+If you'd rather not use Llama 2, there are other models you can choose from. Ollama provides a variety of [models](https://ollama.com/library) that you can download. Once you've
+selected and downloaded your preferred model, modify the `post-prompt.php` file to reference the new model.
 
 ```php
 $config->model = 'llama2';
 
-// becomes
+// change to
 
 $config->model = 'your-model';
+
 ```
 
 ## License ##
