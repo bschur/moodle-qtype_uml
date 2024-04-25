@@ -78,7 +78,7 @@ class EditorHelper {
             string $diagram,
             string $correctanswer,
             int $maxpoints,
-            string $additionalCorrectionPrompt = null
+            string $additionalcorrectionprompt = null
     ) {
         $promptendpoint = self::is_ai_summary_enabled() ? self::$promptendpoint : '';
 
@@ -86,7 +86,7 @@ class EditorHelper {
                     input-id=\'' . $bindelementid . '\'
                     max-points=\'' . $maxpoints . '\'
                     prompt-endpoint=\'' . $promptendpoint . '\'
-                    additional-correction-prompt=\'' . $additionalCorrectionPrompt . '\'
+                    additional-correction-prompt=\'' . $additionalcorrectionprompt . '\'
                     diagram=\'' . $diagram . '\'
                     correct-answer=\'' . $correctanswer . '\'/>
                 </fullscreen-view>';
