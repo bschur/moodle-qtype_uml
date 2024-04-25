@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->libdir . '/questionlib.php');
+require_once(__DIR__ . '/question.php');
 
 /**
  * Class that represents a uml question type.
@@ -78,24 +79,30 @@ class qtype_uml extends question_type {
         $graderinfoformat = $question->graderinfo['format'];
 
         // Store prompt configuration.
-        $promptconfiguration = $this->import_or_save_files($question->promptconfiguration,
-                $context, 'qtype_uml', 'promptconfiguration', $question->id);
-        $promptconfigurationformat = $question->promptconfiguration['format'];
+        $promptconfiguration = isset($question->promptconfiguration) ? $this->import_or_save_files($question->promptconfiguration,
+                $context, 'qtype_uml', 'promptconfiguration', $question->id) : null;
+        $promptconfigurationformat = isset($question->promptconfiguration) ? $question->promptconfiguration['format'] : null;
 
         $options = $DB->get_record('question_uml', ['question' => $question->id]);
         // Save question options in question_uml table.
         if (!$options) {
             $options = new stdClass();
             $options->question = $question->id;
-            $options->id = $DB->insert_record('question_uml', $options);
+            $options->correctanswer = $correctanswerid;
+            $options->graderinfo = $graderinfo;
+            $options->graderinfoformat = $graderinfoformat;
+            $options->promptconfiguration = $promptconfiguration;
+            $options->promptconfigurationformat = $promptconfigurationformat;
+            $DB->insert_record('question_uml', $options);
+        } else {
+            $options->question = $question->id;
+            $options->correctanswer = $correctanswerid;
+            $options->graderinfo = $graderinfo;
+            $options->graderinfoformat = $graderinfoformat;
+            $options->promptconfiguration = $promptconfiguration;
+            $options->promptconfigurationformat = $promptconfigurationformat;
+            $DB->update_record('question_uml', $options);
         }
-
-        $options->correctanswer = $correctanswerid;
-        $options->graderinfo = $graderinfo;
-        $options->graderinfoformat = $graderinfoformat;
-        $options->promptconfiguration = $promptconfiguration;
-        $options->promptconfigurationformat = $promptconfigurationformat;
-        $DB->update_record('question_uml', $options);
 
         $this->save_hints($question);
 
