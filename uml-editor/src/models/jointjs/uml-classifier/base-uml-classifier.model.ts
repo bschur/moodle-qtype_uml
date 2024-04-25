@@ -5,6 +5,9 @@ import Size = dia.Size
 
 export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
 
+export const classifierTypes = ['Class', 'Enum', 'Interface'] as const
+export type ClassifierType = (typeof classifierTypes)[number]
+
 export function convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>, model: BaseUmlClassifierModel): T {
   const element = new clazz()
   element.position(model.position().x, model.position().y)
@@ -17,6 +20,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
 
   protected abstract initialWidth: number
   protected abstract listItemHeight: number
+  abstract readonly type: ClassifierType
 
   protected get listItemWidth(): number {
     let width = this.initialWidth
@@ -59,6 +63,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
         newTextBlockElement.resize(this.size().width - 10, this.listItemHeight)
+        newTextBlockElement.setToTitle()
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
@@ -128,13 +133,15 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   addHeader(header: TextBlock) {
-    const hc = new TextBlock()
+    //const hc = new TextBlock()
+    this.headerComponent.position(header.position().x, header.position().y)
+    this.headerComponent.resize(this.initialWidth, this.listItemHeight)
 
-    hc.position(header.position().x, header.position().y)
-    hc.resize(this.initialWidth, this.listItemHeight)
-    hc.attr('text/props/value', header.attr('text/props/value'))
-    this.headerComponent = hc
-    this.embed(hc)
+    this.headerComponent.prop('markup', header.markup)
+    this.headerComponent.attr('text/props/value', header.attr('text/props/value'))
+    // this.headerComponent = hc
+
+    this.embed(this.headerComponent)
   }
 
   getFunctions(): TextBlock[] {

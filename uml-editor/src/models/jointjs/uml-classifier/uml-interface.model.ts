@@ -1,7 +1,7 @@
 import { shapes, util } from '@joint/core'
 import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
-import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
+import { BaseUmlClassifierModel, ClassifierType, UmlClassSectors } from './base-uml-classifier.model'
 
 const initialWidth = 150
 const initialHeight = 80
@@ -10,6 +10,7 @@ const listItemHeight = 20
 export class UmlInterface extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
+  override readonly type: ClassifierType = 'Interface'
 
   override readonly markup = [
     {

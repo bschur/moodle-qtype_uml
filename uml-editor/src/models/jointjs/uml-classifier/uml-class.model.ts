@@ -2,7 +2,7 @@ import { dia, shapes, util } from '@joint/core'
 import { ClassifierConfigurationComponent } from '../../../shared/classifier-configuration/classifier-configuration.component'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 import { TextBlock } from '../text-block.model'
-import { BaseUmlClassifierModel, UmlClassSectors } from './base-uml-classifier.model'
+import { BaseUmlClassifierModel, ClassifierType, UmlClassSectors } from './base-uml-classifier.model'
 
 const initialWidth = 150
 const initialHeight = 120
@@ -12,6 +12,7 @@ const headerHeigth = 40
 export class UmlClass extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
+  override readonly type: ClassifierType = 'Class'
 
   private readonly variableComponents: TextBlock[] = []
 
@@ -87,7 +88,7 @@ export class UmlClass extends BaseUmlClassifierModel {
           stroke: 'black',
         },
         ['headerlabel' satisfies UmlClassSectors]: {
-          text: '<<Static>>',
+          text: '',
           width: '100%', // Assuming you want the label to occupy the entire width of the body
           height: listItemHeight,
           'ref-y': 0,
@@ -143,7 +144,7 @@ export class UmlClass extends BaseUmlClassifierModel {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + listItemHeight)
         newTextBlockElement.resize(this.size().width - 10, listItemHeight)
-
+        newTextBlockElement.setToTitle()
         this.headerComponent = newTextBlockElement
         break
       case 'variablesRect':
@@ -270,5 +271,14 @@ export class UmlClass extends BaseUmlClassifierModel {
     })
 
     return this
+  }
+
+  setStatic() {
+    const selector = 'headerlabel/text'
+    if (this.attr(selector) != '') {
+      this.attr(selector, '')
+    } else {
+      this.attr(selector, '<<Static>>')
+    }
   }
 }
