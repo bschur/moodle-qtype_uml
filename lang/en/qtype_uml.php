@@ -26,6 +26,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['correctanswer'] = 'Correct solution';
+$string['graderinfo'] = 'Grader information';
+$string['graderinfoheader'] = 'Information for graders';
 $string['pluginname'] = 'Moodle UML (BFH)';
 $string['pluginname_help'] = 'UML questions consist of interactive editor where responders can design their diagram.';
 $string['pluginname_link'] = 'question/type/uml';
@@ -33,10 +35,8 @@ $string['pluginnameadding'] = 'Adding a UML question';
 $string['pluginnameediting'] = 'Editing a UML question';
 $string['pluginnamesummary'] = 'UML questions consist of interactive editor where responders can design their diagram.';
 $string['privacy:metadata'] = 'The UML question type plugin does not store any personal data.';
-$string['suggested_comment'] = 'Suggested comment';
-$string['suggested_points'] = 'Suggested points';
-$string['graderinfoheader'] = 'Information for graders';
-$string['graderinfo'] = 'Grader information';
-$string['promptconfigurationheader'] = 'Prompt configuration';
 $string['promptconfiguration'] = 'Prompt string, that will be used for giving an estimation of the correctness of an given answer';
 $string['promptconfigurationdefault'] = 'Use the following weights for grading: arrowType=0.5, class=1, interface=1, package=1, note=0.5, relation=1, stereotype=0.5, text=0.5, visibility=0.5';
+$string['promptconfigurationheader'] = 'Prompt configuration';
+$string['suggested_comment'] = 'Suggested comment';
+$string['suggested_points'] = 'Suggested points';
