@@ -48,6 +48,10 @@ class qtype_uml_question extends question_with_responses {
     public $graderinfo;
     /** @var int format of $graderinfo. */
     public $graderinfoformat;
+    /** @var string configuration of the prompt. */
+    public $promptconfiguration;
+    /** @var int format of $promptconfiguration. */
+    public $promptconfigurationformat;
 
     /**
      * Defines the behaviour of the question.

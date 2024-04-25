@@ -72,18 +72,30 @@ class qtype_uml extends question_type {
             $DB->delete_records('question_answers', ['id' => $oldanswer->id]);
         }
 
+        // Store grader information.
+        $graderinfo = $this->import_or_save_files($question->graderinfo,
+                $context, 'qtype_uml', 'graderinfo', $question->id);
+        $graderinfoformat = $question->graderinfo['format'];
+
+        // Store prompt configuration.
+        $promptconfiguration = $this->import_or_save_files($question->promptconfiguration,
+                $context, 'qtype_uml', 'promptconfiguration', $question->id);
+        $promptconfigurationformat = $question->promptconfiguration['format'];
+
+        $options = $DB->get_record('question_uml', ['question' => $question->id]);
         // Save question options in question_uml table.
-        if ($options = $DB->get_record('question_uml', ['question' => $question->id])) {
-            // No need to do anything, since the answer IDs won't have changed
-            // But we'll do it anyway, just for robustness.
-            $options->correctanswer = $correctanswerid;
-            $DB->update_record('question_uml', $options);
-        } else {
+        if (!options) {
             $options = new stdClass();
             $options->question = $question->id;
-            $options->correctanswer = $correctanswerid;
-            $DB->insert_record('question_uml', $options);
+            $options->id = $DB->insert_record('question_uml', $options);
         }
+
+        $options->correctanswer = $correctanswerid;
+        $options->graderinfo = $graderinfo;
+        $options->graderinfoformat = $graderinfoformat;
+        $options->promptconfiguration = $promptconfiguration;
+        $options->promptconfigurationformat = $promptconfigurationformat;
+        $DB->update_record('question_uml', $options);
 
         $this->save_hints($question);
 

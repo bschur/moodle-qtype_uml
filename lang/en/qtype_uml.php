@@ -35,3 +35,8 @@ $string['privacy:metadata'] = 'The UML question type plugin does not store any p
 $string['correctanswer'] = 'Correct solution';
 $string['suggested_comment'] = 'Suggested comment';
 $string['suggested_points'] = 'Suggested points';
+$string['graderinfoheader'] = 'Information for graders';
+$string['graderinfo'] = 'Grader information';
+$string['promptconfigurationheader'] = 'Prompt configuration';
+$string['promptconfiguration'] = 'Prompt string, that will be used for giving an estimation of the correctness of an given answer';
+$string['promptconfigurationdefault'] = 'Use the following weights for grading: arrowType=0.5, class=1, interface=1, package=1, note=0.5, relation=1, stereotype=0.5, text=0.5, visibility=0.5';

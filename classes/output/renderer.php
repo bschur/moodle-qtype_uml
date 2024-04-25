@@ -58,12 +58,12 @@ class qtype_uml_renderer extends qtype_renderer {
             $maxpoints = $question->defaultmark;
 
             return $result
-                . EditorHelper::load_editor_correctness_html_for_id(
-                    $manualcommentid,
-                    $response,
-                    $correctresponse,
-                    $maxpoints
-                );
+                    . EditorHelper::load_editor_correctness_html_for_id(
+                            $manualcommentid,
+                            $response,
+                            $correctresponse,
+                            $maxpoints
+                    );
         }
 
         // Generate the input field.
@@ -80,12 +80,12 @@ class qtype_uml_renderer extends qtype_renderer {
         $answerinput = html_writer::empty_tag('input', $answerattributes);
 
         return $result
-            . EditorHelper::load_editor_html_for_id(
-                $answerattributes['id'],
-                !$options->readonly,
-                $response
-            )
-            . $answerinput;
+                . EditorHelper::load_editor_html_for_id(
+                        $answerattributes['id'],
+                        !$options->readonly,
+                        $response
+                )
+                . $answerinput;
     }
 
     /**
@@ -102,18 +102,25 @@ class qtype_uml_renderer extends qtype_renderer {
 
         // Generate the input fields.
         $suggestedcommentattributes = [
-            'id' => $options->manualcommentlink->id . '__expected-comment',
+                'id' => $options->manualcommentlink->id . '__expected-comment',
         ];
 
         $suggestedpointsattributes = [
-            'id' => $options->manualcommentlink->id . '__expected-points',
+                'id' => $options->manualcommentlink->id . '__expected-points',
         ];
 
         $question = $qa->get_question();
-        return html_writer::nonempty_tag('div', get_string("suggested_comment", "qtype_uml"))
-            . html_writer::nonempty_tag('div', '...', $suggestedcommentattributes)
-            . html_writer::nonempty_tag('div', get_string("suggested_points", "qtype_uml"))
-            . html_writer::nonempty_tag('div', '...', $suggestedpointsattributes);
+
+        // Grader information for manual comment.
+        $graderinformation = html_writer::nonempty_tag('div', $question->format_text(
+                $question->graderinfo, $question->graderinfoformat, $qa, 'qtype_uml',
+                'graderinfo', $question->id), ['class' => 'graderinfo']);
+
+        return $graderinformation
+                . html_writer::nonempty_tag('div', get_string("suggested_comment", "qtype_uml"))
+                . html_writer::nonempty_tag('div', '...', $suggestedcommentattributes)
+                . html_writer::nonempty_tag('div', get_string("suggested_points", "qtype_uml"))
+                . html_writer::nonempty_tag('div', '...', $suggestedpointsattributes);
     }
 
     /**
