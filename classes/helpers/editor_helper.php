@@ -70,13 +70,15 @@ class EditorHelper {
      * @param string $diagram The diagram to compare.
      * @param string $correctanswer The diagram correct answer.
      * @param int $maxpoints The maximum points to get for this question.
+     * @param string|null $additionalCorrectionPrompt The additional correction prompt.
      * @return string The editor correctness html.
      */
     public static function load_editor_correctness_html_for_id(
             string $bindelementid,
             string $diagram,
             string $correctanswer,
-            int $maxpoints
+            int $maxpoints,
+            string $additionalCorrectionPrompt = null
     ) {
         $promptendpoint = self::is_ai_summary_enabled() ? self::$promptendpoint : '';
 
@@ -84,6 +86,7 @@ class EditorHelper {
                     input-id=\'' . $bindelementid . '\'
                     max-points=\'' . $maxpoints . '\'
                     prompt-endpoint=\'' . $promptendpoint . '\'
+                    additional-correction-prompt=\'' . $additionalCorrectionPrompt . '\'
                     diagram=\'' . $diagram . '\'
                     correct-answer=\'' . $correctanswer . '\'/>
                 </fullscreen-view>';

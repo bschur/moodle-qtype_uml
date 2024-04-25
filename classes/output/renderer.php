@@ -56,13 +56,15 @@ class qtype_uml_renderer extends qtype_renderer {
             $manualcommentid = uniqid('manualCommentInput');
             $options->manualcommentlink->id = $manualcommentid;
             $maxpoints = $question->defaultmark;
+            $additionalCorrectionPrompt = $question->promptconfiguration;
 
             return $result
                     . EditorHelper::load_editor_correctness_html_for_id(
                             $manualcommentid,
                             $response,
                             $correctresponse,
-                            $maxpoints
+                            $maxpoints,
+                            $additionalCorrectionPrompt
                     );
         }
 

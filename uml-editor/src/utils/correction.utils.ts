@@ -119,7 +119,8 @@ export function injectEvaluateCorrectionFn() {
     answer: JointJSDiagram,
     solution: JointJSDiagram,
     maxPoints: number,
-    endpoint?: string | null | undefined
+    endpoint?: string | null | undefined,
+    correctionPrompt?: string | null | undefined
   ): Promise<UmlCorrection> => {
     const correction = evaluateCorrection(answer, solution, maxPoints)
 
@@ -133,7 +134,8 @@ export function injectEvaluateCorrectionFn() {
       correction.normalizedAnswer,
       correction.normalizedSolution,
       maxPoints,
-      endpoint
+      endpoint,
+      correctionPrompt
     )
 
     return {

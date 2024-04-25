@@ -176,5 +176,10 @@ class qtype_uml extends question_type {
         $correctanswerid = $questiondata->options->correctanswer;
 
         $question->correctanswer = $answers[$correctanswerid]->answer;
+
+        $question->graderinfo = $questiondata->options->graderinfo;
+        $question->graderinfoformat = $questiondata->options->graderinfoformat;
+        $question->promptconfiguration = $questiondata->options->promptconfiguration;
+        $question->promptconfigurationformat = $questiondata->options->promptconfigurationformat;
     }
 }

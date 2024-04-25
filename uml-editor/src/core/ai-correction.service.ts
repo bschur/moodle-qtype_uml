@@ -13,7 +13,8 @@ export class AiCorrectionService {
     cleanedAnswer: JointJSDiagram,
     cleanedSolution: JointJSDiagram,
     maxPoints: number,
-    endpoint: string
+    endpoint: string,
+    additionalCorrectionPrompt?: string | null | undefined
   ): Promise<string> {
     const prompt = `
 This is the given solution:
@@ -27,6 +28,7 @@ You are now the lecturer and your goal is to give the student an grade.
 
 Write a short summary by first listing the difference(s) between the answer and the solution
 Then grade the answer by giving it points. The minimum points is 0 and the maximum points is "${maxPoints}".
+${additionalCorrectionPrompt}
 `
 
     return firstValueFrom(this.httpClient.post<string>(endpoint, prompt))
