@@ -70,7 +70,7 @@ class EditorHelper {
      * @param string $diagram The diagram to compare.
      * @param string $correctanswer The diagram correct answer.
      * @param int $maxpoints The maximum points to get for this question.
-     * @param string|null $additionalCorrectionPrompt The additional correction prompt.
+     * @param string|null $additionalcorrectionprompt The additional correction prompt.
      * @return string The editor correctness html.
      */
     public static function load_editor_correctness_html_for_id(
