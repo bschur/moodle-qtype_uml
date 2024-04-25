@@ -83,10 +83,15 @@ class qtype_uml_edit_form extends question_edit_form {
         $mform->setExpanded('graderinfoheader');
         $mform->addElement('editor', 'graderinfo', get_string('graderinfo', 'qtype_uml'), $this->editoroptions);
 
-        // Prompt configuration information.
-        $mform->addElement('header', 'promptconfigurationheader', get_string('promptconfigurationheader', 'qtype_uml'));
-        $mform->setExpanded('promptconfigurationheader');
-        $mform->addElement('editor', 'promptconfiguration', get_string('promptconfiguration', 'qtype_uml'));
+        // Only allow the prompt configuration if the AI summary is enabled.
+        if (EditorHelper::is_ai_summary_enabled()) {
+            // Prompt configuration information.
+            $mform->addElement('header', 'promptconfigurationheader', get_string('promptconfigurationheader', 'qtype_uml'));
+            $mform->setExpanded('promptconfigurationheader');
+            $mform->addElement('editor', 'promptconfiguration',
+                    get_string('promptconfiguration', 'qtype_uml', $this->editoroptions));;
+            $mform->setDefault('promptconfiguration', ['text' => get_string('promptconfigurationdefault', 'qtype_uml')]);
+        }
     }
 
     /**
@@ -136,7 +141,7 @@ class qtype_uml_edit_form extends question_edit_form {
                 $this->fileoptions,
                 $question->options->promptconfiguration
         );
-        $question->promptconfiguration['format'] = $question->options->promptconfiguration;
+        $question->promptconfiguration['format'] = $question->options->promptconfigurationformat;
         $question->promptconfiguration['itemid'] = $draftidpromptconfiguration;
 
         return $question;

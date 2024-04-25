@@ -35,18 +35,23 @@ function xmldb_qtype_uml_upgrade($oldversion) {
     // Automatically generated Moodle v3.9.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2024042500) {
+    if ($oldversion < 2024042501) {
         $table = new xmldb_table('question_uml');
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
 
         // Create fields.
 
         // Grader info fields.
         $fieldgraderinfo = new xmldb_field('graderinfo', XMLDB_TYPE_TEXT);
-        $fieldgraderinfofromat = new xmldb_field('graderinfoformat', XMLDB_TYPE_NUMBER);
+        $fieldgraderinfofromat = new xmldb_field('graderinfoformat', XMLDB_TYPE_INTEGER, '10',
+                null, null, null, null, 'graderinfoformat');
 
         // Prompt configuration fields.
         $fieldpromptconfiguration = new xmldb_field('promptconfiguration', XMLDB_TYPE_TEXT);
-        $fieldpromptconfigurationformat = new xmldb_field('promptconfigurationformat', XMLDB_TYPE_NUMBER);
+        $fieldpromptconfigurationformat = new xmldb_field('promptconfigurationformat', XMLDB_TYPE_INTEGER, '10',
+                null, null, null, null, 'promptconfigurationformat');
 
         $fields = [
                 $fieldgraderinfo,
@@ -63,7 +68,7 @@ function xmldb_qtype_uml_upgrade($oldversion) {
         }
 
         // UML savepoint reached.
-        upgrade_plugin_savepoint(true, 2024042500, 'qtype', 'uml');
+        upgrade_plugin_savepoint(true, 2024042501, 'qtype', 'uml');
     }
 
     return true;

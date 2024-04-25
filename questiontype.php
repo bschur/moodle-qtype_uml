@@ -84,7 +84,7 @@ class qtype_uml extends question_type {
 
         $options = $DB->get_record('question_uml', ['question' => $question->id]);
         // Save question options in question_uml table.
-        if (!options) {
+        if (!$options) {
             $options = new stdClass();
             $options->question = $question->id;
             $options->id = $DB->insert_record('question_uml', $options);

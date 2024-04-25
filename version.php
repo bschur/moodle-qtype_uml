@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_uml';
 $plugin->release = '0.1.0';
-$plugin->version = 2024042500;
+$plugin->version = 2024042501;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->supported = [401, 403];

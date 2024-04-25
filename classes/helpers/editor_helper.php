@@ -31,6 +31,20 @@ $PAGE->requires->js_call_amd('qtype_uml/loader', 'init', [$CFG->wwwroot . '/ques
  * Helper functions for the editor loading
  */
 class EditorHelper {
+    /**
+     * @var string The prompt endpoint for the AI summary.
+     */
+    public static string $promptendpoint = '/question/type/uml/rest/post-prompt.php';
+
+    /**
+     * Checks whether the current Moodle setup supports the AI summary.
+     *
+     * @return bool Whether the AI summary is enabled.
+     */
+    public static function is_ai_summary_enabled(): bool {
+        $fp = @fsockopen('localhost', '11434');
+        return is_resource($fp);
+    }
 
     /**
      * Loads the editor html with the given display options.
@@ -59,19 +73,12 @@ class EditorHelper {
      * @return string The editor correctness html.
      */
     public static function load_editor_correctness_html_for_id(
-        string $bindelementid,
-        string $diagram,
-        string $correctanswer,
-        int $maxpoints
+            string $bindelementid,
+            string $diagram,
+            string $correctanswer,
+            int $maxpoints
     ) {
-        $promptendpoint = '';
-
-        // Check if ollama instance is running.
-        $fp = @fsockopen('localhost', '11434');
-        if (is_resource($fp)) {
-            // If yes, provide the according endpoint to the web component.
-            $promptendpoint = '/question/type/uml/rest/post-prompt.php';
-        }
+        $promptendpoint = self::is_ai_summary_enabled() ? self::$promptendpoint : '';
 
         return '<fullscreen-view style="min-height: 300px; height: 1px;"><uml-editor-correctness
                     input-id=\'' . $bindelementid . '\'
