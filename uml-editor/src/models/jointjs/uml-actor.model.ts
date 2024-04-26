@@ -7,25 +7,27 @@ const headY = 0.15
 
 const COLORS = ['#3f84e5', '#49306B', '#fe7f2d', '#ad343e', '#899e8b', '#ede9e9', '#b2a29f', '#392F2D']
 
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'background',
+  },
+  {
+    tagName: 'path',
+    selector: 'body',
+  },
+  {
+    tagName: 'circle',
+    selector: 'head',
+  },
+  {
+    tagName: 'text',
+    selector: 'label',
+  },
+]
+
 export class UmlActor extends dia.Element {
-  override readonly markup = [
-    {
-      tagName: 'rect',
-      selector: 'background',
-    },
-    {
-      tagName: 'path',
-      selector: 'body',
-    },
-    {
-      tagName: 'circle',
-      selector: 'head',
-    },
-    {
-      tagName: 'text',
-      selector: 'label',
-    },
-  ]
+  override readonly markup = markup
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {

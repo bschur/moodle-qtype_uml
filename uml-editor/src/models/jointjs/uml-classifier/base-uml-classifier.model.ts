@@ -3,7 +3,8 @@ import { dia, mvc, shapes } from '@joint/core'
 import { TextBlock } from '../text-block.model'
 import Size = dia.Size
 
-export type UmlClassSectors = 'header' | 'headerlabel' | 'variablesRect' | 'functionsRect'
+export const classSectors = ['header', 'headerlabel', 'variablesRect', 'functionsRect'] as const
+export type UmlClassSectors = (typeof classSectors)[number]
 
 export const classifierTypes = ['Class', 'Enum', 'Interface'] as const
 export type ClassifierType = (typeof classifierTypes)[number]
@@ -83,9 +84,9 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   resizeInlineContainer(direction: number, container: UmlClassSectors) {
-    const bodyheigth = (this.size().height += this.listItemHeight * direction)
-    this.resize(this.size().width, bodyheigth)
-    this.attr(container + '/height', bodyheigth - 2 * this.listItemHeight)
+    const bodyHeight = (this.size().height += this.listItemHeight * direction)
+    this.resize(this.size().width, bodyHeight)
+    this.attr(container + '/height', bodyHeight - 2 * this.listItemHeight)
   }
 
   adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
