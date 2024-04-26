@@ -5,6 +5,7 @@ import {
   CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   Input,
+  numberAttribute,
   Output,
   signal,
 } from '@angular/core'
@@ -31,8 +32,9 @@ export class UmlEditorCorrectnessComponent {
   @Input({ required: true }) inputId!: string
   @Input({ required: true }) diagram!: string
   @Input({ required: true }) correctAnswer!: string
-  @Input({ required: true, transform: parseInt }) maxPoints!: number
+  @Input({ required: true, transform: numberAttribute }) maxPoints!: number
   @Input() promptEndpoint?: string
+  @Input() additionalCorrectionPrompt?: string
 
   @Output() readonly correctionChanged = new EventEmitter<{
     inputId: string
@@ -76,7 +78,8 @@ export class UmlEditorCorrectnessComponent {
       decodedDiagram,
       decodedCorrectAnswerDiagram,
       this.maxPoints,
-      this.promptEndpoint
+      this.promptEndpoint,
+      this.additionalCorrectionPrompt
     )
     this.correction.set(correction)
   }

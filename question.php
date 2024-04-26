@@ -26,28 +26,23 @@
  * Class that represents a uml question.
  */
 class qtype_uml_question extends question_with_responses {
+    /** @var int The UML question reference. */
+    public int $question;
     /**
-     * @var string The correct answer fot the UML question.
+     * @var string The correct answer for the UML question.
      */
     public string $correctanswer;
-
     // Definition of properties used in legacy code or tests, for compatibility with PHP 8.2.
     /** @var string Feedback for any correct response. */
     public $correctfeedback;
-    /** @var int format of $correctfeedback. */
-    public $correctfeedbackformat;
-    /** @var string Feedback for any partially correct response. */
-    public $partiallycorrectfeedback;
-    /** @var int format of $partiallycorrectfeedback. */
-    public $partiallycorrectfeedbackformat;
-    /** @var string Feedback for any incorrect response. */
-    public $incorrectfeedback;
-    /** @var int format of $incorrectfeedback. */
-    public $incorrectfeedbackformat;
     /** @var string Information for the graders. */
     public $graderinfo;
     /** @var int format of $graderinfo. */
     public $graderinfoformat;
+    /** @var string configuration of the prompt. */
+    public $promptconfiguration;
+    /** @var int format of $promptconfiguration. */
+    public $promptconfigurationformat;
 
     /**
      * Defines the behaviour of the question.

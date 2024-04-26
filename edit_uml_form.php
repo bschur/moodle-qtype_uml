@@ -77,6 +77,33 @@ class qtype_uml_edit_form extends question_edit_form {
         </div>';
 
         $mform->addElement('html', '<div class="form-group row fitem">' . $labelhtml . $editorhtml . '</div>');
+
+        // Render grader information.
+        $mform->addElement('header', 'graderinfoheader', get_string('graderinfoheader', 'qtype_uml'));
+        $mform->setExpanded('graderinfoheader');
+        $mform->addElement(
+                'editor',
+                'graderinfo',
+                get_string('graderinfo', 'qtype_uml'),
+                ['rows' => 10],
+                $this->editoroptions
+        );
+
+        // Only allow the prompt configuration if the AI summary is enabled.
+        if (EditorHelper::is_ai_summary_enabled()) {
+            // Prompt configuration information.
+            $mform->addElement('header', 'promptconfigurationheader', get_string('promptconfigurationheader', 'qtype_uml'));
+            $mform->setExpanded('promptconfigurationheader');
+            $mform->addElement(
+                    'editor',
+                    'promptconfiguration',
+                    get_string('promptconfiguration', 'qtype_uml'),
+                    ['rows' => 10],
+                    $this->editoroptions
+            );
+            $mform->setDefault('promptconfiguration',
+                    ['text' => get_string('promptconfigurationdefault', 'qtype_uml'), 'format' => FORMAT_HTML]);
+        }
     }
 
     /**
@@ -88,12 +115,48 @@ class qtype_uml_edit_form extends question_edit_form {
     protected function data_preprocessing($question): object {
         $question = parent::data_preprocessing($question);
 
+        if (empty($question->options)) {
+            return $question;
+        }
+
         if (!empty($question->options->correctanswer)) {
             $correctanswerid = $question->options->correctanswer;
             $correctanswer = $question->options->answers[$correctanswerid];
 
             $question->correctanswer = $correctanswer->answer;
         }
+
+        // Load grader information.
+        $draftidgraderinfo = file_get_submitted_draft_itemid('graderinfo');
+        $question->graderinfo = [];
+        $question->graderinfo['text'] = file_prepare_draft_area(
+                $draftidgraderinfo,
+                $this->context->id,
+                'qtype_uml',
+                'graderinfo',
+                !empty($question->id) ? (int) $question->id : null,
+                $this->fileoptions,
+                $question->options->graderinfo
+        );
+        $question->graderinfo['format'] = $question->options->graderinfoformat;
+        $question->graderinfo['itemid'] = $draftidgraderinfo;
+
+        // Prompt configuration.
+        $draftidpromptconfiguration = file_get_submitted_draft_itemid('promptconfiguration');
+        $texttouse = $question->options->promptconfiguration ?? get_string('promptconfigurationdefault', 'qtype_uml');
+        $formattouse = $question->options->promptconfigurationformat ?? FORMAT_HTML;
+        $question->promptconfiguration = [];
+        $question->promptconfiguration['text'] = file_prepare_draft_area(
+                $draftidpromptconfiguration,
+                $this->context->id,
+                'qtype_uml',
+                'promptconfiguration',
+                !empty($question->id) ? (int) $question->id : null,
+                $this->fileoptions,
+                $texttouse
+        );
+        $question->promptconfiguration['format'] = $formattouse;
+        $question->promptconfiguration['itemid'] = $draftidpromptconfiguration;
 
         return $question;
     }

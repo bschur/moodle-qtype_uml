@@ -31,6 +31,33 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
+## Optionally Set Up AI Correction ##
+
+By default, this plugin supports only static analysis of a given answer and its correct solution. However, it also has support for Large Language Models (LLMs), allowing for more
+advanced correction capabilities.
+
+To enable this feature, follow the steps outlined below.
+
+### Setting Up Llama 2 Locally ###
+
+We will set up LLM support using [Ollama](https://ollama.com/). Begin by following the Ollama setup guide on the Moodle server. Once installed, download the Llama 2 model. When
+everything is running, go to a UML question and edit it to check if the setup is correct. You should see a section labeled "prompt configuration." If it appears, your setup is
+successful.
+
+### Using Other Models ###
+
+If you'd rather not use Llama 2, there are other models you can choose from. Ollama provides a variety of [models](https://ollama.com/library) that you can download. Once you've
+selected and downloaded your preferred model, modify the `post-prompt.php` file to reference the new model.
+
+```php
+$config->model = 'llama2';
+
+// change to
+
+$config->model = 'your-model';
+
+```
+
 ## License ##
 
 This program is free software: you can redistribute it and/or modify it under
