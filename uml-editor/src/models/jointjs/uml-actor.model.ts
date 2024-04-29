@@ -63,17 +63,26 @@ export class UmlActor extends dia.Element {
           fill: '#ffffff',
         },
         ['foreignObject']: {
-          width: 40,
+          width: 70,
           height: 20,
-          x: 0,
+          x: -15,
           y: 85,
-          //y: 'calc(h + 10)',
-          //x: 'calc(0.5 * w)',
         },
       },
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
+  }
+
+  override resize(width: number, height: number) {
+    const tbWidth = (width * 7) / 4
+
+    super.resize(width, height)
+    this.attr('foreignObject/y', height + 5)
+
+    this.attr('foreignObject/width', tbWidth)
+    this.attr('foreignObject/x', (width - tbWidth) / 2)
+    return this
   }
 }
