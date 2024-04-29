@@ -72,4 +72,8 @@ export class TextBlock extends dia.Element {
     parsedMarkup[0].children[0].children[0].style['font-size'] = '16px'
     this.prop('markup', parsedMarkup)
   }
+
+  getMarkup() {
+    return this.markup
+  }
 }
