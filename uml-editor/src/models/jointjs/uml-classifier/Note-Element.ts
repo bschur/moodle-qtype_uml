@@ -1,4 +1,4 @@
-import { dia, util } from '@joint/core'
+import { dia, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
 export const NoteElementView = dia.ElementView.extend({
   events: {
@@ -11,7 +11,7 @@ export const NoteElementView = dia.ElementView.extend({
 
 const initialWidth = 150
 const initialHeight = 80
-export class NoteElement extends dia.Element {
+export class NoteElement extends shapes.standard.Rectangle {
   private backgroundColor = '#f5e487'
   override readonly markup = [
     {
@@ -74,8 +74,6 @@ export class NoteElement extends dia.Element {
           strokeWidth: 4,
           stroke: 'black',
           fill: this.backgroundColor,
-          width: initialWidth,
-          height: initialHeight,
         },
         header: {
           ref: 'body',
@@ -96,8 +94,8 @@ export class NoteElement extends dia.Element {
           ref: 'body',
         },
         foreignObject: {
-          width: initialWidth,
-          height: initialHeight - 20,
+          width: '100%',
+          height: '100%',
           x: 0,
           y: 20,
           ref: 'body',
@@ -111,8 +109,8 @@ export class NoteElement extends dia.Element {
   }
 
   override resize(width: number, height: number) {
-    this.attr('body/size/width', width)
-    this.attr('header/size/width', width)
+    this.attr('body/width', width)
+    this.attr('header/width', width)
     super.resize(width, height)
     return this
   }
