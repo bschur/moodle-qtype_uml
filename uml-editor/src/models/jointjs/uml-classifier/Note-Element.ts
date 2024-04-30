@@ -9,6 +9,8 @@ export const NoteElementView = dia.ElementView.extend({
   },
 })
 
+const initialWidth = 150
+const initialHeight = 80
 export class NoteElement extends dia.Element {
   private backgroundColor = '#f5e487'
   override readonly markup = [
@@ -61,21 +63,26 @@ export class NoteElement extends dia.Element {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.NoteElement',
-      resizeable: true,
+      size: {
+        width: initialWidth,
+        height: initialHeight,
+      },
       attrs: {
         body: {
-          width: 100,
-          height: 100,
+          rx: 0,
+          ry: 0,
           strokeWidth: 4,
           stroke: 'black',
           fill: this.backgroundColor,
+          width: initialWidth,
+          height: initialHeight,
         },
         header: {
+          ref: 'body',
           x: 0,
           y: 0,
-          width: 100,
+          width: '100%',
           height: 20,
-          ref: 'body',
           fill: '#f5e487',
         },
         ['title']: {
@@ -89,8 +96,8 @@ export class NoteElement extends dia.Element {
           ref: 'body',
         },
         foreignObject: {
-          width: 100,
-          height: 80,
+          width: initialWidth,
+          height: initialHeight - 20,
           x: 0,
           y: 20,
           ref: 'body',
@@ -101,5 +108,12 @@ export class NoteElement extends dia.Element {
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
+  }
+
+  override resize(width: number, height: number) {
+    this.attr('body/size/width', width)
+    this.attr('header/size/width', width)
+    super.resize(width, height)
+    return this
   }
 }
