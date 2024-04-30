@@ -4,6 +4,7 @@ import { UmlActor } from '../models/jointjs/uml-actor.model'
 import { UmlClass } from '../models/jointjs/uml-classifier/uml-class.model'
 import { UmlEnum } from '../models/jointjs/uml-classifier/uml-enum.model'
 import { UmlInterface } from '../models/jointjs/uml-classifier/uml-interface.model'
+import { UMLSystem } from '../models/jointjs/uml-system.model'
 import { UseCase } from '../models/jointjs/uml-use-case.model'
 import { createCustomJointJSElement, createCustomJointJSElementView } from './create-custom-jointjs-element.function'
 
@@ -14,6 +15,7 @@ export const jointJSCustomUmlElements: CustomJointJSElement[] = [
   createCustomJointJSElement(UseCase, 'UseCase', true),
   createCustomJointJSElement(UmlInterface, 'Interface', true),
   createCustomJointJSElement(UmlEnum, 'Enum', true),
+  createCustomJointJSElement(UMLSystem, 'System', true),
 ]
 
 export const jointJSCustomUmlElementViews: CustomJointJSElementView[] = [
