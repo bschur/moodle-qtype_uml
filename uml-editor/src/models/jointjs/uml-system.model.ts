@@ -14,17 +14,14 @@ export class UMLSystem extends shapes.standard.Rectangle {
   ) {
     super.initialize(attributes, options)
     // Initialize textBlockMarkup with TextBlock markup
-    this.textBlockMarkup = new TextBlock().markup
+    const tb = new TextBlock()
+    tb.setToTitle()
+    this.textBlockMarkup = tb.markup
     this.markup = [
       {
         tagName: 'rect',
         selector: 'body',
       },
-      {
-        tagName: 'text',
-        selector: 'headerlabel',
-      },
-
       ...(this.textBlockMarkup || []),
     ]
   }
@@ -36,6 +33,7 @@ export class UMLSystem extends shapes.standard.Rectangle {
         width: initialWidth,
         height: initialHeight,
       },
+      z: -1,
       attrs: {
         body: {
           rx: 0,
@@ -44,28 +42,24 @@ export class UMLSystem extends shapes.standard.Rectangle {
           stroke: 'black',
           fillOpacity: 0,
         },
-        ['headerlabel']: {
-          text: '<<System>>',
-          width: '100%', // Assuming you want the label to occupy the entire width of the body
-          height: listItemHeight,
-          'ref-y': 0,
-          'ref-x': 0.5, // Adjust reference to center horizontally
-          'text-anchor': 'middle', // Center align text horizontally
+        ['foreignObject']: {
           ref: 'body',
           fill: 'black',
-        },
-        ['functionsRect']: {
-          width: initialWidth,
-          height: 10,
-          'ref-y': 2 * listItemHeight,
-          'ref-x': 0,
-          ref: 'body',
-          fillOpacity: 0,
+          width: initialWidth, // Assuming you want the label to occupy the entire width of the body
+          height: listItemHeight,
+          x: 0,
+          y: 0,
         },
       },
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
+  }
+
+  override resize(width: number, height: number) {
+    super.resize(width, height)
+    this.attr('foreignObject/width', width)
+    return this
   }
 }
