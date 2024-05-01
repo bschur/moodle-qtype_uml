@@ -73,6 +73,21 @@ export class TextBlock extends dia.Element {
     this.prop('markup', parsedMarkup)
   }
 
+  setPlaceholder(text: string) {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    parsedMarkup[0].children[0].children[0].attributes.placeholder = text
+    console.log(parsedMarkup[0].children[0].children[0])
+    this.prop('markup', parsedMarkup)
+  }
+
+  centerText() {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    parsedMarkup[0].children[0].children[0].style['text-align'] = 'center'
+    this.prop('markup', parsedMarkup)
+  }
+
   getMarkup() {
     return this.markup
   }
