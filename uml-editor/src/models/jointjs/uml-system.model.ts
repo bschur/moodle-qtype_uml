@@ -1,24 +1,33 @@
-import { shapes, util } from '@joint/core'
+import { dia, mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
+import { TextBlock } from './text-block.model'
 const initialWidth = 150
 const initialHeight = 80
 const listItemHeight = 20
 
 export class UMLSystem extends shapes.standard.Rectangle {
-  override readonly markup = [
-    {
-      tagName: 'rect',
-      selector: 'body',
-    },
-    {
-      tagName: 'text',
-      selector: 'headerlabel',
-    },
-    {
-      tagName: 'rect',
-      selector: 'functionsRect',
-    },
-  ]
+  private textBlockMarkup: dia.MarkupJSON | undefined // Placeholder for TextBlock markup
+
+  override initialize(
+    attributes?: shapes.standard.RectangleAttributes,
+    options?: mvc.CombinedModelConstructorOptions<never, this>
+  ) {
+    super.initialize(attributes, options)
+    // Initialize textBlockMarkup with TextBlock markup
+    this.textBlockMarkup = new TextBlock().markup
+    this.markup = [
+      {
+        tagName: 'rect',
+        selector: 'body',
+      },
+      {
+        tagName: 'text',
+        selector: 'headerlabel',
+      },
+
+      ...(this.textBlockMarkup || []),
+    ]
+  }
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
@@ -36,7 +45,7 @@ export class UMLSystem extends shapes.standard.Rectangle {
           fillOpacity: 0,
         },
         ['headerlabel']: {
-          text: '<<Enumeration>>',
+          text: '<<System>>',
           width: '100%', // Assuming you want the label to occupy the entire width of the body
           height: listItemHeight,
           'ref-y': 0,
