@@ -44,7 +44,7 @@ export class NoteElement extends shapes.standard.Rectangle {
               selector: 'input',
               style: {
                 ['backgroundColor']: this.backgroundColor,
-                font: '12px sans-serif',
+                font: '14px sans-serif',
                 padding: '2px',
                 margin: 0,
                 resize: 'none', // Prevent resizing if desired
@@ -79,7 +79,7 @@ export class NoteElement extends shapes.standard.Rectangle {
           ref: 'body',
           x: 0,
           y: 0,
-          width: '100%',
+          width: initialWidth,
           height: 20,
           fill: '#f5e487',
         },
@@ -94,8 +94,8 @@ export class NoteElement extends shapes.standard.Rectangle {
           ref: 'body',
         },
         foreignObject: {
-          width: '100%',
-          height: '100%',
+          width: initialWidth,
+          height: initialHeight - 20,
           x: 0,
           y: 20,
           ref: 'body',
@@ -111,6 +111,8 @@ export class NoteElement extends shapes.standard.Rectangle {
   override resize(width: number, height: number) {
     this.attr('body/width', width)
     this.attr('header/width', width)
+    this.attr('foreignObject/width', width)
+    this.attr('foreignObject/height', height - 20)
     super.resize(width, height)
     return this
   }
