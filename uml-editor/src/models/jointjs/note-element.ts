@@ -1,5 +1,6 @@
 import { dia, shapes, util } from '@joint/core'
-import { CustomJointJSElementAttributes } from '../custom-jointjs-element.model'
+import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
+
 export const NoteElementView = dia.ElementView.extend({
   events: {
     'input input': 'onInput',
@@ -11,53 +12,56 @@ export const NoteElementView = dia.ElementView.extend({
 
 const initialWidth = 150
 const initialHeight = 80
-export class NoteElement extends shapes.standard.Rectangle {
-  private backgroundColor = '#f5e487'
-  override readonly markup = [
-    {
-      tagName: 'rect',
-      selector: 'body',
-    },
-    {
-      tagName: 'rect',
-      selector: 'header',
-    },
-    {
-      tagName: 'text',
-      selector: 'title',
-    },
-    {
-      tagName: 'foreignObject',
-      selector: 'foreignObject',
-      children: [
-        {
-          tagName: 'div',
-          namespaceURI: 'http://www.w3.org/1999/xhtml',
-          selector: 'background',
-          style: {
-            width: '100%', // Adjust the width as needed
-            height: '100%', // Adjust the height as needed
-          },
-          children: [
-            {
-              tagName: 'textarea',
-              selector: 'input',
-              style: {
-                ['backgroundColor']: this.backgroundColor,
-                font: '14px sans-serif',
-                padding: '2px',
-                margin: 0,
-                resize: 'none', // Prevent resizing if desired
-                width: '100%', // Adjust the width as needed
-                height: '100%', // Adjust the height as needed
-                //border: '1px solid black', // Optional border styling
-              },
-            },
-          ],
+const initBackgroundColor = '#f5e487'
+
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'body',
+  },
+  {
+    tagName: 'rect',
+    selector: 'header',
+  },
+  {
+    tagName: 'text',
+    selector: 'title',
+  },
+  {
+    tagName: 'foreignObject',
+    selector: 'foreignObject',
+    children: [
+      {
+        tagName: 'div',
+        namespaceURI: 'http://www.w3.org/1999/xhtml',
+        selector: 'background',
+        style: {
+          width: '100%', // Adjust the width as needed
+          height: '100%', // Adjust the height as needed
         },
-      ],
-    },
-  ]
+        children: [
+          {
+            tagName: 'textarea',
+            selector: 'input',
+            style: {
+              backgroundColor: initBackgroundColor,
+              font: '14px sans-serif',
+              padding: '2px',
+              margin: 0,
+              resize: 'none', // Prevent resizing if desired
+              width: '100%', // Adjust the width as needed
+              height: '100%', // Adjust the height as needed
+              //border: '1px solid black', // Optional border styling
+            },
+          },
+        ],
+      },
+    ],
+  },
+]
+
+export class NoteElement extends shapes.standard.Rectangle {
+  override readonly markup = markup
 
   // Override the defaults if necessary
   override defaults() {
@@ -73,7 +77,7 @@ export class NoteElement extends shapes.standard.Rectangle {
           ry: 0,
           strokeWidth: 4,
           stroke: 'black',
-          fill: this.backgroundColor,
+          fill: initBackgroundColor,
         },
         header: {
           ref: 'body',
@@ -83,7 +87,7 @@ export class NoteElement extends shapes.standard.Rectangle {
           height: 20,
           fill: '#f5e487',
         },
-        ['title']: {
+        title: {
           text: 'Note',
           width: '100%',
           height: 20,

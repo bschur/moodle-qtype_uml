@@ -1,7 +1,7 @@
 import { CustomJointJSElement, CustomJointJSElementView } from '../models/jointjs/custom-jointjs-element.model'
+import { NoteElement, NoteElementView } from '../models/jointjs/note-element'
 import { TextBlock, TextBlockView } from '../models/jointjs/text-block.model'
 import { UmlActor } from '../models/jointjs/uml-actor.model'
-import { NoteElement, NoteElementView } from '../models/jointjs/uml-classifier/Note-Element'
 import { UmlClass } from '../models/jointjs/uml-classifier/uml-class.model'
 import { UmlEnum } from '../models/jointjs/uml-classifier/uml-enum.model'
 import { UmlInterface } from '../models/jointjs/uml-classifier/uml-interface.model'
