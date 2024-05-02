@@ -17,23 +17,15 @@ const markup = [
 export class UMLSystem extends shapes.standard.Rectangle {
   override readonly markup = markup
 
-  private _textBlock: TextBlock | undefined
-
-  get textBlock() {
-    if (!this._textBlock) {
-      this._textBlock = new TextBlock()
-    }
-
-    return this._textBlock
-  }
-
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>
   ) {
     super.initialize(attributes, options)
 
-    this.textBlock.setToTitle()
+    const textBlock = new TextBlock()
+    textBlock.setToTitle()
+    this.embed(textBlock)
   }
 
   override defaults() {

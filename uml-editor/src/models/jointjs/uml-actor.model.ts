@@ -7,6 +7,7 @@ const bodyY = 0.3
 const headY = 0.15
 const initWidth = 40
 const initHeight = 80
+const listItemHeight = 20
 
 const markup = [
   {
@@ -27,24 +28,15 @@ const markup = [
 export class UmlActor extends dia.Element {
   override readonly markup = markup
 
-  private _textBlock: TextBlock | undefined
-
-  get textBlock() {
-    if (!this._textBlock) {
-      this._textBlock = new TextBlock()
-    }
-
-    return this._textBlock
-  }
-
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>
   ) {
     super.initialize(attributes, options)
 
-    this.textBlock.setPlaceholder('Actor')
-    this.textBlock.centerText()
+    const textBlock = new TextBlock()
+    textBlock.centerText()
+    this.embed(textBlock)
   }
 
   override defaults() {
@@ -76,7 +68,7 @@ export class UmlActor extends dia.Element {
         },
         foreignObject: {
           width: 70,
-          height: 20,
+          height: listItemHeight,
           x: -19,
           y: 85,
         },

@@ -10,25 +10,55 @@ export const TextBlockView = dia.ElementView.extend({
   },
 })
 
-export const textBlockMarkup = util.svg`
-    <foreignObject @selector="foreignObject" style=" position: relative;">
-      <div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute;  left: 4px; width: 100%; height: 100%;">
-        <input 
-            @selector="text" 
-            type="text" 
-            name="text" 
-            placeholder="Type something"
-            style="width: 100%; height: 100%;  border: none;
-            outline: none;
-            background: none;
-            font-size: 14px;
-            font-family: sans-serif;
-             ;"
-            
-        />
-      </div>
-    </foreignObject>
-`
+export const textBlockMarkup = [
+  {
+    tagName: 'foreignObject',
+    selector: 'foreignObject',
+    attributes: {
+      style: 'position: relative;',
+    },
+    style: {
+      position: 'relative',
+    },
+    children: [
+      {
+        namespaceURI: 'http://www.w3.org/1999/xhtml',
+        tagName: 'div',
+        selector: 'div',
+        attributes: {
+          xmlns: 'http://www.w3.org/1999/xhtml',
+        },
+        style: {
+          height: '100%',
+          width: '100%',
+          left: '4px',
+          position: 'absolute',
+        },
+        children: [
+          {
+            namespaceURI: 'http://www.w3.org/1999/xhtml',
+            tagName: 'input',
+            selector: 'text',
+            attributes: {
+              type: 'text',
+              name: 'text',
+              placeholder: 'Type something',
+            },
+            style: {
+              height: '100%',
+              width: '100%',
+              border: 'none',
+              outline: 'none',
+              background: 'none',
+              'font-size': '14px',
+              'font-family': 'sans-serif',
+            },
+          },
+        ],
+      },
+    ],
+  },
+]
 
 export class TextBlock extends dia.Element {
   override readonly markup = textBlockMarkup

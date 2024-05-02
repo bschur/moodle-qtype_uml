@@ -12,12 +12,12 @@ import { createCustomJointJSElement, createCustomJointJSElementView } from './cr
 export const jointJSCustomUmlElements: CustomJointJSElement[] = [
   createCustomJointJSElement(UmlActor, 'Actor', true),
   createCustomJointJSElement(UmlClass, 'Classifier', true),
-  createCustomJointJSElement(TextBlock, 'Text-block', false),
+  createCustomJointJSElement(TextBlock, 'Text Block', false),
   createCustomJointJSElement(UseCase, 'UseCase', true),
   createCustomJointJSElement(UmlInterface, 'Interface', false),
   createCustomJointJSElement(UmlEnum, 'Enum', false),
   createCustomJointJSElement(UMLSystem, 'System', true),
-  createCustomJointJSElement(NoteElement, 'NoteElement', true),
+  createCustomJointJSElement(NoteElement, 'Note Element', true),
 ]
 
 export const jointJSCustomUmlElementViews: CustomJointJSElementView[] = [
