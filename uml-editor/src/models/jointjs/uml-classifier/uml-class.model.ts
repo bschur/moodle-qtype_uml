@@ -7,37 +7,38 @@ import { BaseUmlClassifierModel, ClassifierType, UmlClassSectors } from './base-
 const initialWidth = 150
 const initialHeight = 120
 const listItemHeight = 20
-const headerHeigth = 40
+const headerHeight = 40
+
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'body',
+  },
+  {
+    tagName: 'text',
+    selector: 'headerlabel',
+  },
+  {
+    tagName: 'rect',
+    selector: 'header',
+  },
+  {
+    tagName: 'rect',
+    selector: 'variablesRect',
+  },
+  {
+    tagName: 'rect',
+    selector: 'functionsRect',
+  },
+]
 
 export class UmlClass extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
   override readonly type: ClassifierType = 'Class'
+  override readonly markup = markup
 
   private readonly variableComponents: TextBlock[] = []
-
-  override readonly markup = [
-    {
-      tagName: 'rect',
-      selector: 'body',
-    },
-    {
-      tagName: 'text',
-      selector: 'headerlabel',
-    },
-    {
-      tagName: 'rect',
-      selector: 'header',
-    },
-    {
-      tagName: 'rect',
-      selector: 'variablesRect',
-    },
-    {
-      tagName: 'rect',
-      selector: 'functionsRect',
-    },
-  ]
 
   private get variablesComponentAllHeight(): number {
     return (this.variableComponents?.length || 0) * listItemHeight
@@ -48,20 +49,20 @@ export class UmlClass extends BaseUmlClassifierModel {
   }
 
   private inlineContainerHeight(container: UmlClassSectors): number {
-    const initialHeightPerContainer = (initialHeight - headerHeigth) / 2
+    const initialHeightPerContainer = (initialHeight - headerHeight) / 2
 
     try {
       const amountInputs = this.variablesComponentAllHeight + this.functionsComponentAllHeight
-      const heigthBothContainer = this.size().height - headerHeigth - amountInputs
+      const heightBothContainer = this.size().height - headerHeight - amountInputs
 
       if (amountInputs == 0) {
-        return heigthBothContainer / 2
+        return heightBothContainer / 2
       }
 
       if (container === 'variablesRect') {
-        return this.variablesComponentAllHeight + heigthBothContainer / 2
+        return this.variablesComponentAllHeight + heightBothContainer / 2
       } else {
-        return this.functionsComponentAllHeight + heigthBothContainer / 2
+        return this.functionsComponentAllHeight + heightBothContainer / 2
       }
     } catch (e) {
       if (container === 'variablesRect') {
@@ -111,7 +112,7 @@ export class UmlClass extends BaseUmlClassifierModel {
           height: this.inlineContainerHeight('functionsRect'),
           stroke: 'black',
           strokeWidth: 3,
-          'ref-y': headerHeigth,
+          'ref-y': headerHeight,
           'ref-x': 0,
           ref: 'body',
           fill: 'white',
@@ -148,7 +149,7 @@ export class UmlClass extends BaseUmlClassifierModel {
         this.headerComponent = newTextBlockElement
         break
       case 'variablesRect':
-        positionY = this.position().y + headerHeigth + this.variablesComponentAllHeight
+        positionY = this.position().y + headerHeight + this.variablesComponentAllHeight
         newTextBlockElement.position(this.position().x, positionY)
         newTextBlockElement.resize(this.listItemWidth, listItemHeight)
         this.variableComponents.push(newTextBlockElement)
@@ -161,7 +162,7 @@ export class UmlClass extends BaseUmlClassifierModel {
       case 'functionsRect':
         positionY =
           this.position().y +
-          headerHeigth +
+          headerHeight +
           this.inlineContainerHeight('variablesRect') +
           this.functionsComponentAllHeight
         newTextBlockElement.position(this.position().x, positionY)
@@ -230,9 +231,9 @@ export class UmlClass extends BaseUmlClassifierModel {
 
   override resize(width: number, height: number) {
     width = Math.max(width, initialWidth)
-    const minHeigth = this.variablesComponentAllHeight + this.functionsComponentAllHeight + 1.5 * headerHeigth
-    if (height < minHeigth) {
-      height = minHeigth
+    const minHeight = this.variablesComponentAllHeight + this.functionsComponentAllHeight + 1.5 * headerHeight
+    if (height < minHeight) {
+      height = minHeight
     }
 
     super.resize(width, height)
@@ -243,7 +244,7 @@ export class UmlClass extends BaseUmlClassifierModel {
     this.attr('variablesRect' satisfies UmlClassSectors, {
       width: width,
       height: this.inlineContainerHeight('variablesRect'),
-      'ref-y': headerHeigth,
+      'ref-y': headerHeight,
     })
     this.attr('functionsRect' satisfies UmlClassSectors, {
       width: width,
@@ -259,7 +260,7 @@ export class UmlClass extends BaseUmlClassifierModel {
     this.functionComponents.forEach(component => {
       component.resize(this.listItemWidth, listItemHeight)
 
-      let y = this.position().y + headerHeigth + this.inlineContainerHeight('variablesRect') + counter
+      let y = this.position().y + headerHeight + this.inlineContainerHeight('variablesRect') + counter
 
       //dont know why this works
       if (y - component.position().y == listItemHeight) {

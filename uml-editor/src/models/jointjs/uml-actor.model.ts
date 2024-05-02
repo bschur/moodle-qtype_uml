@@ -1,6 +1,5 @@
 import { dia, mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock } from './text-block.model'
 
 const legsY = 0.7
 const bodyY = 0.3
@@ -8,31 +7,30 @@ const headY = 0.15
 
 const COLORS = ['#3f84e5', '#49306B', '#fe7f2d', '#ad343e', '#899e8b', '#ede9e9', '#b2a29f', '#392F2D']
 
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'background',
+  },
+  {
+    tagName: 'path',
+    selector: 'body',
+  },
+  {
+    tagName: 'circle',
+    selector: 'head',
+  },
+  // ...(this.textBlockMarkup || []),
+]
+
 export class UmlActor extends dia.Element {
-  private textBlockMarkup: dia.MarkupJSON | undefined // Placeholder for TextBlock markup
+  override readonly markup = markup
 
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>
   ) {
     super.initialize(attributes, options)
-    // Initialize textBlockMarkup with TextBlock markup
-    this.textBlockMarkup = new TextBlock().markup
-    this.markup = [
-      {
-        tagName: 'rect',
-        selector: 'background',
-      },
-      {
-        tagName: 'path',
-        selector: 'body',
-      },
-      {
-        tagName: 'circle',
-        selector: 'head',
-      },
-      ...(this.textBlockMarkup || []),
-    ]
   }
 
   override defaults() {
@@ -62,7 +60,7 @@ export class UmlActor extends dia.Element {
           strokeWidth: 2,
           fill: '#ffffff',
         },
-        ['foreignObject']: {
+        foreignObject: {
           width: 70,
           height: 20,
           x: -15,

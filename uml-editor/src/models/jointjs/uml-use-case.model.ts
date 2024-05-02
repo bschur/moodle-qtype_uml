@@ -3,46 +3,51 @@ import { UseCaseConfigurationComponent } from '../../shared/use-case-configurati
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
-let width = 150
-let heigth = 100
-let isTextBox = false
+const initialWidth = 150
+const initialHeight = 120
+
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'body',
+  },
+  {
+    tagName: 'ellipse',
+    selector: 'ellipse',
+    children: [
+      {
+        tagName: 'textBox',
+        selector: 'textBox',
+      },
+    ],
+  },
+]
+
+type MarkupTags = (typeof markup)[number]['selector']
+
 export class UseCase extends shapes.standard.Rectangle {
-  override readonly markup = [
-    {
-      tagName: 'rect',
-      selector: 'body',
-    },
-    {
-      tagName: 'ellipse',
-      selector: 'ellipse',
-      children: [
-        {
-          tagName: 'textBox',
-          selector: 'textBox',
-        },
-      ],
-    },
-  ]
+  override readonly markup = markup
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
       type: 'custom.uml.UseCase',
       propertyView: UseCaseConfigurationComponent,
       size: {
-        width: width,
-        height: heigth,
+        width: initialWidth,
+        height: initialHeight,
       },
+      isTextBox: false,
       attrs: {
         body: {
           opacity: 0,
         },
-        ['ellipse']: {
+        ['ellipse' satisfies MarkupTags]: {
           width: '100%',
           height: '100%',
           stroke: 'black',
           strokeWidth: 3,
-          rx: width / 2,
-          ry: heigth / 2,
+          rx: initialWidth / 2,
+          ry: initialHeight / 2,
           'ref-y': 0.5,
           'ref-x': 0.5,
           'ref-Cy': 0.5,
@@ -57,17 +62,17 @@ export class UseCase extends shapes.standard.Rectangle {
   }
 
   userInput() {
-    if (!isTextBox) {
+    if (!this.attr('isTextBox')) {
       const ctb = new TextBlock()
 
       ctb.size(this.size().width - 5, this.size().height / 2)
-      const tbWidth = this.position().x + width / 2 - ctb.size().width / 2
-      const tbHeight = this.position().y + heigth / 2 - ctb.size().height / 2
+      const tbWidth = this.position().x + this.size().width / 2 - ctb.size().width / 2
+      const tbHeight = this.position().y + this.size().height / 2 - ctb.size().height / 2
       ctb.position(tbWidth, tbHeight)
 
-      ctb.attr('ref', 'ellipse')
+      ctb.attr('ref', 'ellipse' satisfies MarkupTags)
 
-      isTextBox = true
+      this.set('isTextBox', true)
       this.embed(ctb)
       return ctb
     }
@@ -76,12 +81,10 @@ export class UseCase extends shapes.standard.Rectangle {
 
   override resize(widthNew: number, heightNew: number) {
     super.resize(widthNew, heightNew)
-    heigth = heightNew
-    width = widthNew
 
-    this.attr('ellipse', {
-      rx: width / 2,
-      ry: heigth / 2,
+    this.attr('ellipse' satisfies MarkupTags, {
+      rx: widthNew / 2,
+      ry: heightNew / 2,
     })
 
     return this

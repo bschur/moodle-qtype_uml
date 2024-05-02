@@ -67,9 +67,10 @@ export class TextBlock extends dia.Element {
   setToTitle() {
     const markup = this.markup
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    parsedMarkup[0].children[0].children[0].style['font-weight'] = 'bold'
-    parsedMarkup[0].children[0].children[0].style['text-align'] = 'center'
-    parsedMarkup[0].children[0].children[0].style['font-size'] = '16px'
+    const elem = parsedMarkup[0].children[0].children[0]
+    elem.style['font-weight'] = 'bold'
+    elem.style['text-align'] = 'center'
+    elem.style['font-size'] = '16px'
     this.prop('markup', parsedMarkup)
   }
 }
