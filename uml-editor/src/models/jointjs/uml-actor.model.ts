@@ -1,6 +1,6 @@
 import { dia, mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock } from './text-block.model'
+import { TextBlock, textBlockMarkup } from './text-block.model'
 
 const legsY = 0.7
 const bodyY = 0.3
@@ -8,34 +8,43 @@ const headY = 0.15
 const initWidth = 40
 const initHeight = 80
 
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'background',
+  },
+  {
+    tagName: 'path',
+    selector: 'body',
+  },
+  {
+    tagName: 'circle',
+    selector: 'head',
+  },
+  ...textBlockMarkup,
+]
+
 export class UmlActor extends dia.Element {
-  private textBlockMarkup: dia.MarkupJSON | undefined // Placeholder for TextBlock markup
+  override readonly markup = markup
+
+  private _textBlock: TextBlock | undefined
+
+  get textBlock() {
+    if (!this._textBlock) {
+      this._textBlock = new TextBlock()
+    }
+
+    return this._textBlock
+  }
 
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>
   ) {
     super.initialize(attributes, options)
-    // Initialize textBlockMarkup with TextBlock markup
-    const tb = new TextBlock()
-    tb.setPlaceholder('Actor')
-    tb.centerText()
-    this.textBlockMarkup = tb.markup
-    this.markup = [
-      {
-        tagName: 'rect',
-        selector: 'background',
-      },
-      {
-        tagName: 'path',
-        selector: 'body',
-      },
-      {
-        tagName: 'circle',
-        selector: 'head',
-      },
-      ...(this.textBlockMarkup || []),
-    ]
+
+    this.textBlock.setPlaceholder('Actor')
+    this.textBlock.centerText()
   }
 
   override defaults() {
@@ -65,7 +74,7 @@ export class UmlActor extends dia.Element {
           strokeWidth: 2,
           fill: '#ffffff',
         },
-        ['foreignObject']: {
+        foreignObject: {
           width: 70,
           height: 20,
           x: -19,
@@ -79,14 +88,12 @@ export class UmlActor extends dia.Element {
   }
 
   override resize(width: number, height: number) {
-    // if (width < initWidth - 5 && height < initHeight - 5) {
     const tbWidth = (width * 7) / 4
 
     super.resize(width, height)
-    this.attr('foreignObject/y', height + 5)
     this.attr('foreignObject/width', tbWidth)
     this.attr('foreignObject/x', (width - tbWidth) / 2)
-    // }
+    this.attr('foreignObject/y', height + 5)
 
     return this
   }
