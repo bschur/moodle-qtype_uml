@@ -45,7 +45,7 @@ export class UmlClass extends BaseUmlClassifierModel {
   }
 
   private get functionsComponentAllHeight(): number {
-    return (this.functionComponents?.length || 0) * listItemHeight
+    return this.functionComponents.length * listItemHeight
   }
 
   private inlineContainerHeight(container: UmlClassSectors): number {
@@ -135,7 +135,7 @@ export class UmlClass extends BaseUmlClassifierModel {
   }
 
   override userInput(evt: dia.Event, rect?: string) {
-    const selectedRect = rect || (evt.target.attributes[0].value as UmlClassSectors | string)
+    const selectedRect = (rect || evt.target.attributes[0].value) as UmlClassSectors
 
     const newTextBlockElement = new TextBlock()
     newTextBlockElement.attr('ref', selectedRect)
@@ -173,11 +173,11 @@ export class UmlClass extends BaseUmlClassifierModel {
         break
       default:
         console.log('Clicked outside the sections')
-        return null
+        return
     }
 
     this.embed(newTextBlockElement)
-    return newTextBlockElement
+    this.graph.addCell(newTextBlockElement)
   }
 
   override resizeInlineContainer(direction: number, container: UmlClassSectors) {

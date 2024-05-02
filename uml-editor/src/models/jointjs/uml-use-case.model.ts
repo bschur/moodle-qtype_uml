@@ -62,21 +62,22 @@ export class UseCase extends shapes.standard.Rectangle {
   }
 
   userInput() {
-    if (!this.attr('isTextBox')) {
-      const ctb = new TextBlock()
-
-      ctb.size(this.size().width - 5, this.size().height / 2)
-      const tbWidth = this.position().x + this.size().width / 2 - ctb.size().width / 2
-      const tbHeight = this.position().y + this.size().height / 2 - ctb.size().height / 2
-      ctb.position(tbWidth, tbHeight)
-
-      ctb.attr('ref', 'ellipse' satisfies MarkupTags)
-
-      this.set('isTextBox', true)
-      this.embed(ctb)
-      return ctb
+    if (this.attr('isTextBox')) {
+      return
     }
-    return null
+
+    const textBox = new TextBlock()
+
+    textBox.size(this.size().width - 5, this.size().height / 2)
+    const tbWidth = this.position().x + this.size().width / 2 - textBox.size().width / 2
+    const tbHeight = this.position().y + this.size().height / 2 - textBox.size().height / 2
+    textBox.position(tbWidth, tbHeight)
+
+    textBox.attr('ref', 'ellipse' satisfies MarkupTags)
+
+    this.set('isTextBox', true)
+    this.embed(textBox)
+    this.graph.addCell(textBox)
   }
 
   override resize(widthNew: number, heightNew: number) {

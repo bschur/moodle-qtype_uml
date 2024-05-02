@@ -16,9 +16,6 @@ export function convertTo<T extends BaseUmlClassifierModel>(clazz: Type<T>, mode
 }
 
 export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
-  protected functionComponents: TextBlock[] = []
-  protected headerComponent: TextBlock = new TextBlock()
-
   protected abstract initialWidth: number
   protected abstract listItemHeight: number
   abstract readonly type: ClassifierType
@@ -32,6 +29,38 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     }
     return width - 1
   }
+
+  get functionComponents(): TextBlock[] {
+    if (!this._functionComponents) {
+      this._functionComponents = []
+    }
+
+    return this._functionComponents
+  }
+
+  get headerComponent(): TextBlock {
+    if (!this._headerComponent) {
+      this._headerComponent = new TextBlock()
+    }
+
+    return this._headerComponent
+  }
+
+  set headerComponent(header: TextBlock) {
+    if (!header) {
+      return
+    }
+
+    if (this._headerComponent) {
+      this._headerComponent.remove()
+    }
+
+    this._headerComponent = header
+    this.graph.addCell(header)
+  }
+
+  private _functionComponents?: TextBlock[]
+  private _headerComponent?: TextBlock
 
   shrinkFuncY(indexOfComponentToRemove: number) {
     this.functionComponents.forEach((component, index) => {
@@ -56,7 +85,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   userInput(evt: dia.Event) {
-    const selectedRect = evt.target.attributes[0].value as UmlClassSectors | string
+    const selectedRect = evt.target.attributes[0].value as UmlClassSectors
 
     const newTextBlockElement = new TextBlock()
     let positionY = 0
@@ -70,17 +99,16 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
       case 'functionsRect':
         positionY = this.position().y + 2 * this.listItemHeight + this.functionComponents.length * this.listItemHeight
         newTextBlockElement.position(this.position().x, positionY)
-        //newTextBlockElement.resize(this.size().width, listItemHeight)
         this.functionComponents.push(newTextBlockElement)
         this.resizeInlineContainer(1, 'functionsRect')
         break
       default:
         console.log('Clicked outside the sections')
-        return null
+        return
     }
 
     this.embed(newTextBlockElement)
-    return newTextBlockElement
+    this.graph.addCell(newTextBlockElement)
   }
 
   resizeInlineContainer(direction: number, container: UmlClassSectors) {
@@ -89,7 +117,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.attr(container + '/height', bodyHeight - 2 * this.listItemHeight)
   }
 
-  adjustByDelete(selectedRect: UmlClassSectors, posY: number) {
+  adjustByDelete(_: UmlClassSectors, posY: number) {
     const indexOfComponentToRemove = this.functionComponents.findIndex(component => component.position().y === posY)
 
     if (indexOfComponentToRemove !== -1) {
@@ -114,14 +142,22 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     headerComponent?: TextBlock
   ) {
     super.initialize(attributes, options)
-    if (position != undefined) this.position(position.x, position.y)
-    if (size != undefined) this.resize(size.width, size.height)
-    if (functionComponents != undefined) this.addFunction(functionComponents)
-    if (headerComponent != undefined) this.addHeader(headerComponent)
+    if (position) {
+      this.position(position.x, position.y)
+    }
+    if (size) {
+      this.resize(size.width, size.height)
+    }
+    if (functionComponents) {
+      this.addFunction(functionComponents)
+    }
+    if (headerComponent) {
+      this.addHeader(headerComponent)
+    }
   }
 
   addFunction(functionComponents: TextBlock[]) {
-    functionComponents?.forEach(value => {
+    functionComponents.forEach(value => {
       const newTextBlockElement = new TextBlock()
       const positionY =
         this.position().y + 2 * this.listItemHeight + this.functionComponents.length * this.listItemHeight
@@ -145,15 +181,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.embed(this.headerComponent)
   }
 
-  getFunctions(): TextBlock[] {
-    return this.functionComponents
-  }
-
-  getHeader(): TextBlock {
-    return this.headerComponent
-  }
-
   setAbstract() {
-    this.headerComponent?.changeAbstract()
+    this.headerComponent.changeAbstract()
   }
 }
