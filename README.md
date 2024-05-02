@@ -38,19 +38,19 @@ advanced correction capabilities.
 
 To enable this feature, follow the steps outlined below.
 
-### Setting Up Llama 2 Locally ###
+### Setting Up Llama 3 Locally ###
 
-We will set up LLM support using [Ollama](https://ollama.com/). Begin by following the Ollama setup guide on the Moodle server. Once installed, download the Llama 2 model. When
+We will set up LLM support using [Ollama](https://ollama.com/). Begin by following the Ollama setup guide on the Moodle server. Once installed, download the Llama 3 model. When
 everything is running, go to a UML question and edit it to check if the setup is correct. You should see a section labeled "prompt configuration." If it appears, your setup is
 successful.
 
 ### Using Other Models ###
 
-If you'd rather not use Llama 2, there are other models you can choose from. Ollama provides a variety of [models](https://ollama.com/library) that you can download. Once you've
+If you'd rather not use Llama 3, there are other models you can choose from. Ollama provides a variety of [models](https://ollama.com/library) that you can download. Once you've
 selected and downloaded your preferred model, modify the `post-prompt.php` file to reference the new model.
 
 ```php
-$config->model = 'llama2';
+$config->model = 'llama3';
 
 // change to
 
