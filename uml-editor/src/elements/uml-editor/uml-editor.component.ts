@@ -94,9 +94,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
         if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
           this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
             model: cell.model,
-            graph: paperEditor.model,
             elementView: cell,
-            paper: paperEditor,
           })
         }
       }

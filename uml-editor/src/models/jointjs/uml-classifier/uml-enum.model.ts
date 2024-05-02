@@ -7,32 +7,33 @@ const initialWidth = 150
 const initialHeight = 80
 const listItemHeight = 20
 
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'body',
+  },
+  {
+    tagName: 'text',
+    selector: 'headerlabel',
+  },
+  {
+    tagName: 'rect',
+    selector: 'header',
+  },
+  {
+    tagName: 'rect',
+    selector: 'functionsRect',
+  },
+]
+
 export class UmlEnum extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
   override readonly type: ClassifierType = 'Enum'
-
-  override readonly markup = [
-    {
-      tagName: 'rect',
-      selector: 'body',
-    },
-    {
-      tagName: 'text',
-      selector: 'headerlabel',
-    },
-    {
-      tagName: 'rect',
-      selector: 'header',
-    },
-    {
-      tagName: 'rect',
-      selector: 'functionsRect',
-    },
-  ]
+  override readonly markup = markup
 
   private get functionsComponentAllHeight(): number {
-    return initialHeight - 2 * listItemHeight + (this.functionComponents?.length || 0) * listItemHeight
+    return initialHeight - 2 * listItemHeight + this.functionComponents.length * listItemHeight
   }
 
   override defaults() {
@@ -88,9 +89,9 @@ export class UmlEnum extends BaseUmlClassifierModel {
 
   override resize(width: number, height: number) {
     width = Math.max(width, initialWidth)
-    const minHeigth = this.functionComponents.length * 30 + 2 * listItemHeight
-    if (height < minHeigth) {
-      height = minHeigth
+    const minHeight = this.functionComponents.length * 30 + 2 * listItemHeight
+    if (height < minHeight) {
+      height = minHeight
     }
 
     super.resize(width, height)

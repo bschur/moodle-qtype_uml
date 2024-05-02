@@ -55,7 +55,7 @@ if (!isset($prompt)) {
 }
 
 $config = new OllamaConfig();
-$config->model = 'llama2';
+$config->model = 'llama3';
 $chat = new OllamaChat($config);
 
 try {
