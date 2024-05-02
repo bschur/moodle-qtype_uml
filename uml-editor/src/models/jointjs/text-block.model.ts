@@ -10,8 +10,7 @@ export const TextBlockView = dia.ElementView.extend({
   },
 })
 
-export class TextBlock extends dia.Element {
-  override readonly markup = util.svg`
+export const textBlockMarkup = util.svg`
     <foreignObject @selector="foreignObject" style=" position: relative;">
       <div xmlns="http://www.w3.org/1999/xhtml" style="position: absolute;  left: 4px; width: 100%; height: 100%;">
         <input 
@@ -31,7 +30,9 @@ export class TextBlock extends dia.Element {
     </foreignObject>
 `
 
-  // Override the defaults if necessary
+export class TextBlock extends dia.Element {
+  override readonly markup = textBlockMarkup
+
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.TextBlock',
@@ -49,18 +50,20 @@ export class TextBlock extends dia.Element {
     return elementAttributes
   }
 
-  changeTextSize() {
+  changeTextSize(fontSize: number) {
     const markup = this.markup
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    parsedMarkup[0].children[0].children[0].style['font-size'] = '20px'
+    const elem = parsedMarkup[0].children[0].children[0]
+    elem.style['font-size'] = `${fontSize}px`
     this.prop('markup', parsedMarkup)
   }
 
   changeAbstract() {
     const markup = this.markup
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    const actualValue = parsedMarkup[0].children[0].children[0].style.fontFamily || 'sans-serif'
-    parsedMarkup[0].children[0].children[0].style.fontFamily = actualValue === 'sans-serif' ? 'cursive' : 'sans-serif'
+    const elem = parsedMarkup[0].children[0].children[0]
+    const actualValue = elem.style.fontFamily || 'sans-serif'
+    elem.style.fontFamily = actualValue === 'sans-serif' ? 'cursive' : 'sans-serif'
     this.prop('markup', parsedMarkup)
   }
 

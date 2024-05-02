@@ -1,29 +1,39 @@
-import { dia, mvc, shapes, util } from '@joint/core'
+import { mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock } from './text-block.model'
+import { TextBlock, textBlockMarkup } from './text-block.model'
+
 const initialWidth = 150
 const initialHeight = 80
 const listItemHeight = 20
 
+const markup = [
+  {
+    tagName: 'rect',
+    selector: 'body',
+  },
+  ...textBlockMarkup,
+]
+
 export class UMLSystem extends shapes.standard.Rectangle {
-  private textBlockMarkup: dia.MarkupJSON | undefined // Placeholder for TextBlock markup
+  override readonly markup = markup
+
+  private _textBlock: TextBlock | undefined
+
+  get textBlock() {
+    if (!this._textBlock) {
+      this._textBlock = new TextBlock()
+    }
+
+    return this._textBlock
+  }
 
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
     options?: mvc.CombinedModelConstructorOptions<never, this>
   ) {
     super.initialize(attributes, options)
-    // Initialize textBlockMarkup with TextBlock markup
-    const tb = new TextBlock()
-    tb.setToTitle()
-    this.textBlockMarkup = tb.markup
-    this.markup = [
-      {
-        tagName: 'rect',
-        selector: 'body',
-      },
-      ...(this.textBlockMarkup || []),
-    ]
+
+    this.textBlock.setToTitle()
   }
 
   override defaults() {
@@ -42,7 +52,7 @@ export class UMLSystem extends shapes.standard.Rectangle {
           stroke: 'black',
           fillOpacity: 0,
         },
-        ['foreignObject']: {
+        foreignObject: {
           ref: 'body',
           fill: 'black',
           width: initialWidth, // Assuming you want the label to occupy the entire width of the body
