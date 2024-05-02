@@ -50,14 +50,6 @@ export class TextBlock extends dia.Element {
     return elementAttributes
   }
 
-  changeTextSize(fontSize: number) {
-    const markup = this.markup
-    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    const elem = parsedMarkup[0].children[0].children[0]
-    elem.style['font-size'] = `${fontSize}px`
-    this.prop('markup', parsedMarkup)
-  }
-
   changeAbstract() {
     const markup = this.markup
     const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
@@ -74,6 +66,22 @@ export class TextBlock extends dia.Element {
     elem.style['font-weight'] = 'bold'
     elem.style['text-align'] = 'center'
     elem.style['font-size'] = '16px'
+    this.prop('markup', parsedMarkup)
+  }
+
+  setPlaceholder(text: string) {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    const elem = parsedMarkup[0].children[0].children[0]
+    elem.attributes.placeholder = text
+    this.prop('markup', parsedMarkup)
+  }
+
+  centerText() {
+    const markup = this.markup
+    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
+    const elem = parsedMarkup[0].children[0].children[0]
+    elem.style['text-align'] = 'center'
     this.prop('markup', parsedMarkup)
   }
 }
