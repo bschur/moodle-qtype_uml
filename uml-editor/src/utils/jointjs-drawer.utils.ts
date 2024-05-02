@@ -74,10 +74,7 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
   paper.on('element:pointerdblclick', (elementView, evt) => {
     const target = elementView.model
     if (target instanceof BaseUmlClassifierModel || target instanceof UseCase) {
-      const textBlock = target.userInput(evt)
-      if (textBlock) {
-        paper.model.addCell(textBlock)
-      }
+      target.userInput(evt)
     } else {
       throw new Error('elementView.model is not instanceof UmlClass')
     }

@@ -33,7 +33,7 @@ export class UmlEnum extends BaseUmlClassifierModel {
   override readonly markup = markup
 
   private get functionsComponentAllHeight(): number {
-    return initialHeight - 2 * listItemHeight + (this.functionComponents?.length || 0) * listItemHeight
+    return initialHeight - 2 * listItemHeight + this.functionComponents.length * listItemHeight
   }
 
   override defaults() {

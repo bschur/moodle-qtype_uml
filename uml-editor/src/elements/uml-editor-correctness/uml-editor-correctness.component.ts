@@ -1,4 +1,3 @@
-import { JsonPipe } from '@angular/common'
 import {
   ChangeDetectionStrategy,
   Component,
@@ -25,7 +24,7 @@ import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor-correctness.component.html',
   styleUrl: './uml-editor-correctness.component.scss',
-  imports: [MatListModule, JsonPipe, MatFabButton, MatIcon],
+  imports: [MatListModule, MatFabButton, MatIcon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorCorrectnessComponent {
