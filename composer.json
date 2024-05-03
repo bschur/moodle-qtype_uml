@@ -5,6 +5,7 @@
     }
   },
   "require": {
-    "theodo-group/llphant": "*"
+    "theodo-group/llphant": "*",
+    "ext-json": "*"
   }
 }

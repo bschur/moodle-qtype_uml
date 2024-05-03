@@ -56,9 +56,9 @@ if (!isset($prompt)) {
 
 $config = new OllamaConfig();
 $config->model = 'llama3';
-$chat = new OllamaChat($config);
 
 try {
+    $chat = new OllamaChat($config);
     $response = $chat->generateText($prompt);
     header('Content-Type: application/json');
     echo json_encode($response);
