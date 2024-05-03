@@ -131,8 +131,8 @@ export function injectEvaluateCorrectionFn() {
     }
 
     const summary = await aiCorrectionService.promptForCorrectionSummary(
-      correction.normalizedAnswer,
       correction.normalizedSolution,
+      correction.normalizedAnswer,
       maxPoints,
       endpoint,
       correctionPrompt
