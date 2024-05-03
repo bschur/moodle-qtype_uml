@@ -1763,16 +1763,16 @@
         },
         {
             "name": "theodo-group/llphant",
-            "version": "0.6.5",
+            "version": "0.6.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theodo-group/LLPhant.git",
-                "reference": "2fd55d54bce7d3573631bb79cf21b9f0947c9815"
+                "reference": "0c1da3650e1c92c5087fabac5d248b344df212dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theodo-group/LLPhant/zipball/2fd55d54bce7d3573631bb79cf21b9f0947c9815",
-                "reference": "2fd55d54bce7d3573631bb79cf21b9f0947c9815",
+                "url": "https://api.github.com/repos/theodo-group/LLPhant/zipball/0c1da3650e1c92c5087fabac5d248b344df212dc",
+                "reference": "0c1da3650e1c92c5087fabac5d248b344df212dc",
                 "shasum": ""
             },
             "require": {
@@ -1832,9 +1832,9 @@
             ],
             "support": {
                 "issues": "https://github.com/theodo-group/LLPhant/issues",
-                "source": "https://github.com/theodo-group/LLPhant/tree/0.6.5"
+                "source": "https://github.com/theodo-group/LLPhant/tree/0.6.6"
             },
-            "time": "2024-04-10T09:14:32+00:00"
+            "time": "2024-04-27T13:34:01+00:00"
         }
     ],
     "packages-dev": [],
