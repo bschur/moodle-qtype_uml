@@ -10,49 +10,20 @@ export const TextBlockView = dia.ElementView.extend({
   },
 })
 
-export const textBlockMarkup = [
+const markup = [
   {
     tagName: 'foreignObject',
     selector: 'foreignObject',
-    attributes: {
-      style: 'position: relative;',
-    },
-    style: {
-      position: 'relative',
-    },
     children: [
       {
         namespaceURI: 'http://www.w3.org/1999/xhtml',
         tagName: 'div',
         selector: 'div',
-        attributes: {
-          xmlns: 'http://www.w3.org/1999/xhtml',
-        },
-        style: {
-          height: '100%',
-          width: '100%',
-          left: '4px',
-          position: 'absolute',
-        },
         children: [
           {
             namespaceURI: 'http://www.w3.org/1999/xhtml',
             tagName: 'input',
             selector: 'text',
-            attributes: {
-              type: 'text',
-              name: 'text',
-              placeholder: 'Type something',
-            },
-            style: {
-              height: '100%',
-              width: '100%',
-              border: 'none',
-              outline: 'none',
-              background: 'none',
-              'font-size': '14px',
-              'font-family': 'sans-serif',
-            },
           },
         ],
       },
@@ -60,58 +31,61 @@ export const textBlockMarkup = [
   },
 ]
 
+const textBlockDefaultAttrs = {
+  foreignObject: {
+    width: 'calc(w-6)',
+    height: 'calc(h)',
+    style: {
+      position: 'relative',
+    },
+  },
+  div: {
+    style: {
+      height: '100%',
+      width: '100%',
+      left: '4px',
+      position: 'absolute',
+    },
+  },
+  text: {
+    type: 'text',
+    name: 'text',
+    placeholder: 'Type something',
+    style: {
+      height: '100%',
+      width: '100%',
+      border: 'none',
+      outline: 'none',
+      background: 'none',
+      'font-size': '14px',
+      'font-family': 'sans-serif',
+      'text-align': 'left',
+      'font-weight': 'normal',
+    },
+  },
+}
+
 export class TextBlock extends dia.Element {
-  override readonly markup = textBlockMarkup
+  override readonly markup = [...markup]
+
+  get inputElement() {
+    return this.attr('text') as (typeof textBlockDefaultAttrs)['text']
+  }
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.TextBlock',
       resizeable: false,
-      attrs: {
-        foreignObject: {
-          width: 'calc(w-6)',
-          height: 'calc(h)',
-        },
-      },
-      text: '',
+      attrs: { ...textBlockDefaultAttrs },
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)
     return elementAttributes
   }
 
-  changeAbstract() {
-    const markup = this.markup
-    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    const elem = parsedMarkup[0].children[0].children[0]
-    const actualValue = elem.style.fontFamily || 'sans-serif'
-    elem.style.fontFamily = actualValue === 'sans-serif' ? 'cursive' : 'sans-serif'
-    this.prop('markup', parsedMarkup)
-  }
-
-  setToTitle() {
-    const markup = this.markup
-    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    const elem = parsedMarkup[0].children[0].children[0]
-    elem.style['font-weight'] = 'bold'
-    elem.style['text-align'] = 'center'
-    elem.style['font-size'] = '16px'
-    this.prop('markup', parsedMarkup)
-  }
-
-  setPlaceholder(text: string) {
-    const markup = this.markup
-    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    const elem = parsedMarkup[0].children[0].children[0]
-    elem.attributes.placeholder = text
-    this.prop('markup', parsedMarkup)
-  }
-
-  centerText() {
-    const markup = this.markup
-    const parsedMarkup = typeof markup === 'string' ? JSON.parse(markup) : markup
-    const elem = parsedMarkup[0].children[0].children[0]
-    elem.style['text-align'] = 'center'
-    this.prop('markup', parsedMarkup)
+  makeBold() {
+    this.inputElement.style['font-weight'] = 'bold'
+    this.inputElement.style['text-align'] = 'center'
+    this.inputElement.style['font-size'] = '16px'
   }
 }

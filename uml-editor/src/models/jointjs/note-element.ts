@@ -61,7 +61,7 @@ const markup = [
 ]
 
 export class NoteElement extends shapes.standard.Rectangle {
-  override readonly markup = markup
+  override readonly markup = [...markup]
 
   // Override the defaults if necessary
   override defaults() {
@@ -105,7 +105,6 @@ export class NoteElement extends shapes.standard.Rectangle {
           ref: 'body',
         },
       },
-      text: '',
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)

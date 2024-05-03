@@ -30,7 +30,7 @@ export class UmlInterface extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
   override readonly type: ClassifierType = 'Interface'
-  override readonly markup = markup
+  override readonly markup = [...markup]
 
   private get functionsComponentAllHeight(): number {
     return initialHeight - 2 * listItemHeight + this.functionComponents.length * listItemHeight

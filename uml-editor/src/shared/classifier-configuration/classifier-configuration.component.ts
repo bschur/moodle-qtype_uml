@@ -52,12 +52,19 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
       .pipe(takeUntilDestroyed())
       .subscribe(value => this.changeClassifierType(value))
 
-    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeAbstract())
-    this.form.controls.static.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeStatic())
+    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.toggleAbstract())
+    this.form.controls.static.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.toggleStatic())
   }
 
   ngOnInit() {
-    this.form.controls.classifier.setValue(this.model.type)
+    this.form.setValue(
+      {
+        classifier: this.model.type,
+        abstract: this.model.isAbstract,
+        static: this.model instanceof UmlClass ? this.model.isStatic : false,
+      },
+      { emitEvent: false }
+    )
   }
 
   changeClassifierType(type: ClassifierType) {
@@ -98,13 +105,13 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
     }
   }
 
-  private changeAbstract() {
-    this.model.setAbstract()
+  private toggleAbstract() {
+    this.model.toggleAbstract()
   }
 
-  private changeStatic() {
+  private toggleStatic() {
     if (this.model instanceof UmlClass) {
-      this.model.setStatic()
+      this.model.toggleStatic()
     }
   }
 }

@@ -36,7 +36,11 @@ export class UmlClass extends BaseUmlClassifierModel {
   override readonly initialWidth = initialWidth
   override readonly listItemHeight = listItemHeight
   override readonly type: ClassifierType = 'Class'
-  override readonly markup = markup
+  override readonly markup = [...markup]
+
+  get isStatic() {
+    return this.attr('headerlabel/text') === '<<Static>>'
+  }
 
   private readonly variableComponents: TextBlock[] = []
 
@@ -145,7 +149,7 @@ export class UmlClass extends BaseUmlClassifierModel {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + listItemHeight)
         newTextBlockElement.resize(this.size().width - 10, listItemHeight)
-        newTextBlockElement.setToTitle()
+        newTextBlockElement.makeBold()
         this.headerComponent = newTextBlockElement
         break
       case 'variablesRect':
@@ -274,7 +278,7 @@ export class UmlClass extends BaseUmlClassifierModel {
     return this
   }
 
-  setStatic() {
+  toggleStatic() {
     const selector = 'headerlabel/text'
     if (this.attr(selector) != '') {
       this.attr(selector, '')

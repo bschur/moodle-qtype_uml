@@ -1,6 +1,6 @@
 import { dia, mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock, textBlockMarkup } from './text-block.model'
+import { TextBlock } from './text-block.model'
 
 const legsY = 0.7
 const bodyY = 0.3
@@ -22,11 +22,12 @@ const markup = [
     tagName: 'circle',
     selector: 'head',
   },
-  ...textBlockMarkup,
 ]
 
 export class UmlActor extends dia.Element {
-  override readonly markup = markup
+  override readonly markup = [...markup]
+
+  private _textBlock!: TextBlock
 
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
@@ -34,9 +35,9 @@ export class UmlActor extends dia.Element {
   ) {
     super.initialize(attributes, options)
 
-    const textBlock = new TextBlock()
-    textBlock.centerText()
-    this.embed(textBlock)
+    this._textBlock = new TextBlock()
+    this.embed(this._textBlock)
+    this._textBlock.inputElement.style['text-align'] = 'center'
   }
 
   override defaults() {

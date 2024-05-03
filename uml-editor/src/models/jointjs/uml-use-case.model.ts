@@ -26,7 +26,7 @@ const markup = [
 type MarkupTags = (typeof markup)[number]['selector']
 
 export class UseCase extends shapes.standard.Rectangle {
-  override readonly markup = markup
+  override readonly markup = [...markup]
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {

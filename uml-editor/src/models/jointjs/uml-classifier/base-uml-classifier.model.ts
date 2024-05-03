@@ -59,6 +59,10 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.graph.addCell(header)
   }
 
+  get isAbstract() {
+    return this.headerComponent.inputElement.style['font-family'] === 'cursive'
+  }
+
   private _functionComponents?: TextBlock[]
   private _headerComponent?: TextBlock
 
@@ -93,7 +97,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
       case 'header':
         newTextBlockElement.position(this.position().x, this.position().y + this.listItemHeight)
         newTextBlockElement.resize(this.size().width - 10, this.listItemHeight)
-        newTextBlockElement.setToTitle()
+        newTextBlockElement.makeBold()
         this.headerComponent = newTextBlockElement
         break
       case 'functionsRect':
@@ -181,7 +185,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.embed(this.headerComponent)
   }
 
-  setAbstract() {
-    this.headerComponent.changeAbstract()
+  toggleAbstract() {
+    this.headerComponent.inputElement.style['font-family'] = this.isAbstract ? 'sans-serif' : 'cursive'
   }
 }

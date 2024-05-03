@@ -1,6 +1,6 @@
 import { mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
-import { TextBlock, textBlockMarkup } from './text-block.model'
+import { TextBlock } from './text-block.model'
 
 const initialWidth = 150
 const initialHeight = 80
@@ -11,11 +11,12 @@ const markup = [
     tagName: 'rect',
     selector: 'body',
   },
-  ...textBlockMarkup,
 ]
 
 export class UMLSystem extends shapes.standard.Rectangle {
-  override readonly markup = markup
+  override readonly markup = [...markup]
+
+  private _textBlock!: TextBlock
 
   override initialize(
     attributes?: shapes.standard.RectangleAttributes,
@@ -23,9 +24,9 @@ export class UMLSystem extends shapes.standard.Rectangle {
   ) {
     super.initialize(attributes, options)
 
-    const textBlock = new TextBlock()
-    textBlock.setToTitle()
-    this.embed(textBlock)
+    this._textBlock = new TextBlock()
+    this.embed(this._textBlock)
+    this._textBlock.makeBold()
   }
 
   override defaults() {
