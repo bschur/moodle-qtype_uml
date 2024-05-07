@@ -3,7 +3,7 @@ import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 
 export const NoteElementView = dia.ElementView.extend({
   events: {
-    'input input': 'onInput',
+    'input textarea': 'onInput',
   },
   onInput: function (event: dia.Event) {
     this.model.attr('text/props/value', event.target.value)
@@ -32,27 +32,14 @@ const markup = [
     selector: 'foreignObject',
     children: [
       {
-        tagName: 'div',
         namespaceURI: 'http://www.w3.org/1999/xhtml',
-        selector: 'background',
-        style: {
-          width: '100%', // Adjust the width as needed
-          height: '100%', // Adjust the height as needed
-        },
+        tagName: 'div',
+        selector: 'div',
         children: [
           {
+            namespaceURI: 'http://www.w3.org/1999/xhtml',
             tagName: 'textarea',
-            selector: 'input',
-            style: {
-              backgroundColor: initBackgroundColor,
-              font: '14px sans-serif',
-              padding: '2px',
-              margin: 0,
-              resize: 'none', // Prevent resizing if desired
-              width: '100%', // Adjust the width as needed
-              height: '100%', // Adjust the height as needed
-              //border: '1px solid black', // Optional border styling
-            },
+            selector: 'text',
           },
         ],
       },
@@ -63,7 +50,6 @@ const markup = [
 export class NoteElement extends shapes.standard.Rectangle {
   override readonly markup = [...markup]
 
-  // Override the defaults if necessary
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.NoteElement',
@@ -103,6 +89,26 @@ export class NoteElement extends shapes.standard.Rectangle {
           x: 0,
           y: 20,
           ref: 'body',
+        },
+        div: {
+          style: {
+            width: '100%', // Adjust the width as needed
+            height: '100%', // Adjust the height as needed
+          },
+        },
+        text: {
+          type: 'text',
+          name: 'text',
+          placeholder: 'Type something',
+          style: {
+            backgroundColor: initBackgroundColor,
+            font: '14px sans-serif',
+            padding: '2px',
+            margin: 0,
+            resize: 'none', // Prevent resizing if desired
+            width: '100%', // Adjust the width as needed
+            height: '100%', // Adjust the height as needed
+          },
         },
       },
     }
