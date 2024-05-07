@@ -31,7 +31,7 @@ const markup = [
   },
 ]
 
-const textBlockDefaultAttrs = {
+const defaultAttrs = {
   foreignObject: {
     width: 'calc(w-6)',
     height: 'calc(h)',
@@ -69,14 +69,14 @@ export class TextBlock extends dia.Element {
   override readonly markup = [...markup]
 
   get inputElement() {
-    return this.attr('text') as (typeof textBlockDefaultAttrs)['text']
+    return this.attr('text') as (typeof defaultAttrs)['text']
   }
 
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.TextBlock',
       resizeable: false,
-      attrs: { ...textBlockDefaultAttrs },
+      attrs: { ...defaultAttrs },
     }
 
     util.defaultsDeep(elementAttributes, super.defaults)
