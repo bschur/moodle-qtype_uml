@@ -45,6 +45,10 @@ export class UmlActor extends dia.Element {
 
     // Use a custom event to add the child to the graph
     this.on('add', () => this.graph.addCell(this._textBlock))
+
+    // keep the textBlock in sync with the foreignObject position
+    this.on('change:position', this.synchronizeTextBlock.bind(this))
+    this.on('change:size', this.synchronizeTextBlock.bind(this))
   }
 
   override defaults() {
@@ -58,7 +62,7 @@ export class UmlActor extends dia.Element {
         background: {
           width: 'calc(w)',
           height: 'calc(h)',
-          fill: 'transparent',
+          fillOpacity: 0,
         },
         body: {
           d: `M 0 calc(0.4 * h) h calc(w) M 0 calc(h) calc(0.5 * w) calc(${legsY} * h) calc(w) calc(h) M calc(0.5 * w) calc(${legsY} * h) V calc(${bodyY} * h)`,
@@ -75,10 +79,10 @@ export class UmlActor extends dia.Element {
           fill: '#ffffff',
         },
         foreignObject: {
-          width: 70,
+          width: initWidth,
           height: listItemHeight,
-          x: -19,
-          y: 85,
+          x: 0,
+          y: initHeight,
         },
       },
     }
@@ -88,13 +92,19 @@ export class UmlActor extends dia.Element {
   }
 
   override resize(width: number, height: number) {
-    const tbWidth = (width * 7) / 4
-
     super.resize(width, height)
-    this.attr('foreignObject/width', tbWidth)
-    this.attr('foreignObject/x', (width - tbWidth) / 2)
-    this.attr('foreignObject/y', height + 5)
+
+    this.attr('foreignObject/width', width)
+    this.attr('foreignObject/y', height)
 
     return this
+  }
+
+  private synchronizeTextBlock() {
+    const parentPosition = this.position()
+    const foreignObject = this.attr('foreignObject')
+
+    this._textBlock.position(parentPosition.x + foreignObject.x, parentPosition.y + foreignObject.y)
+    this._textBlock.resize(foreignObject.width, foreignObject.height)
   }
 }
