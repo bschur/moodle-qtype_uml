@@ -22,6 +22,10 @@ const markup = [
     tagName: 'circle',
     selector: 'head',
   },
+  {
+    tagName: 'foreignObject',
+    selector: 'foreignObject',
+  },
 ]
 
 export class UmlActor extends dia.Element {
@@ -38,6 +42,9 @@ export class UmlActor extends dia.Element {
     this._textBlock = new TextBlock()
     this.embed(this._textBlock)
     this._textBlock.inputElement.style['text-align'] = 'center'
+
+    // Use a custom event to add the child to the graph
+    this.on('add', () => this.graph.addCell(this._textBlock))
   }
 
   override defaults() {

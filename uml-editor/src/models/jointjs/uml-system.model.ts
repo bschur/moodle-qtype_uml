@@ -11,6 +11,10 @@ const markup = [
     tagName: 'rect',
     selector: 'body',
   },
+  {
+    tagName: 'foreignObject',
+    selector: 'foreignObject',
+  },
 ]
 
 export class UMLSystem extends shapes.standard.Rectangle {
@@ -27,6 +31,9 @@ export class UMLSystem extends shapes.standard.Rectangle {
     this._textBlock = new TextBlock()
     this.embed(this._textBlock)
     this._textBlock.makeBold()
+
+    // Use a custom event to add the child to the graph
+    this.on('add', () => this.graph.addCell(this._textBlock))
   }
 
   override defaults() {
@@ -47,8 +54,7 @@ export class UMLSystem extends shapes.standard.Rectangle {
         },
         foreignObject: {
           ref: 'body',
-          fill: 'black',
-          width: initialWidth, // Assuming you want the label to occupy the entire width of the body
+          width: initialWidth,
           height: listItemHeight,
           x: 0,
           y: 0,
