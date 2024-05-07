@@ -10,10 +10,12 @@ const markup = [
   {
     tagName: 'rect',
     selector: 'body',
-  },
-  {
-    tagName: 'foreignObject',
-    selector: 'foreignObject',
+    children: [
+      {
+        tagName: 'foreignObject',
+        selector: 'foreignObject',
+      },
+    ],
   },
 ]
 
@@ -34,6 +36,10 @@ export class UMLSystem extends shapes.standard.Rectangle {
 
     // Use a custom event to add the child to the graph
     this.on('add', () => this.graph.addCell(this._textBlock))
+
+    // keep the textBlock in sync with the foreignObject position
+    this.on('change:position', this.synchronizeTextBlock.bind(this))
+    this.on('change:size', this.synchronizeTextBlock.bind(this))
   }
 
   override defaults() {
@@ -46,14 +52,11 @@ export class UMLSystem extends shapes.standard.Rectangle {
       z: -1,
       attrs: {
         body: {
-          rx: 0,
-          ry: 0,
+          fillOpacity: 0,
           strokeWidth: 4,
           stroke: 'black',
-          fillOpacity: 0,
         },
         foreignObject: {
-          ref: 'body',
           width: initialWidth,
           height: listItemHeight,
           x: 0,
@@ -70,5 +73,13 @@ export class UMLSystem extends shapes.standard.Rectangle {
     super.resize(width, height)
     this.attr('foreignObject/width', width)
     return this
+  }
+
+  private synchronizeTextBlock() {
+    const parentPosition = this.position()
+    const foreignObject = this.attr('foreignObject')
+
+    this._textBlock.position(parentPosition.x + foreignObject.x, parentPosition.y + foreignObject.y)
+    this._textBlock.resize(foreignObject.width, foreignObject.height)
   }
 }
