@@ -31,15 +31,16 @@ export class UMLSystem extends shapes.standard.Rectangle {
     super.initialize(attributes, options)
 
     this._textBlock = new TextBlock()
-    this.embed(this._textBlock)
     this._textBlock.makeBold()
+    this._textBlock.attr('ref', 'foreignObject')
 
     // Use a custom event to add the child to the graph
-    this.on('add', () => this.graph.addCell(this._textBlock))
+    this.on('add', () => {
+      this.synchronizeTextBlock()
 
-    // keep the textBlock in sync with the foreignObject position
-    this.on('change:position', this.synchronizeTextBlock.bind(this))
-    this.on('change:size', this.synchronizeTextBlock.bind(this))
+      this.embed(this._textBlock)
+      this.graph.addCell(this._textBlock)
+    })
   }
 
   override defaults() {
@@ -71,7 +72,10 @@ export class UMLSystem extends shapes.standard.Rectangle {
 
   override resize(width: number, height: number) {
     super.resize(width, height)
+
     this.attr('foreignObject/width', width)
+    this.synchronizeTextBlock()
+
     return this
   }
 
