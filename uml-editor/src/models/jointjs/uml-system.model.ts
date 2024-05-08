@@ -1,34 +1,25 @@
-import { dia, mvc, shapes, util } from '@joint/core'
+import { mvc, shapes, util } from '@joint/core'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
-const legsY = 0.7
-const bodyY = 0.3
-const headY = 0.15
-const initWidth = 40
-const initHeight = 80
+const initialWidth = 150
+const initialHeight = 80
 const listItemHeight = 20
 
 const markup = [
   {
     tagName: 'rect',
-    selector: 'background',
-  },
-  {
-    tagName: 'path',
     selector: 'body',
-  },
-  {
-    tagName: 'circle',
-    selector: 'head',
-  },
-  {
-    tagName: 'foreignObject',
-    selector: 'foreignObject',
+    children: [
+      {
+        tagName: 'foreignObject',
+        selector: 'foreignObject',
+      },
+    ],
   },
 ]
 
-export class UmlActor extends dia.Element {
+export class UMLSystem extends shapes.standard.Rectangle {
   override readonly markup = [...markup]
 
   private _textBlock!: TextBlock
@@ -40,7 +31,7 @@ export class UmlActor extends dia.Element {
     super.initialize(attributes, options)
 
     this._textBlock = new TextBlock()
-    this._textBlock.inputElement.style['text-align'] = 'center'
+    this._textBlock.makeBold()
     this._textBlock.attr('ref', 'foreignObject')
 
     // Use a custom event to add the child to the graph
@@ -53,37 +44,24 @@ export class UmlActor extends dia.Element {
   }
 
   override defaults() {
-    const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
-      type: 'custom.uml.Actor',
+    const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
+      type: 'custom.uml.System',
       size: {
-        width: initWidth,
-        height: initHeight,
+        width: initialWidth,
+        height: initialHeight,
       },
+      z: -1,
       attrs: {
-        background: {
-          width: 'calc(w)',
-          height: 'calc(h)',
-          fillOpacity: 0,
-        },
         body: {
-          d: `M 0 calc(0.4 * h) h calc(w) M 0 calc(h) calc(0.5 * w) calc(${legsY} * h) calc(w) calc(h) M calc(0.5 * w) calc(${legsY} * h) V calc(${bodyY} * h)`,
-          fill: 'none',
+          fillOpacity: 0,
+          strokeWidth: 4,
           stroke: 'black',
-          strokeWidth: 2,
-        },
-        head: {
-          cx: 'calc(0.5 * w)',
-          cy: `calc(${headY} * h)`,
-          r: `calc(${headY} * h)`,
-          stroke: 'black',
-          strokeWidth: 2,
-          fill: '#ffffff',
         },
         foreignObject: {
-          width: initWidth,
+          width: initialWidth,
           height: listItemHeight,
           x: 0,
-          y: initHeight,
+          y: 0,
         },
       },
     }
@@ -96,7 +74,6 @@ export class UmlActor extends dia.Element {
     super.resize(width, height)
 
     this.attr('foreignObject/width', width)
-    this.attr('foreignObject/y', height)
     this.synchronizeTextBlock()
 
     return this

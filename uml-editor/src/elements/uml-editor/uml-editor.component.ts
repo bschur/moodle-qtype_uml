@@ -72,11 +72,18 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    const paperEditor = initCustomPaper(this.editorRef.nativeElement, initCustomNamespaceGraph(), true)
+    const graph = initCustomNamespaceGraph()
 
-    paperEditor.on('change', () => {
-      this.diagramControl.setValue(paperEditor.model.toJSON())
+    const paperEditor = initCustomPaper(this.editorRef.nativeElement, graph, true)
+
+    graph.on('change', () => {
       this.diagramControl.markAsDirty()
+      this.diagramControl.setValue(graph.toJSON())
+    })
+
+    graph.on('add', () => {
+      this.diagramControl.markAsDirty()
+      this.diagramControl.setValue(graph.toJSON())
     })
 
     paperEditor.on('cell:pointerdblclick', cell => {
@@ -94,9 +101,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
         if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
           this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
             model: cell.model,
-            graph: paperEditor.model,
             elementView: cell,
-            paper: paperEditor,
           })
         }
       }
@@ -122,7 +127,6 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     clickedClass.position(tmpX, tmpY)
 
     this._paperEditor()?.model.addCell(clickedClass)
-    this.diagramControl.setValue(this._paperEditor()?.model.toJSON())
   }
 
   resetDiagram() {

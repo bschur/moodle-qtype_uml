@@ -39,6 +39,8 @@
 
   .uml-editor-correctness__fab-section {
     position: absolute;
+    display: flex;
+    gap: 16px;
     bottom: 16px;
     right: 100px;
     z-index: 9999;

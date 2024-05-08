@@ -1,4 +1,4 @@
-import { CommonModule, JsonPipe } from '@angular/common'
+import { CommonModule } from '@angular/common'
 import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms'
@@ -21,7 +21,6 @@ import { UmlInterface } from '../../models/jointjs/uml-classifier/uml-interface.
 @Component({
   standalone: true,
   imports: [
-    JsonPipe,
     CommonModule,
     MatButton,
     MatFormField,
@@ -39,8 +38,6 @@ import { UmlInterface } from '../../models/jointjs/uml-classifier/uml-interface.
 export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> implements OnInit {
   @Input({ required: true }) model!: T
   @Input({ required: true }) elementView!: dia.ElementView
-  @Input({ required: true }) graph!: dia.Graph
-  @Input({ required: true }) paper!: dia.Paper
 
   readonly lines = classifierTypes
 
@@ -55,12 +52,19 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
       .pipe(takeUntilDestroyed())
       .subscribe(value => this.changeClassifierType(value))
 
-    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeAbsract())
-    this.form.controls.static.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.changeStatic())
+    this.form.controls.abstract.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.toggleAbstract())
+    this.form.controls.static.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => this.toggleStatic())
   }
 
   ngOnInit() {
-    this.form.controls.classifier.setValue(this.model.type)
+    this.form.setValue(
+      {
+        classifier: this.model.type,
+        abstract: this.model.isAbstract,
+        static: this.model instanceof UmlClass ? this.model.isStatic : false,
+      },
+      { emitEvent: false }
+    )
   }
 
   changeClassifierType(type: ClassifierType) {
@@ -78,9 +82,9 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
           break
       }
 
-      this.graph.addCell(newModel)
+      this.model.graph.addCell(newModel)
       const classifierID = this.model.id
-      this.paper.model.getLinks().forEach(function (link) {
+      this.model.graph.getLinks().forEach(link => {
         if (link.target().id === classifierID) {
           const anchor = link.target().anchor
           link.target(newModel, { anchor })
@@ -90,25 +94,24 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
         }
       })
 
-      this.graph.removeCells([this.elementView.model])
-      // this.graph.addCell(newModel)
+      this.model.graph.removeCells([this.elementView.model])
       this.elementView.model = newModel
       this.elementView.update()
       this.model = newModel as unknown as T
-      newModel.getFunctions().forEach(value => {
-        this.paper.model.addCell(value)
+      newModel.functionComponents.forEach(value => {
+        this.model.graph.addCell(value)
       })
-      this.paper.model.addCell(newModel.getHeader())
+      this.model.graph.addCell(newModel.headerComponent)
     }
   }
 
-  private changeAbsract() {
-    this.model.setAbstract()
+  private toggleAbstract() {
+    this.model.toggleAbstract()
   }
 
-  private changeStatic() {
+  private toggleStatic() {
     if (this.model instanceof UmlClass) {
-      this.model.setStatic()
+      this.model.toggleStatic()
     }
   }
 }
