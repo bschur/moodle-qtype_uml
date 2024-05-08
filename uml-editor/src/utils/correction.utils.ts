@@ -112,7 +112,7 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
   }
 }
 
-export function injectEvaluateCorrectionFn() {
+export function injectCreateEvaluateCorrectionFn() {
   const aiCorrectionService = inject(AiCorrectionService)
 
   return async (
@@ -142,5 +142,25 @@ export function injectEvaluateCorrectionFn() {
       ...correction,
       summary,
     }
+  }
+}
+
+export function injectCreatePrepareEvaluationPromptFn() {
+  const aiCorrectionService = inject(AiCorrectionService)
+
+  return (
+    answer: JointJSDiagram,
+    solution: JointJSDiagram,
+    maxPoints: number,
+    correctionPrompt?: string | null | undefined
+  ) => {
+    const correction = evaluateCorrection(answer, solution, maxPoints)
+
+    return aiCorrectionService.prepareEvaluationPrompt(
+      correction.normalizedSolution,
+      correction.normalizedAnswer,
+      maxPoints,
+      correctionPrompt
+    )
   }
 }

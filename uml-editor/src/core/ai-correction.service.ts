@@ -34,6 +34,19 @@ Grade: <grade here>
 export class AiCorrectionService {
   private readonly httpClient = inject(HttpClient)
 
+  prepareEvaluationPrompt(
+    cleanedSolution: JointJSDiagram,
+    cleanedAnswer: JointJSDiagram,
+    maxPoints: number,
+    additionalCorrectionPrompt?: string | null | undefined
+  ): string {
+    return sourcePrompt
+      .replaceAll('{0}', JSON.stringify(cleanedSolution, null, 2))
+      .replaceAll('{1}', JSON.stringify(cleanedAnswer, null, 2))
+      .replaceAll('{2}', maxPoints.toString())
+      .replaceAll('{3}', additionalCorrectionPrompt || '')
+  }
+
   promptForCorrectionSummary(
     cleanedSolution: JointJSDiagram,
     cleanedAnswer: JointJSDiagram,
@@ -41,11 +54,12 @@ export class AiCorrectionService {
     endpoint: string,
     additionalCorrectionPrompt?: string | null | undefined
   ): Promise<string> {
-    const formattedPrompt = sourcePrompt
-      .replaceAll('{0}', JSON.stringify(cleanedSolution, null, 2))
-      .replaceAll('{1}', JSON.stringify(cleanedAnswer, null, 2))
-      .replaceAll('{2}', maxPoints.toString())
-      .replaceAll('{3}', additionalCorrectionPrompt || '')
+    const formattedPrompt = this.prepareEvaluationPrompt(
+      cleanedSolution,
+      cleanedAnswer,
+      maxPoints,
+      additionalCorrectionPrompt
+    )
 
     return firstValueFrom(this.httpClient.post<string>(endpoint, formattedPrompt))
   }

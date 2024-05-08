@@ -1,8 +1,10 @@
+import { Clipboard } from '@angular/cdk/clipboard'
 import {
   ChangeDetectionStrategy,
   Component,
   CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
+  inject,
   Input,
   numberAttribute,
   Output,
@@ -15,7 +17,7 @@ import { MatListModule } from '@angular/material/list'
 import { skip } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
 import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
-import { injectEvaluateCorrectionFn } from '../../utils/correction.utils'
+import { injectCreateEvaluateCorrectionFn, injectCreatePrepareEvaluationPromptFn } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
 
 @Component({
@@ -50,7 +52,9 @@ export class UmlEditorCorrectnessComponent {
     normalizedSolution: EMPTY_DIAGRAM_OBJECT,
   })
 
-  private readonly evaluateCorrection = injectEvaluateCorrectionFn()
+  private readonly evaluateCorrection = injectCreateEvaluateCorrectionFn()
+  private readonly prepareEvaluationPrompt = injectCreatePrepareEvaluationPromptFn()
+  private readonly clipboard = inject(Clipboard)
 
   constructor() {
     toObservable(this.correction)
@@ -81,5 +85,18 @@ export class UmlEditorCorrectnessComponent {
       this.additionalCorrectionPrompt
     )
     this.correction.set(correction)
+  }
+
+  copyPromptToClipboard() {
+    const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
+    const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
+    const prompt = this.prepareEvaluationPrompt(
+      decodedDiagram,
+      decodedCorrectAnswerDiagram,
+      this.maxPoints,
+      this.additionalCorrectionPrompt
+    )
+
+    this.clipboard.copy(prompt)
   }
 }

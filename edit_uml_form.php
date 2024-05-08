@@ -89,21 +89,18 @@ class qtype_uml_edit_form extends question_edit_form {
                 $this->editoroptions
         );
 
-        // Only allow the prompt configuration if the AI summary is enabled.
-        if (EditorHelper::is_ai_summary_enabled()) {
-            // Prompt configuration information.
-            $mform->addElement('header', 'promptconfigurationheader', get_string('promptconfigurationheader', 'qtype_uml'));
-            $mform->setExpanded('promptconfigurationheader');
-            $mform->addElement(
-                    'editor',
-                    'promptconfiguration',
-                    get_string('promptconfiguration', 'qtype_uml'),
-                    ['rows' => 10],
-                    $this->editoroptions
-            );
-            $mform->setDefault('promptconfiguration',
-                    ['text' => get_string('promptconfigurationdefault', 'qtype_uml'), 'format' => FORMAT_HTML]);
-        }
+        // Prompt configuration information.
+        $mform->addElement('header', 'promptconfigurationheader', get_string('promptconfigurationheader', 'qtype_uml'));
+        $mform->setExpanded('promptconfigurationheader');
+        $mform->addElement(
+                'editor',
+                'promptconfiguration',
+                get_string('promptconfiguration', 'qtype_uml'),
+                ['rows' => 10],
+                $this->editoroptions
+        );
+        $mform->setDefault('promptconfiguration',
+                ['text' => get_string('promptconfigurationdefault', 'qtype_uml'), 'format' => FORMAT_HTML]);
     }
 
     /**
