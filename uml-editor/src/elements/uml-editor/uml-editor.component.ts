@@ -20,12 +20,14 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatTooltip } from '@angular/material/tooltip'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
-import { EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
+import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { LinkConfigurationComponent } from '../../shared/link-configuration/link-configuration.component'
 import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
+import { UmlEditorToolboxComponent } from '../../shared/uml-editor-toolbox/uml-editor-toolbox.component'
 import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-drawer.utils'
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression.utils'
@@ -36,7 +38,7 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor.component.html',
   styleUrl: './uml-editor.component.scss',
-  imports: [MatSidenavModule, MatButtonModule, MatIconModule],
+  imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlEditorToolboxComponent, MatTooltip],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorComponent implements OnChanges, AfterViewInit {
@@ -48,7 +50,6 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) diagram: string | null = null
 
   @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
-  @ViewChild('toolbox', { static: true }) toolboxRef!: ElementRef<HTMLDivElement>
 
   @Output() readonly diagramChanged = new EventEmitter<{
     inputId: string
@@ -110,10 +111,6 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     this._paperEditor.set(paperEditor)
 
     this.setDiagramToEditor(this.diagram, { emitEvent: false })
-
-    this.toolboxRef.nativeElement.addEventListener('itemSelected', <EventListenerOrEventListenerObject>(
-      ((event: CustomEvent) => this.addItemFromToolboxToEditor(event.detail))
-    ))
   }
 
   addItemFromToolboxToEditor(itemType: string) {
@@ -130,7 +127,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }
 
   resetDiagram() {
-    this.setDiagramToEditor(this.diagram)
+    this.setDiagramToEditor(this.diagram || EMPTY_DIAGRAM)
   }
 
   private readonly setDiagramToEditor = (

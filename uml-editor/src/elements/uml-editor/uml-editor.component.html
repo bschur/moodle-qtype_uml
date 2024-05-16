@@ -1,16 +1,16 @@
 <mat-drawer-container class="uml-editor" autosize>
   <mat-drawer #drawer class="uml-editor__menu" mode="side" [opened]="allowEdit">
-    <uml-editor-toolbox #toolbox></uml-editor-toolbox>
+    <uml-editor-toolbox (itemSelected)="addItemFromToolboxToEditor($event)"></uml-editor-toolbox>
   </mat-drawer>
 
   @if (allowEdit) {
-    <button type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle">
+    <button type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle" matTooltip="Toggle toolbox">
       <mat-icon>{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
     </button>
   }
 
   @if (isDirty()) {
-    <button type="button" mat-fab color="warn" (click)="resetDiagram()" class="uml-editor__reset">
+    <button type="button" mat-fab color="warn" (click)="resetDiagram()" class="uml-editor__reset" matTooltip="Reset diagram">
       <mat-icon>undo</mat-icon>
     </button>
   }

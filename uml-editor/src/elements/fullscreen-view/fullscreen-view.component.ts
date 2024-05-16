@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common'
 import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, signal } from '@angular/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
+import { MatTooltip } from '@angular/material/tooltip'
 
 @Component({
   selector: 'app-fullscreen-view',
@@ -9,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon'
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './fullscreen-view.component.html',
   styleUrl: './fullscreen-view.component.scss',
-  imports: [MatButtonModule, MatIconModule],
+  imports: [MatButtonModule, MatIconModule, MatTooltip],
 })
 export class FullscreenViewComponent {
   readonly inFullScreen = signal(false)

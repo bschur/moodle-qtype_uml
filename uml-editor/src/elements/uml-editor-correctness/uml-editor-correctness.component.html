@@ -6,14 +6,14 @@
     <uml-editor [diagram]="correctAnswer" />
   </div>
   <div class="uml-editor-correctness__fab-section">
-    <button type="button" mat-fab color="accent" (click)="copyPromptToClipboard()">
+    <button type="button" mat-fab color="accent" (click)="copyPromptToClipboard()" matTooltip="Copy prompt">
       <mat-icon>content_copy</mat-icon>
     </button>
-    <button type="button" mat-fab color="accent" (click)="correctDiagram()" [disabled]="isLoading()">
+    <button type="button" mat-fab color="accent" (click)="correctDiagram()" [disabled]="isLoading()" matTooltip="Evaluate correction">
       @if (isLoading()) {
         <mat-spinner [diameter]="40"></mat-spinner>
       } @else {
-        <mat-icon>save</mat-icon>
+        <mat-icon>check</mat-icon>
       }
     </button>
   </div>

@@ -24,7 +24,7 @@ import { initCustomNamespaceGraph, initCustomPaper } from '../../utils/jointjs-d
 import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
 
 @Component({
-  selector: 'app-uml-editor-toolbox',
+  selector: 'uml-editor-toolbox',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgForOf, MatListModule, MatIconModule, MatButtonModule, MatInputModule, ReactiveFormsModule],

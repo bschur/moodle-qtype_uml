@@ -16,6 +16,7 @@ import { MatIcon } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
 import { MatProgressSpinner } from '@angular/material/progress-spinner'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTooltip } from '@angular/material/tooltip'
 import { skip } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
 import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
@@ -28,7 +29,7 @@ import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor-correctness.component.html',
   styleUrl: './uml-editor-correctness.component.scss',
-  imports: [MatListModule, MatFabButton, MatIcon, MatProgressSpinner],
+  imports: [MatListModule, MatFabButton, MatIcon, MatProgressSpinner, MatTooltip],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorCorrectnessComponent {
