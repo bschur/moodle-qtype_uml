@@ -26,11 +26,8 @@ export class FullscreenViewComponent {
     }
   }
 
-  @HostListener('fullscreenchange', ['$event'])
-  fullscreenChangeHandler(event: UIEvent) {
-    event.preventDefault()
-    event.stopPropagation()
-
+  @HostListener('fullscreenchange')
+  fullscreenChangeHandler() {
     this.inFullScreen.set(!!this.document.fullscreenElement)
   }
 
