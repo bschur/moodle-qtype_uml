@@ -72,6 +72,9 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    let clickTimer: string | number | NodeJS.Timeout | undefined
+    const delay = 200
+
     const graph = initCustomNamespaceGraph()
 
     const paperEditor = initCustomPaper(this.editorRef.nativeElement, graph, true)
@@ -86,7 +89,29 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       this.diagramControl.setValue(graph.toJSON())
     })
 
+    paperEditor.on(
+      'cell:pointerclick',
+      cell => {
+        clearTimeout(clickTimer)
+
+        // use timer to differentiate between single & double click
+        clickTimer = setTimeout(() => {
+          if (cell instanceof dia.ElementView) {
+            const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
+            if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
+              this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
+                model: cell.model,
+                elementView: cell,
+              })
+            }
+          }
+        }, delay)
+      },
+      delay
+    )
+
     paperEditor.on('cell:pointerdblclick', cell => {
+      clearTimeout(clickTimer)
       this.showPropertyEditorService.hide()
 
       // handle generic link from jointjs
@@ -96,15 +121,6 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       }
 
       // handle custom elements
-      if (cell instanceof dia.ElementView) {
-        const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
-        if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
-          this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
-            model: cell.model,
-            elementView: cell,
-          })
-        }
-      }
     })
 
     this._paperEditor.set(paperEditor)
