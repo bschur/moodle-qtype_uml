@@ -19,6 +19,7 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltip } from '@angular/material/tooltip'
 import { dia } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
@@ -56,6 +57,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
 
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly showPropertyEditorService = inject(PropertyEditorService)
+  private readonly snackbar = inject(MatSnackBar)
 
   private readonly _paperEditor = signal<dia.Paper | null>(null)
 
@@ -126,6 +128,30 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
 
   resetDiagram() {
     this.setDiagramToEditor(this.diagram || EMPTY_DIAGRAM)
+  }
+
+  copyDiagramToClipboard(event: ClipboardEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const encodedDiagram = encodeDiagram(this.diagramControl.value)
+    event.clipboardData?.setData('text/plain', encodedDiagram)
+
+    this.snackbar.open('Diagram copied to clipboard', 'Dismiss', {
+      duration: 2000,
+    })
+  }
+
+  pasteDiagramFromClipboard(event: ClipboardEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const clipboardValue = event.clipboardData?.getData('text') || null
+    this.setDiagramToEditor(clipboardValue, { emitEvent: true })
+
+    this.snackbar.open('Diagram pasted from clipboard', 'Dismiss', {
+      duration: 2000,
+    })
   }
 
   private readonly setDiagramToEditor = (

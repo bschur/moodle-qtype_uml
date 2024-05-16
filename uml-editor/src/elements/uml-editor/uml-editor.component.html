@@ -27,5 +27,12 @@
     </button>
   }
 
-  <div #editor class="uml-editor__canvas" [class.--hide-controls]="!allowEdit"></div>
+  <input class="uml-editor__copy-paste-input" type="text" #hiddenCopyPasteDiagramInput (copy)="copyDiagramToClipboard($event)" (paste)="pasteDiagramFromClipboard($event)">
+  <div
+    #editor
+    class="uml-editor__canvas"
+    [class.--hide-controls]="!allowEdit"
+    (mouseenter)="hiddenCopyPasteDiagramInput.focus()"
+    (mouseleave)="hiddenCopyPasteDiagramInput.blur()">
+  </div>
 </mat-drawer-container>

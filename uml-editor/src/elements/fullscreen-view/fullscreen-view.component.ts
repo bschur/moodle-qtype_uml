@@ -16,7 +16,7 @@ export class FullscreenViewComponent {
   readonly inFullScreen = signal(false)
   readonly document = inject(DOCUMENT)
 
-  private readonly elementRef: ElementRef<HTMLElement> = inject(ElementRef)
+  private readonly elementRef = inject(ElementRef)
 
   toggleFullscreen(fullscreen?: boolean) {
     if (!this.document.fullscreenElement || fullscreen) {
@@ -26,8 +26,17 @@ export class FullscreenViewComponent {
     }
   }
 
-  @HostListener('document:fullscreenchange', ['$event'])
-  fullscreenChangeHandler() {
+  @HostListener('fullscreenchange', ['$event'])
+  fullscreenChangeHandler(event: UIEvent) {
+    event.preventDefault()
+    event.stopPropagation()
+
     this.inFullScreen.set(!!this.document.fullscreenElement)
+  }
+
+  @HostListener('keydown.enter', ['$event'])
+  preventFromClosing(event: KeyboardEvent) {
+    event.preventDefault()
+    event.stopPropagation()
   }
 }
