@@ -2,7 +2,6 @@ import { Clipboard } from '@angular/cdk/clipboard'
 import {
   ChangeDetectionStrategy,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   inject,
   Input,
@@ -20,8 +19,9 @@ import { MatTooltip } from '@angular/material/tooltip'
 import { skip } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
 import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
-import { injectCreateEvaluateCorrectionFn, injectCreatePrepareEvaluationPromptFn } from '../../utils/correction.utils'
+import { injectCreateEvaluateCorrectionFn, prepareEvaluateCorrectionPrompt } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
+import { UmlEditorComponent } from '../uml-editor/uml-editor.component'
 
 @Component({
   selector: 'app-uml-editor-correctness',
@@ -29,8 +29,7 @@ import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor-correctness.component.html',
   styleUrl: './uml-editor-correctness.component.scss',
-  imports: [MatListModule, MatFabButton, MatIcon, MatProgressSpinner, MatTooltip],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [MatListModule, MatFabButton, MatIcon, MatProgressSpinner, MatTooltip, UmlEditorComponent],
 })
 export class UmlEditorCorrectnessComponent {
   @Input({ required: true }) inputId!: string
@@ -58,7 +57,6 @@ export class UmlEditorCorrectnessComponent {
   })
 
   private readonly evaluateCorrection = injectCreateEvaluateCorrectionFn()
-  private readonly prepareEvaluationPrompt = injectCreatePrepareEvaluationPromptFn()
   private readonly clipboard = inject(Clipboard)
   private readonly snackbar = inject(MatSnackBar)
 
@@ -107,7 +105,7 @@ export class UmlEditorCorrectnessComponent {
   copyPromptToClipboard() {
     const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
     const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
-    const prompt = this.prepareEvaluationPrompt(
+    const prompt = prepareEvaluateCorrectionPrompt(
       decodedDiagram,
       decodedCorrectAnswerDiagram,
       this.maxPoints,

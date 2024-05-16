@@ -38,25 +38,23 @@ export const initCustomNamespaceGraph = (): dia.Graph => {
   return new dia.Graph({}, { cellNamespace: jointjsCustomNamespace })
 }
 
-export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive: boolean): dia.Paper => {
+export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, options?: dia.Paper.Options): dia.Paper => {
   const paper = new dia.Paper({
     el: el,
     model: graph,
     width: '100%',
     height: '100%',
-    gridSize: 10,
-    drawGrid: true,
-    interactive: isInteractive,
+    drawGrid: false,
+    interactive: true,
     cellViewNamespace: jointjsCustomNamespace,
+    ...options,
     ...paperHoverConnectToolOptions,
   })
 
   resizePaperObserver(paper).observe(el)
 
   // register tools for links and elements
-  paper.on('link:mouseenter', linkView => {
-    linkView.addTools(globalLinkToolsView)
-  })
+  paper.on('link:mouseenter', linkView => linkView.addTools(globalLinkToolsView))
 
   paper.on('element:mouseenter', elementView => {
     if (elementView instanceof TextBlockView) {
@@ -67,9 +65,7 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
     elementView.addTools(globalElementToolsView)
   })
 
-  paper.on('blank:mouseover', () => {
-    paper.removeTools()
-  })
+  paper.on('blank:mouseover', () => paper.removeTools())
 
   paper.on('element:pointerdblclick', (elementView, evt) => {
     const target = elementView.model

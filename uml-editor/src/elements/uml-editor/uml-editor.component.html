@@ -4,13 +4,25 @@
   </mat-drawer>
 
   @if (allowEdit) {
-    <button type="button" mat-fab color="accent" (click)="drawer.toggle()" class="uml-editor__toggle" matTooltip="Toggle toolbox">
+    <button
+      type="button"
+      mat-fab
+      color="accent"
+      (click)="drawer.toggle()"
+      class="uml-editor__toggle"
+      matTooltip="Toggle toolbox">
       <mat-icon>{{ drawer.opened ? 'close' : 'menu' }}</mat-icon>
     </button>
   }
 
   @if (isDirty()) {
-    <button type="button" mat-fab color="warn" (click)="resetDiagram()" class="uml-editor__reset" matTooltip="Reset diagram">
+    <button
+      type="button"
+      mat-fab
+      color="warn"
+      (click)="resetDiagram()"
+      class="uml-editor__reset"
+      matTooltip="Reset diagram">
       <mat-icon>undo</mat-icon>
     </button>
   }

@@ -91,6 +91,8 @@ export class UmlEditorToolboxComponent implements AfterViewInit {
 
     const graph = initCustomNamespaceGraph()
     graph.addCell(itemByType.instance.clone())
-    initCustomPaper(listItemIconRef.nativeElement, graph, false)
+    initCustomPaper(listItemIconRef.nativeElement, graph, {
+      interactive: false,
+    })
   }
 }

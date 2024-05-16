@@ -3,7 +3,6 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   ElementRef,
   EventEmitter,
   inject,
@@ -39,15 +38,14 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   templateUrl: './uml-editor.component.html',
   styleUrl: './uml-editor.component.scss',
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlEditorToolboxComponent, MatTooltip],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class UmlEditorComponent implements OnChanges, AfterViewInit {
   readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
   readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
 
   @Input({ transform: booleanAttribute }) allowEdit = false
-  @Input({ required: true }) inputId: string | null = null
-  @Input({ required: true }) diagram: string | null = null
+  @Input() inputId: string | null = null
+  @Input() diagram: string | null = null
 
   @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
 
@@ -75,7 +73,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   ngAfterViewInit() {
     const graph = initCustomNamespaceGraph()
 
-    const paperEditor = initCustomPaper(this.editorRef.nativeElement, graph, true)
+    const paperEditor = initCustomPaper(this.editorRef.nativeElement, graph)
 
     graph.on('change', () => {
       this.diagramControl.markAsDirty()
