@@ -47,7 +47,9 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
     gridSize: 10,
     drawGrid: true,
     interactive: isInteractive,
+    restrictTranslate: true,
     cellViewNamespace: jointjsCustomNamespace,
+    origin: { x: 0, y: 0 },
     ...paperHoverConnectToolOptions,
   })
 
@@ -72,6 +74,7 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, isInteractive
   })
 
   paper.on('element:pointerdblclick', (elementView, evt) => {
+    console.log(paper)
     const target = elementView.model
     if (target instanceof BaseUmlClassifierModel || target instanceof UseCase) {
       target.userInput(evt)

@@ -139,8 +139,9 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     }
 
     const tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
-    const tmpY = Math.floor(Math.random() * (500 - 20 + 1)) + 20
+    const tmpY = Math.floor(Math.random() * (500 - 20 + 1)) - 300
     clickedClass.position(tmpX, tmpY)
+    console.log(clickedClass.position())
 
     this._paperEditor()?.model.addCell(clickedClass)
   }

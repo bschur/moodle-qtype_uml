@@ -54,6 +54,7 @@ const defaultAttrs = {
     strokeWidth: 4,
     stroke: 'black',
     fill: initBackgroundColor,
+    resize: 'none',
   },
   header: {
     ref: 'body',
@@ -79,11 +80,13 @@ const defaultAttrs = {
     x: 0,
     y: 20,
     ref: 'body',
+    resize: 'none',
   },
   div: {
     style: {
       width: '100%', // Adjust the width as needed
       height: '100%', // Adjust the height as needed
+      resize: 'none',
     },
   },
   text: {
@@ -95,9 +98,9 @@ const defaultAttrs = {
       font: '14px sans-serif',
       padding: '2px',
       margin: 0,
-      resize: 'none', // Prevent resizing if desired
-      width: '100%', // Adjust the width as needed
-      height: '100%', // Adjust the height as needed
+      resize: 'none',
+      width: '100%',
+      height: '100%',
     },
   },
 }
@@ -120,11 +123,15 @@ export class NoteElement extends shapes.standard.Rectangle {
   }
 
   override resize(width: number, height: number) {
-    this.attr('body/width', width)
-    this.attr('header/width', width)
-    this.attr('foreignObject/width', width)
-    this.attr('foreignObject/height', height - 20)
-    super.resize(width, height)
+    if (width > initialWidth && height > initialHeight) {
+      this.attr('body/width', width)
+      this.attr('header/width', width)
+      this.attr('foreignObject/width', width)
+      this.attr('foreignObject/height', height - 20)
+
+      super.resize(width, height)
+    }
+
     return this
   }
 }

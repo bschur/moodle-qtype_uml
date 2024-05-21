@@ -81,6 +81,9 @@ export class UseCase extends shapes.standard.Rectangle {
   }
 
   override resize(widthNew: number, heightNew: number) {
+    if (widthNew < initialWidth) widthNew = initialWidth
+    if (heightNew < initialHeight) heightNew = initialHeight
+
     super.resize(widthNew, heightNew)
 
     this.attr('ellipse' satisfies MarkupTags, {
