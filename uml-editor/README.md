@@ -8,7 +8,7 @@ Run `npm run start` for a dev server. Navigate to `http://localhost:4200/`. The 
 
 ## Build
 
-- Run `npm run build:elements:moodle` to build the project and bundle it for Moodle.
+- Run `npm run build:single` to build the project and bundle it for Moodle.
   - Now the scripts in the root project folder `/dist` will be updated to the newest version
 
 ## Further help

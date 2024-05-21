@@ -67,7 +67,7 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
     )
   }
 
-  changeClassifierType(type: ClassifierType) {
+  private changeClassifierType(type: ClassifierType) {
     if (type != this.model.type) {
       let newModel
       switch (type) {
