@@ -55,7 +55,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   protected readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
 
   private readonly viewContainerRef = inject(ViewContainerRef)
-  private readonly showPropertyEditorService = inject(PropertyEditorService)
+  private readonly propertyEditorService = inject(PropertyEditorService)
   private readonly snackbar = inject(MatSnackBar)
 
   private readonly _diagramChanges$ = this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200))
@@ -99,12 +99,23 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       this.diagramControl.setValue(graph.toJSON())
     })
 
+    graph.on('remove', cell => {
+      const containsModel = Object.values(this.propertyEditorService.openPropertyEditor?.initProperties || {}).includes(
+        cell
+      )
+      if (containsModel) {
+        this.propertyEditorService.hide()
+      }
+    })
+
     paperEditor.on('cell:pointerdblclick', cell => {
-      this.showPropertyEditorService.hide()
+      this.propertyEditorService.hide()
 
       // handle generic link from jointjs
       if (cell instanceof dia.LinkView) {
-        this.showPropertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, { model: cell.model })
+        this.propertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, {
+          model: cell.model,
+        })
         return
       }
 
@@ -112,7 +123,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       if (cell instanceof dia.ElementView) {
         const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
         if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
-          this.showPropertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
+          this.propertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
             model: cell.model,
             elementView: cell,
           })
@@ -227,19 +238,21 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     const currentValueIndex = history.findIndex(value => value === currentValue)
     const newStep = currentValueIndex + cursorMove
 
-    const initialDiagram = this.diagram || EMPTY_DIAGRAM_ENCODED
-    const newValue = history[newStep] || initialDiagram
-    const fallbackToInitial = newValue === initialDiagram
-
     if (newStep > history.length - 1 || newStep < -1) {
       console.debug('no possible history step found')
       return
     }
 
+    const initialDiagram = this.diagram || EMPTY_DIAGRAM_ENCODED
+    const newValue = history[newStep] || initialDiagram
+    const fallbackToInitial = newValue === initialDiagram
+
     console.debug('restoring diagram from history', newStep)
+
     const decodedValue = decodeDiagram(newValue)
     paperEditor.model.fromJSON(decodedValue)
-    this.diagramControl.setValue(decodedValue, { emitEvent: false })
+
+    this.diagramControl.setValue(decodedValue)
     if (fallbackToInitial) {
       this.diagramControl.markAsPristine()
     }
