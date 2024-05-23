@@ -63,7 +63,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     return this.headerComponent.inputElement.style['font-family'] === 'cursive'
   }
 
-  private _functionComponents?: TextBlock[]
+  private _functionComponents?: TextBlock[] = []
   private _headerComponent?: TextBlock
 
   shrinkFuncY(indexOfComponentToRemove: number) {

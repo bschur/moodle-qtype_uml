@@ -57,8 +57,8 @@ export class UmlClass extends BaseUmlClassifierModel {
 
     try {
       const amountInputs = this.variablesComponentAllHeight + this.functionsComponentAllHeight
-      const heightBothContainer = this.size().height - headerHeight - amountInputs
 
+      const heightBothContainer = this.size().height - headerHeight - amountInputs
       if (amountInputs == 0) {
         return heightBothContainer / 2
       }
@@ -262,6 +262,7 @@ export class UmlClass extends BaseUmlClassifierModel {
 
     let counter = 0
     this.functionComponents.forEach(component => {
+      console.log(component)
       component.resize(this.listItemWidth, listItemHeight)
 
       let y = this.position().y + headerHeight + this.inlineContainerHeight('variablesRect') + counter
