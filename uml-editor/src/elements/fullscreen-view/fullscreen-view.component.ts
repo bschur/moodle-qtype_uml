@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, s
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltip } from '@angular/material/tooltip'
+import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
 
 @Component({
   selector: 'app-fullscreen-view',
@@ -13,12 +14,13 @@ import { MatTooltip } from '@angular/material/tooltip'
   imports: [MatButtonModule, MatIconModule, MatTooltip],
 })
 export class FullscreenViewComponent {
-  readonly inFullScreen = signal(false)
-  readonly document = inject(DOCUMENT)
+  protected readonly inFullScreen = signal(false)
+  protected readonly document = inject(DOCUMENT)
 
+  private readonly propertyEditorService = inject(PropertyEditorService)
   private readonly elementRef = inject(ElementRef)
 
-  toggleFullscreen(fullscreen?: boolean) {
+  protected toggleFullscreen(fullscreen?: boolean) {
     if (!this.document.fullscreenElement || fullscreen) {
       void this.elementRef.nativeElement.requestFullscreen()
     } else if (this.document.exitFullscreen) {
@@ -27,12 +29,13 @@ export class FullscreenViewComponent {
   }
 
   @HostListener('fullscreenchange')
-  fullscreenChangeHandler() {
+  protected fullscreenChangeHandler() {
+    this.propertyEditorService.hide()
     this.inFullScreen.set(!!this.document.fullscreenElement)
   }
 
   @HostListener('keydown.enter', ['$event'])
-  preventFromClosing(event: KeyboardEvent) {
+  protected preventFromClosing(event: KeyboardEvent) {
     event.preventDefault()
     event.stopPropagation()
   }

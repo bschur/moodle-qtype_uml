@@ -41,19 +41,19 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlEditorToolboxComponent, MatTooltip],
 })
 export class UmlEditorComponent implements OnChanges, AfterViewInit {
-  readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
-  readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
-
   @Input({ transform: booleanAttribute }) allowEdit = false
   @Input() inputId: string | null = null
   @Input() diagram: string | null = null
 
-  @ViewChild('editor', { static: true }) editorRef!: ElementRef<HTMLDivElement>
+  @ViewChild('editor', { static: true }) protected editorRef!: ElementRef<HTMLDivElement>
 
-  @Output() readonly diagramChanged = new EventEmitter<{
+  @Output() protected readonly diagramChanged = new EventEmitter<{
     inputId: string
     diagram: string
   }>()
+
+  protected readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
+  protected readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
 
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly showPropertyEditorService = inject(PropertyEditorService)
@@ -113,7 +113,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     this.setDiagramToEditor(this.diagram, { emitEvent: false })
   }
 
-  addItemFromToolboxToEditor(itemType: string) {
+  protected addItemFromToolboxToEditor(itemType: string) {
     const clickedClass = jointJSCustomUmlElements.find(item => item.defaults.type === itemType)?.instance.clone()
     if (!clickedClass) {
       throw new Error(`itemType ${itemType} not found`)
@@ -126,11 +126,11 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     this._paperEditor()?.model.addCell(clickedClass)
   }
 
-  resetDiagram() {
+  protected resetDiagram() {
     this.setDiagramToEditor(this.diagram || EMPTY_DIAGRAM)
   }
 
-  copyDiagramToClipboard(event: ClipboardEvent) {
+  protected copyDiagramToClipboard(event: ClipboardEvent) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -142,7 +142,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     })
   }
 
-  pasteDiagramFromClipboard(event: ClipboardEvent) {
+  protected pasteDiagramFromClipboard(event: ClipboardEvent) {
     event.preventDefault()
     event.stopPropagation()
 

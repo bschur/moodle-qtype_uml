@@ -39,9 +39,9 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
   @Input({ required: true }) model!: T
   @Input({ required: true }) elementView!: dia.ElementView
 
-  readonly lines = classifierTypes
+  protected readonly lines = classifierTypes
 
-  readonly form = new FormGroup({
+  protected readonly form = new FormGroup({
     classifier: new FormControl<ClassifierType>('Class', { nonNullable: true }),
     abstract: new FormControl<boolean>(false, { nonNullable: true }),
     static: new FormControl<boolean>(false, { nonNullable: true }),

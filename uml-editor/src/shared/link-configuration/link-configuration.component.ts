@@ -47,10 +47,10 @@ import {
 export class LinkConfigurationComponent implements OnInit {
   @Input({ required: true }) model!: dia.Link
 
-  readonly arrows = jointJSArrows
-  readonly lines = jointJSLinks
+  protected readonly arrows = jointJSArrows
+  protected readonly lines = jointJSLinks
 
-  readonly form = new FormGroup({
+  protected readonly form = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true }),
     arrowTarget: new FormControl<JointJSLinkArrowType>('none', { nonNullable: true }),
     arrowSource: new FormControl<JointJSLinkArrowType>('none', { nonNullable: true }),
@@ -59,12 +59,12 @@ export class LinkConfigurationComponent implements OnInit {
     multiplicitySource: new FormControl<JointJSLinkMultiplicity>('', { nonNullable: true }),
   })
 
-  readonly suggestedTargetLinkMultiplicities = computed(() => {
+  protected readonly suggestedTargetLinkMultiplicities = computed(() => {
     const value = this.multiplicityTargetValue()
     return jointJSSuggestedLinkMultiplicities.filter(multiplicity => multiplicity.includes(value))
   })
 
-  readonly suggestedSourceLinkMultiplicities = computed(() => {
+  protected readonly suggestedSourceLinkMultiplicities = computed(() => {
     const value = this.multiplicitySourceValue()
     return jointJSSuggestedLinkMultiplicities.filter(multiplicity => multiplicity.includes(value))
   })
@@ -113,5 +113,5 @@ export class LinkConfigurationComponent implements OnInit {
     })
   }
 
-  readonly swapDirection = () => swapDirection(this.model)
+  protected readonly swapDirection = () => swapDirection(this.model)
 }

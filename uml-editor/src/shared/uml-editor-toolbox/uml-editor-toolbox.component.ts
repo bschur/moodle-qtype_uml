@@ -32,12 +32,12 @@ import { jointJSCustomUmlElements } from '../../utils/jointjs-extension.const'
   styleUrl: './uml-editor-toolbox.component.scss',
 })
 export class UmlEditorToolboxComponent implements AfterViewInit {
-  @Output() readonly itemSelected = new EventEmitter<string>()
+  @Output() protected readonly itemSelected = new EventEmitter<string>()
 
-  @ViewChildren('listItemsIcon') listItemsIcon!: QueryList<ElementRef<HTMLDivElement>>
+  @ViewChildren('listItemsIcon') protected listItemsIcon!: QueryList<ElementRef<HTMLDivElement>>
 
-  readonly searchControl = new FormControl<string>('')
-  readonly items = signal<CustomJointJSElement[]>([])
+  protected readonly searchControl = new FormControl<string>('')
+  protected readonly items = signal<CustomJointJSElement[]>([])
 
   private readonly destroyRef = inject(DestroyRef)
 
@@ -64,7 +64,7 @@ export class UmlEditorToolboxComponent implements AfterViewInit {
       .subscribe(elements => elements.forEach(this.drawListItemGraph))
   }
 
-  selectItem(itemType: string) {
+  protected selectItem(itemType: string) {
     this.itemSelected.emit(itemType)
   }
 

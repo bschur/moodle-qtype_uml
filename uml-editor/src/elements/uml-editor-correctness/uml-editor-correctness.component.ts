@@ -39,7 +39,7 @@ export class UmlEditorCorrectnessComponent {
   @Input() promptEndpoint?: string
   @Input() additionalCorrectionPrompt?: string
 
-  @Output() readonly correctionChanged = new EventEmitter<{
+  @Output() protected readonly correctionChanged = new EventEmitter<{
     inputId: string
     maxPoints: number
     comment: string
@@ -77,7 +77,7 @@ export class UmlEditorCorrectnessComponent {
       })
   }
 
-  async correctDiagram() {
+  protected async correctDiagram() {
     this.isLoading.set(true)
 
     try {
@@ -102,7 +102,7 @@ export class UmlEditorCorrectnessComponent {
     }
   }
 
-  copyPromptToClipboard() {
+  protected copyPromptToClipboard() {
     const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
     const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
     const prompt = prepareEvaluateCorrectionPrompt(

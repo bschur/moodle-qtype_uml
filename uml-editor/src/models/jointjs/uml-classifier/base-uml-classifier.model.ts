@@ -107,7 +107,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
         this.resizeInlineContainer(1, 'functionsRect')
         break
       default:
-        console.log('Clicked outside the sections')
+        console.debug('Clicked outside the sections')
         return
     }
 
@@ -131,7 +131,7 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
       // Adjust the position of subsequent components
       this.shrinkFuncY(indexOfComponentToRemove)
     } else {
-      console.log('Component not found')
+      console.debug('Component not found')
     }
 
     this.resizeInlineContainer(-1, 'functionsRect')
