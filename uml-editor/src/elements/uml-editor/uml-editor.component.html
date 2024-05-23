@@ -15,7 +15,7 @@
     </button>
   }
 
-  @if (isDirty()) {
+  @if (diagramControl.dirty) {
     <button
       type="button"
       mat-fab
@@ -32,7 +32,12 @@
     type="text"
     #hiddenCopyPasteDiagramInput
     (copy)="copyDiagramToClipboard($event)"
-    (paste)="pasteDiagramFromClipboard($event)" />
+    (paste)="pasteDiagramFromClipboard($event)"
+    (keydown.control.z)="undo()"
+    (keydown.meta.z)="undo()"
+    (keydown.control.y)="redo()"
+    (keydown.meta.y)="redo()"
+    />
   <div
     #editor
     class="uml-editor__canvas"

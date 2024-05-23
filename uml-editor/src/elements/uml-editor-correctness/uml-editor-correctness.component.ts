@@ -18,7 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltip } from '@angular/material/tooltip'
 import { skip } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
-import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
+import { EMPTY_DIAGRAM_ENCODED, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
 import { injectCreateEvaluateCorrectionFn, prepareEvaluateCorrectionPrompt } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
 import { UmlEditorComponent } from '../uml-editor/uml-editor.component'
@@ -81,8 +81,8 @@ export class UmlEditorCorrectnessComponent {
     this.isLoading.set(true)
 
     try {
-      const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
-      const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
+      const decodedDiagram = decodeDiagram(this.diagram || EMPTY_DIAGRAM_ENCODED)
+      const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || EMPTY_DIAGRAM_ENCODED)
 
       const correction = await this.evaluateCorrection(
         decodedDiagram,
@@ -103,8 +103,8 @@ export class UmlEditorCorrectnessComponent {
   }
 
   protected copyPromptToClipboard() {
-    const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
-    const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
+    const decodedDiagram = decodeDiagram(this.diagram || EMPTY_DIAGRAM_ENCODED)
+    const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || EMPTY_DIAGRAM_ENCODED)
     const prompt = prepareEvaluateCorrectionPrompt(
       decodedDiagram,
       decodedCorrectAnswerDiagram,

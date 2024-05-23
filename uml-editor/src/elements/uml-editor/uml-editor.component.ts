@@ -22,9 +22,9 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltip } from '@angular/material/tooltip'
 import { dia } from '@joint/core'
-import { debounceTime, map } from 'rxjs'
+import { debounceTime, scan } from 'rxjs'
 import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
-import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
+import { EMPTY_DIAGRAM_ENCODED, EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { LinkConfigurationComponent } from '../../shared/link-configuration/link-configuration.component'
 import { PropertyEditorService } from '../../shared/property-editor/property-editor.service'
 import { UmlEditorToolboxComponent } from '../../shared/uml-editor-toolbox/uml-editor-toolbox.component'
@@ -35,7 +35,7 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
 @Component({
   selector: 'app-uml-editor',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.Default,
   templateUrl: './uml-editor.component.html',
   styleUrl: './uml-editor.component.scss',
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlEditorToolboxComponent, MatTooltip],
@@ -53,17 +53,29 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }>()
 
   protected readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
-  protected readonly isDirty = toSignal(this.diagramControl.valueChanges.pipe(map(() => this.diagramControl.dirty)))
 
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly showPropertyEditorService = inject(PropertyEditorService)
   private readonly snackbar = inject(MatSnackBar)
 
+  private readonly _diagramChanges$ = this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200))
   private readonly _paperEditor = signal<dia.Paper | null>(null)
+  private readonly _history = toSignal(
+    this._diagramChanges$.pipe(
+      scan((acc, value) => {
+        const encoded = encodeDiagram(value)
+        if (encoded !== this.diagram || EMPTY_DIAGRAM_ENCODED) {
+          acc.add(encodeDiagram(value))
+        }
+        return acc
+      }, new Set<string>())
+    ),
+    { initialValue: new Set<string>() }
+  )
 
   constructor() {
     // listen to diagram changes and emit value
-    this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200)).subscribe(this.encodeAndEmitDiagram)
+    this._diagramChanges$.subscribe(this.encodeAndEmitDiagram.bind(this))
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -127,7 +139,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }
 
   protected resetDiagram() {
-    this.setDiagramToEditor(this.diagram || EMPTY_DIAGRAM)
+    this.setDiagramToEditor(this.diagram || EMPTY_DIAGRAM_ENCODED)
   }
 
   protected copyDiagramToClipboard(event: ClipboardEvent) {
@@ -146,13 +158,23 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     event.preventDefault()
     event.stopPropagation()
 
-    const clipboardValue = event.clipboardData?.getData('text') || null
-    this.setDiagramToEditor(clipboardValue, { emitEvent: true })
+    try {
+      const clipboardValue = event.clipboardData?.getData('text') || null
+      this.setDiagramToEditor(clipboardValue)
 
-    this.snackbar.open('Diagram pasted from clipboard', 'Dismiss', {
-      duration: 2000,
-    })
+      this.snackbar.open('Diagram pasted from clipboard', 'Dismiss', {
+        duration: 2000,
+      })
+    } catch {
+      this.snackbar.open('Error while pasting diagram from clipboard', 'Dismiss', {
+        duration: 2000,
+      })
+    }
   }
+
+  protected readonly undo = () => this.restoreFromHistory(-1)
+
+  protected readonly redo = () => this.restoreFromHistory(1)
 
   private readonly setDiagramToEditor = (
     diagramValue: string | null,
@@ -176,7 +198,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  private readonly encodeAndEmitDiagram = (diagram: JointJSDiagram) => {
+  private encodeAndEmitDiagram(diagram: JointJSDiagram) {
     // the value was changed
     const inputId = this.inputId
     if (!inputId || !diagram) {
@@ -191,5 +213,35 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       inputId,
       diagram: encodedDiagram,
     })
+  }
+
+  private restoreFromHistory(cursorMove: number) {
+    const paperEditor = this._paperEditor()
+    if (!paperEditor) {
+      console.debug('no paper editor found')
+      return
+    }
+
+    const history = Array.from(this._history())
+    const currentValue = encodeDiagram(this.diagramControl.value)
+    const currentValueIndex = history.findIndex(value => value === currentValue)
+    const newStep = currentValueIndex + cursorMove
+
+    const initialDiagram = this.diagram || EMPTY_DIAGRAM_ENCODED
+    const newValue = history[newStep] || initialDiagram
+    const fallbackToInitial = newValue === initialDiagram
+
+    if (newStep > history.length - 1 || newStep < -1) {
+      console.debug('no possible history step found')
+      return
+    }
+
+    console.debug('restoring diagram from history', newStep)
+    const decodedValue = decodeDiagram(newValue)
+    paperEditor.model.fromJSON(decodedValue)
+    this.diagramControl.setValue(decodedValue, { emitEvent: false })
+    if (fallbackToInitial) {
+      this.diagramControl.markAsPristine()
+    }
   }
 }
