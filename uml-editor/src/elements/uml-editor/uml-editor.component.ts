@@ -266,6 +266,8 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     this.diagramControl.setValue(decodedValue)
     if (fallbackToInitial) {
       this.diagramControl.markAsPristine()
+    } else {
+      this.diagramControl.markAsDirty()
     }
   }
 }
