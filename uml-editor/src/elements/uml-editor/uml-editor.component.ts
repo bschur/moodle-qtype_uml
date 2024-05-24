@@ -186,9 +186,17 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     }
   }
 
-  protected readonly undo = () => this.restoreFromHistory(-1)
+  protected undo(event: Event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.restoreFromHistory(-1)
+  }
 
-  protected readonly redo = () => this.restoreFromHistory(1)
+  protected redo(event: Event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.restoreFromHistory(1)
+  }
 
   private readonly setDiagramToEditor = (
     diagramValue: string | null,

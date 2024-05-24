@@ -33,10 +33,10 @@
     #hiddenCopyPasteDiagramInput
     (copy)="copyDiagramToClipboard($event)"
     (paste)="pasteDiagramFromClipboard($event)"
-    (keydown.control.z)="undo()"
-    (keydown.meta.z)="undo()"
-    (keydown.control.y)="redo()"
-    (keydown.meta.y)="redo()" />
+    (keydown.control.z)="undo($event)"
+    (keydown.meta.z)="undo($event)"
+    (keydown.control.y)="redo($event)"
+    (keydown.meta.y)="redo($event)" />
   <div
     #editor
     class="uml-editor__canvas"
