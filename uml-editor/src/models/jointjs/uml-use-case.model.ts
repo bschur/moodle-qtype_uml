@@ -1,5 +1,4 @@
 import { shapes, util } from '@joint/core'
-import { UseCaseConfigurationComponent } from '../../shared/use-case-configuration/use-case-configuration.component'
 import { CustomJointJSElementAttributes } from './custom-jointjs-element.model'
 import { TextBlock } from './text-block.model'
 
@@ -31,7 +30,6 @@ export class UseCase extends shapes.standard.Rectangle {
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<shapes.standard.RectangleAttributes> = {
       type: 'custom.uml.UseCase',
-      propertyView: UseCaseConfigurationComponent,
       size: {
         width: initialWidth,
         height: initialHeight,
