@@ -22,7 +22,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTooltip } from '@angular/material/tooltip'
 import { dia } from '@joint/core'
-import { debounceTime, scan } from 'rxjs'
+import { debounceTime, map, scan } from 'rxjs'
 import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
 import { EMPTY_DIAGRAM_ENCODED, EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
 import { LinkConfigurationComponent } from '../../shared/link-configuration/link-configuration.component'
@@ -35,7 +35,7 @@ import { decodeDiagram, encodeDiagram } from '../../utils/uml-editor-compression
 @Component({
   selector: 'app-uml-editor',
   standalone: true,
-  changeDetection: ChangeDetectionStrategy.Default,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor.component.html',
   styleUrl: './uml-editor.component.scss',
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, UmlEditorToolboxComponent, MatTooltip],
@@ -53,15 +53,18 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }>()
 
   protected readonly diagramControl = new FormControl<JointJSDiagram>(EMPTY_DIAGRAM_OBJECT, { nonNullable: true })
+  protected readonly diagramChanges$ = this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200))
+  protected readonly isDirty = toSignal(this.diagramChanges$.pipe(map(() => this.diagramControl.dirty)), {
+    initialValue: false,
+  })
 
   private readonly viewContainerRef = inject(ViewContainerRef)
   private readonly propertyEditorService = inject(PropertyEditorService)
   private readonly snackbar = inject(MatSnackBar)
 
-  private readonly _diagramChanges$ = this.diagramControl.valueChanges.pipe(takeUntilDestroyed(), debounceTime(200))
   private readonly _paperEditor = signal<dia.Paper | null>(null)
   private readonly _history = toSignal(
-    this._diagramChanges$.pipe(
+    this.diagramChanges$.pipe(
       scan((acc, value) => {
         const encoded = encodeDiagram(value)
         if (encoded !== this.diagram || EMPTY_DIAGRAM_ENCODED) {
@@ -75,7 +78,7 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
 
   constructor() {
     // listen to diagram changes and emit value
-    this._diagramChanges$.subscribe(this.encodeAndEmitDiagram.bind(this))
+    this.diagramChanges$.subscribe(this.encodeAndEmitDiagram.bind(this))
   }
 
   ngOnChanges(changes: SimpleChanges) {
