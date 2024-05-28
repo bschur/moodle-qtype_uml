@@ -20,7 +20,7 @@ import { FormControl } from '@angular/forms'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { dia } from '@joint/core'
+import { dia, highlighters } from '@joint/core'
 import { debounceTime, map } from 'rxjs'
 import { CustomJointJSElementAttributes } from '../../models/jointjs/custom-jointjs-element.model'
 import { EMPTY_DIAGRAM_OBJECT, JointJSDiagram } from '../../models/jointjs/jointjs-diagram.model'
@@ -103,6 +103,13 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
                 model: cell.model,
                 elementView: cell,
               })
+              highlighters.mask.add(cell, { selector: 'root' }, cell.model.id.toString(), {
+                deep: true,
+                attrs: {
+                  stroke: 'blue',
+                  'stroke-width': 3,
+                },
+              })
             }
           }
         }, delay)
@@ -110,19 +117,34 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       delay
     )
 
-    paperEditor.on('cell:pointerdblclick', cell => {
-      clearTimeout(clickTimer)
-      this.showPropertyEditorService.hide()
+    paperEditor.on(
+      'cell:pointerdblclick',
+      //todo why timer doesnt work?
+      cell => {
+        clearTimeout(clickTimer)
+        this.showPropertyEditorService.hide()
 
-      // handle generic link from jointjs
-      if (cell instanceof dia.LinkView) {
-        this.showPropertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, { model: cell.model })
-        return
-      }
+        clickTimer = setTimeout(() => {
+          // handle generic link from jointjs
+          if (cell instanceof dia.LinkView) {
+            this.showPropertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, {
+              model: cell.model,
+            })
+            highlighters.mask.add(cell, { selector: 'root' }, cell.model.id.toString(), {
+              deep: true,
+              attrs: {
+                stroke: 'blue',
+                'stroke-width': 2,
+              },
+            })
+            return
+          }
+        }, delay)
+      },
+      delay
+    )
 
-      // handle custom elements
-    })
-
+    // handle custom elements
     this._paperEditor.set(paperEditor)
 
     this.setDiagramToEditor(this.diagram, { emitEvent: false })
