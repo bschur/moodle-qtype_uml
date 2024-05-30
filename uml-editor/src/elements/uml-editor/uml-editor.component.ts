@@ -174,12 +174,17 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       throw new Error(`itemType ${itemType} not found`)
     }
 
-    const tmpX = Math.floor(Math.random() * (500 - 20 + 1)) + 20
-    const tmpY = Math.floor(Math.random() * (500 - 20 + 1)) - 300
-    clickedClass.position(tmpX, tmpY)
-    console.log(clickedClass.position())
+    const paperEditor = this._paperEditor()
+    if (!paperEditor) {
+      console.debug('no paper editor found')
+      return
+    }
 
-    this._paperEditor()?.model.addCell(clickedClass)
+    const paperArea = paperEditor.getArea()
+    const contentArea = paperEditor.getContentArea()
+    clickedClass.position((paperArea.width - contentArea.width) / 2, (paperArea.height - contentArea.height) / 2)
+
+    paperEditor.model.addCell(clickedClass)
   }
 
   protected resetDiagram() {
