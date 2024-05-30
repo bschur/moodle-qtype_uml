@@ -103,7 +103,7 @@ class qtype_uml_question extends question_with_responses {
     public function summarise_response(array $response): string {
         if (array_key_exists('answer', $response) &&
                 isset($response['answer'])) {
-            return $response['answer'];
+            return rawurldecode($response['answer']);
         }
 
         return '';
