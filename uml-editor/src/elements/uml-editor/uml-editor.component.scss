@@ -33,7 +33,8 @@
     }
   }
 
-  ::ng-deep .mat-drawer-content {
-    overflow: hidden !important;
+  .uml-editor__copy-paste-input {
+    position: absolute;
+    opacity: 0;
   }
 }

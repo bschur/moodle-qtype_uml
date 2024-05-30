@@ -17,6 +17,11 @@ export class PropertyEditorService {
   private readonly overlay = inject(Overlay)
 
   private overlayRef: OverlayRef | null = null
+  private propertyEditor: PropertyEditorComponent<unknown> | null = null
+
+  get openPropertyEditor() {
+    return this.propertyEditor
+  }
 
   show<T>(
     viewContainerRef: ViewContainerRef,
@@ -51,6 +56,8 @@ export class PropertyEditorService {
     componentRef.instance.type = componentType
     componentRef.instance.initProperties = initProperties
 
+    this.propertyEditor = componentRef.instance
+
     return componentRef
   }
 
@@ -58,6 +65,7 @@ export class PropertyEditorService {
     // Hiding overlay
     this.overlayRef?.detach()
     this.overlayRef = null
+    this.propertyEditor = null
 
     if (cellView != undefined) {
       dia.HighlighterView.remove(cellView)

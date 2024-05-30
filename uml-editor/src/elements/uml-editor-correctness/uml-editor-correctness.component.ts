@@ -2,7 +2,6 @@ import { Clipboard } from '@angular/cdk/clipboard'
 import {
   ChangeDetectionStrategy,
   Component,
-  CUSTOM_ELEMENTS_SCHEMA,
   EventEmitter,
   inject,
   Input,
@@ -14,11 +13,15 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop'
 import { MatFabButton } from '@angular/material/button'
 import { MatIcon } from '@angular/material/icon'
 import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinner } from '@angular/material/progress-spinner'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTooltip } from '@angular/material/tooltip'
 import { skip } from 'rxjs'
 import { UmlCorrection } from '../../models/correction.model'
-import { EMPTY_DIAGRAM, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
-import { injectCreateEvaluateCorrectionFn, injectCreatePrepareEvaluationPromptFn } from '../../utils/correction.utils'
+import { EMPTY_DIAGRAM_ENCODED, EMPTY_DIAGRAM_OBJECT } from '../../models/jointjs/jointjs-diagram.model'
+import { injectCreateEvaluateCorrectionFn, prepareEvaluateCorrectionPrompt } from '../../utils/correction.utils'
 import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
+import { UmlEditorComponent } from '../uml-editor/uml-editor.component'
 
 @Component({
   selector: 'app-uml-editor-correctness',
@@ -26,8 +29,7 @@ import { decodeDiagram } from '../../utils/uml-editor-compression.utils'
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './uml-editor-correctness.component.html',
   styleUrl: './uml-editor-correctness.component.scss',
-  imports: [MatListModule, MatFabButton, MatIcon],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [MatListModule, MatFabButton, MatIcon, MatProgressSpinner, MatTooltip, UmlEditorComponent],
 })
 export class UmlEditorCorrectnessComponent {
   @Input({ required: true }) inputId!: string
@@ -37,13 +39,15 @@ export class UmlEditorCorrectnessComponent {
   @Input() promptEndpoint?: string
   @Input() additionalCorrectionPrompt?: string
 
-  @Output() readonly correctionChanged = new EventEmitter<{
+  @Output() protected readonly correctionChanged = new EventEmitter<{
     inputId: string
     maxPoints: number
     comment: string
     points: number
     summary?: string
   }>()
+
+  protected readonly isLoading = signal(false)
 
   private readonly correction = signal<UmlCorrection>({
     differences: [],
@@ -53,8 +57,8 @@ export class UmlEditorCorrectnessComponent {
   })
 
   private readonly evaluateCorrection = injectCreateEvaluateCorrectionFn()
-  private readonly prepareEvaluationPrompt = injectCreatePrepareEvaluationPromptFn()
   private readonly clipboard = inject(Clipboard)
+  private readonly snackbar = inject(MatSnackBar)
 
   constructor() {
     toObservable(this.correction)
@@ -73,24 +77,35 @@ export class UmlEditorCorrectnessComponent {
       })
   }
 
-  async correctDiagram() {
-    const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
-    const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
+  protected async correctDiagram() {
+    this.isLoading.set(true)
 
-    const correction = await this.evaluateCorrection(
-      decodedDiagram,
-      decodedCorrectAnswerDiagram,
-      this.maxPoints,
-      this.promptEndpoint,
-      this.additionalCorrectionPrompt
-    )
-    this.correction.set(correction)
+    try {
+      const decodedDiagram = decodeDiagram(this.diagram || EMPTY_DIAGRAM_ENCODED)
+      const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || EMPTY_DIAGRAM_ENCODED)
+
+      const correction = await this.evaluateCorrection(
+        decodedDiagram,
+        decodedCorrectAnswerDiagram,
+        this.maxPoints,
+        this.promptEndpoint,
+        this.additionalCorrectionPrompt
+      )
+      this.correction.set(correction)
+    } catch (error) {
+      console.error('Error while evaluating correction:', error)
+      this.snackbar.open('Error while evaluating correction', 'Dismiss', {
+        duration: 2000,
+      })
+    } finally {
+      this.isLoading.set(false)
+    }
   }
 
-  copyPromptToClipboard() {
-    const decodedDiagram = decodeDiagram(this.diagram || JSON.parse(EMPTY_DIAGRAM))
-    const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || JSON.parse(EMPTY_DIAGRAM))
-    const prompt = this.prepareEvaluationPrompt(
+  protected copyPromptToClipboard() {
+    const decodedDiagram = decodeDiagram(this.diagram || EMPTY_DIAGRAM_ENCODED)
+    const decodedCorrectAnswerDiagram = decodeDiagram(this.correctAnswer || EMPTY_DIAGRAM_ENCODED)
+    const prompt = prepareEvaluateCorrectionPrompt(
       decodedDiagram,
       decodedCorrectAnswerDiagram,
       this.maxPoints,
@@ -98,5 +113,9 @@ export class UmlEditorCorrectnessComponent {
     )
 
     this.clipboard.copy(prompt)
+
+    this.snackbar.open('Prompt copied to clipboard', 'Dismiss', {
+      duration: 2000,
+    })
   }
 }

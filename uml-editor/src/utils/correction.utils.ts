@@ -1,6 +1,6 @@
 import { inject } from '@angular/core'
 import { diff } from 'just-diff'
-import { AiCorrectionService } from '../core/ai-correction.service'
+import { AiCorrectionService, prepareCorrectionSummaryPrompt } from '../core/ai-correction.service'
 import { JustDiff, UmlCorrection } from '../models/correction.model'
 import { JointJSDiagram } from '../models/jointjs/jointjs-diagram.model'
 import { cleanupObject, extractPropertyValueByOccurrence, replacePropertyWithValue } from './object.utils'
@@ -15,6 +15,13 @@ const ignoredProperties: string[] = [
   'fill',
   'strokeDasharray',
   'strokeDashoffset',
+  'width',
+  'height',
+  'resizeable',
+  'style',
+  'ref',
+  'ref-dy',
+  'ref-dx',
 ]
 
 function calculatePoints(referenceDiagram: JointJSDiagram, differences: JustDiff[], maxPoints: number): number {
@@ -112,7 +119,7 @@ export function evaluateCorrection(answer: JointJSDiagram, solution: JointJSDiag
   }
 }
 
-export function injectCreateEvaluateCorrectionFn() {
+export const injectCreateEvaluateCorrectionFn = () => {
   const aiCorrectionService = inject(AiCorrectionService)
 
   return async (
@@ -145,22 +152,18 @@ export function injectCreateEvaluateCorrectionFn() {
   }
 }
 
-export function injectCreatePrepareEvaluationPromptFn() {
-  const aiCorrectionService = inject(AiCorrectionService)
+export const prepareEvaluateCorrectionPrompt = (
+  answer: JointJSDiagram,
+  solution: JointJSDiagram,
+  maxPoints: number,
+  correctionPrompt?: string | null | undefined
+) => {
+  const correction = evaluateCorrection(answer, solution, maxPoints)
 
-  return (
-    answer: JointJSDiagram,
-    solution: JointJSDiagram,
-    maxPoints: number,
-    correctionPrompt?: string | null | undefined
-  ) => {
-    const correction = evaluateCorrection(answer, solution, maxPoints)
-
-    return aiCorrectionService.prepareEvaluationPrompt(
-      correction.normalizedSolution,
-      correction.normalizedAnswer,
-      maxPoints,
-      correctionPrompt
-    )
-  }
+  return prepareCorrectionSummaryPrompt(
+    correction.normalizedSolution,
+    correction.normalizedAnswer,
+    maxPoints,
+    correctionPrompt
+  )
 }

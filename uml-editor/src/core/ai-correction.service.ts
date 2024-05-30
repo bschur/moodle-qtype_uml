@@ -14,38 +14,40 @@ Student's Answer (JSON):
 
 Your task as the lecturer is to evaluate the student's answer against the given solution.
 
-    Write a brief summary highlighting the most significant differences between the solution and the student's answer.
-    Grade the student's answer with a score from 0 to {2}. The grading criteria weights are as follows:
-    {3}
+Write a short summary highlighting the most significant differences between the solution and the student's answer.
+For all text values, ignore language differences or different naming. Also ignore case sensitivity and white spaces.
+Ignore errors based on Ids or other unique identifiers. Try to see whether there are similar linings and relations.
+Grade the student's answer with a score from 0 to {2}.
+For each correct value give points. Use the following criteria to grade the student's answer:
+{3}
 
 The JSON formatting and ordering don't matter; focus on the content.
 
-Use this template for your output:
+Use this template for your output do not change the format:
 
 Differences:
   - <list the differences here>
 
-Grade: <grade here>
+Grade: <grade here (numeric)>
 `
+
+export const prepareCorrectionSummaryPrompt = (
+  cleanedSolution: JointJSDiagram,
+  cleanedAnswer: JointJSDiagram,
+  maxPoints: number,
+  additionalCorrectionPrompt?: string | null | undefined
+) =>
+  sourcePrompt
+    .replaceAll('{0}', JSON.stringify(cleanedSolution, null, 2))
+    .replaceAll('{1}', JSON.stringify(cleanedAnswer, null, 2))
+    .replaceAll('{2}', maxPoints.toString())
+    .replaceAll('{3}', additionalCorrectionPrompt || '')
 
 @Injectable({
   providedIn: 'root',
 })
 export class AiCorrectionService {
   private readonly httpClient = inject(HttpClient)
-
-  prepareEvaluationPrompt(
-    cleanedSolution: JointJSDiagram,
-    cleanedAnswer: JointJSDiagram,
-    maxPoints: number,
-    additionalCorrectionPrompt?: string | null | undefined
-  ): string {
-    return sourcePrompt
-      .replaceAll('{0}', JSON.stringify(cleanedSolution, null, 2))
-      .replaceAll('{1}', JSON.stringify(cleanedAnswer, null, 2))
-      .replaceAll('{2}', maxPoints.toString())
-      .replaceAll('{3}', additionalCorrectionPrompt || '')
-  }
 
   promptForCorrectionSummary(
     cleanedSolution: JointJSDiagram,
@@ -54,7 +56,7 @@ export class AiCorrectionService {
     endpoint: string,
     additionalCorrectionPrompt?: string | null | undefined
   ): Promise<string> {
-    const formattedPrompt = this.prepareEvaluationPrompt(
+    const formattedPrompt = prepareCorrectionSummaryPrompt(
       cleanedSolution,
       cleanedAnswer,
       maxPoints,

@@ -1,16 +1,26 @@
 <div class="uml-editor-correctness">
   <div class="uml-editor-correctness__part --warn">
-    <uml-editor [diagram]="diagram" />
+    <app-uml-editor [diagram]="diagram" />
   </div>
   <div class="uml-editor-correctness__part --success">
-    <uml-editor [diagram]="correctAnswer" />
+    <app-uml-editor [diagram]="correctAnswer" />
   </div>
   <div class="uml-editor-correctness__fab-section">
-    <button type="button" mat-fab color="accent" (click)="copyPromptToClipboard()">
-      <mat-icon>save</mat-icon>
+    <button type="button" mat-fab color="accent" (click)="copyPromptToClipboard()" matTooltip="Copy prompt">
+      <mat-icon>content_copy</mat-icon>
     </button>
-    <button type="button" mat-fab color="accent" (click)="correctDiagram()">
-      <mat-icon>check</mat-icon>
+    <button
+      type="button"
+      mat-fab
+      color="accent"
+      (click)="correctDiagram()"
+      [disabled]="isLoading()"
+      matTooltip="Evaluate correction">
+      @if (isLoading()) {
+        <mat-spinner [diameter]="40"></mat-spinner>
+      } @else {
+        <mat-icon>check</mat-icon>
+      }
     </button>
   </div>
 </div>
