@@ -25,9 +25,7 @@ export class PropertyEditorService {
     elementView?: CellView
   ) {
     if (this.overlayRef) {
-      // Overlay already shown, hiding it first
-      //todo how????????????????
-      //this.hide(initProperties<ElementView>.elementView)
+      this.hide(elementView)
     }
 
     if (!isHTMLElementRef(viewContainerRef.element)) {
