@@ -79,6 +79,16 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   constructor() {
     // listen to diagram changes and emit value
     this.diagramChanges$.subscribe(this.encodeAndEmitDiagram.bind(this))
+
+    // listen to property editor hide event and unhighlight the cell
+    this.propertyEditorService.hidePropertyEditor.pipe(takeUntilDestroyed()).subscribe(propertyEditorComponent => {
+      const model = Object.values(propertyEditorComponent?.initProperties || {}).find(
+        (value): value is dia.Cell => value instanceof dia.Cell
+      )
+      if (model) {
+        this._paperEditor()?.findViewByModel(model)?.unhighlight()
+      }
+    })
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -88,9 +98,6 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    let clickTimer: string | number | NodeJS.Timeout | undefined
-    const delay = 200
-
     const graph = initCustomNamespaceGraph()
 
     const paperEditor = initCustomPaper(this.editorRef.nativeElement, graph)
@@ -114,24 +121,43 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       }
     })
 
-    paperEditor.on('cell:pointerdblclick', cell => {
-      this.propertyEditorService.hide()
+    paperEditor.on('cell:pointerdown', cellView => {
+      // highlight the cell when clicked
+      if (cellView instanceof dia.ElementView) {
+        const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
+        if (propertyKey in cellView.model.attributes && cellView.model.attributes[propertyKey]) {
+          this.highlightTarget(paperEditor, cellView)
+        }
+      }
+    })
 
+    paperEditor.on('cell:pointerdblclick', cellView => {
+      // highlight the cell when clicked
+      if (cellView instanceof dia.LinkView) {
+        this.highlightTarget(paperEditor, cellView)
+      }
+    })
+
+    paperEditor.on('cell:unhighlight', () => {
+      this.propertyEditorService.hide()
+    })
+
+    paperEditor.on('cell:highlight', cellView => {
       // handle generic link from jointjs
-      if (cell instanceof dia.LinkView) {
+      if (cellView instanceof dia.LinkView) {
         this.propertyEditorService.show(this.viewContainerRef, LinkConfigurationComponent, {
-          model: cell.model,
+          model: cellView.model,
         })
         return
       }
 
       // handle custom elements
-      if (cell instanceof dia.ElementView) {
+      if (cellView instanceof dia.ElementView) {
         const propertyKey = 'propertyView' satisfies keyof CustomJointJSElementAttributes<dia.Element.Attributes>
-        if (propertyKey in cell.model.attributes && cell.model.attributes[propertyKey]) {
-          this.propertyEditorService.show(this.viewContainerRef, cell.model.attributes[propertyKey], {
-            model: cell.model,
-            elementView: cell,
+        if (propertyKey in cellView.model.attributes && cellView.model.attributes[propertyKey]) {
+          this.propertyEditorService.show(this.viewContainerRef, cellView.model.attributes[propertyKey], {
+            model: cellView.model,
+            elementView: cellView,
           })
         }
       }
@@ -273,5 +299,21 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
     } else {
       this.diagramControl.markAsDirty()
     }
+  }
+
+  private highlightTarget(paperEditor: dia.Paper, targetView: dia.CellView | dia.ElementView | dia.LinkView) {
+    // un-highlight all other views
+    const elements = [...paperEditor.model.getCells(), ...paperEditor.model.getLinks()]
+    elements.forEach(loopElement => {
+      const loopView = paperEditor.findView(loopElement)
+      if (!loopView || loopView === targetView) {
+        return
+      }
+
+      loopView.unhighlight()
+    })
+
+    // highlight the target view
+    targetView.highlight()
   }
 }

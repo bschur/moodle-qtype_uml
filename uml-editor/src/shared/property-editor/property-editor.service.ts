@@ -1,10 +1,8 @@
 import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay'
 import { ComponentPortal } from '@angular/cdk/portal'
-import { ElementRef, Injectable, ViewContainerRef, inject } from '@angular/core'
-import { dia } from '@joint/core'
+import { ElementRef, EventEmitter, Injectable, ViewContainerRef, inject } from '@angular/core'
 import { PropsOfType } from '../../models/property-of.type'
 import { PropertyEditorComponent } from './property-editor.component'
-import CellView = dia.CellView
 
 function isHTMLElementRef(element: ElementRef): element is ElementRef<HTMLElement> {
   return ('nativeElement' satisfies keyof ElementRef<HTMLElement>) in element
@@ -14,6 +12,8 @@ function isHTMLElementRef(element: ElementRef): element is ElementRef<HTMLElemen
   providedIn: 'root',
 })
 export class PropertyEditorService {
+  readonly hidePropertyEditor = new EventEmitter<PropertyEditorComponent<unknown> | null>()
+
   private readonly overlay = inject(Overlay)
 
   private overlayRef: OverlayRef | null = null
@@ -26,11 +26,10 @@ export class PropertyEditorService {
   show<T>(
     viewContainerRef: ViewContainerRef,
     componentType: ComponentType<T>,
-    initProperties?: Partial<PropsOfType<T>>,
-    elementView?: CellView
+    initProperties?: Partial<PropsOfType<T>>
   ) {
     if (this.overlayRef) {
-      this.hide(elementView)
+      this.hide()
     }
 
     if (!isHTMLElementRef(viewContainerRef.element)) {
@@ -61,14 +60,18 @@ export class PropertyEditorService {
     return componentRef
   }
 
-  hide(cellView?: CellView) {
+  hide() {
+    if (!this.overlayRef || !this.propertyEditor) {
+      return
+    }
+
+    const propertyEditor = this.propertyEditor
+
     // Hiding overlay
     this.overlayRef?.detach()
     this.overlayRef = null
     this.propertyEditor = null
 
-    if (cellView != undefined) {
-      dia.HighlighterView.remove(cellView)
-    }
+    this.hidePropertyEditor.emit(propertyEditor)
   }
 }
