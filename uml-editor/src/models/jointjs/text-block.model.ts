@@ -72,6 +72,10 @@ export class TextBlock extends dia.Element {
     return this.attr('text') as (typeof defaultAttrs)['text']
   }
 
+  set inputElement(inputElement: (typeof defaultAttrs)['text']) {
+    this.attr('text').style = inputElement.style
+  }
+
   override defaults() {
     const elementAttributes: CustomJointJSElementAttributes<dia.Element.Attributes> = {
       type: 'custom.uml.TextBlock',
