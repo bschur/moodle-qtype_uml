@@ -44,9 +44,12 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, options?: dia
     model: graph,
     width: '100%',
     height: '100%',
+    gridSize: 10,
     drawGrid: false,
     interactive: true,
+    restrictTranslate: true,
     cellViewNamespace: jointjsCustomNamespace,
+    origin: { x: 0, y: 0 },
     ...options,
     ...paperHoverConnectToolOptions,
   })

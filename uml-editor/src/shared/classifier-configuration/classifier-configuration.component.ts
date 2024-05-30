@@ -101,7 +101,9 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
       newModel.functionComponents.forEach(value => {
         this.model.graph.addCell(value)
       })
-      this.model.graph.addCell(newModel.headerComponent)
+      if (newModel.headerComponent.position().x != 0) {
+        this.model.graph.addCell(newModel.headerComponent)
+      }
     }
   }
 

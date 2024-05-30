@@ -1,6 +1,6 @@
 import { ComponentType, Overlay, OverlayRef } from '@angular/cdk/overlay'
 import { ComponentPortal } from '@angular/cdk/portal'
-import { ElementRef, Injectable, ViewContainerRef, inject } from '@angular/core'
+import { ElementRef, EventEmitter, Injectable, ViewContainerRef, inject } from '@angular/core'
 import { PropsOfType } from '../../models/property-of.type'
 import { PropertyEditorComponent } from './property-editor.component'
 
@@ -12,6 +12,8 @@ function isHTMLElementRef(element: ElementRef): element is ElementRef<HTMLElemen
   providedIn: 'root',
 })
 export class PropertyEditorService {
+  readonly hidePropertyEditor = new EventEmitter<PropertyEditorComponent<unknown> | null>()
+
   private readonly overlay = inject(Overlay)
 
   private overlayRef: OverlayRef | null = null
@@ -27,7 +29,6 @@ export class PropertyEditorService {
     initProperties?: Partial<PropsOfType<T>>
   ) {
     if (this.overlayRef) {
-      // Overlay already shown, hiding it first
       this.hide()
     }
 
@@ -60,9 +61,17 @@ export class PropertyEditorService {
   }
 
   hide() {
+    if (!this.overlayRef || !this.propertyEditor) {
+      return
+    }
+
+    const propertyEditor = this.propertyEditor
+
     // Hiding overlay
     this.overlayRef?.detach()
     this.overlayRef = null
     this.propertyEditor = null
+
+    this.hidePropertyEditor.emit(propertyEditor)
   }
 }

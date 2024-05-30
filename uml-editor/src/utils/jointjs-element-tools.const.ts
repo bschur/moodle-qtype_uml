@@ -85,6 +85,7 @@ export const internalElementToolsView = new dia.ToolsView({
   tools: [
     new elementTools.Remove({
       scale: 1.2,
+      x: 5,
       action: (_, elementView) => {
         const target = elementView.model
         const parent = target.getParentCell()

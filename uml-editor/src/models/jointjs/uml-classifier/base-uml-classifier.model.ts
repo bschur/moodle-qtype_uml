@@ -60,10 +60,10 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
   }
 
   get isAbstract() {
-    return this.headerComponent.inputElement.style['font-family'] === 'cursive'
+    return this.headerComponent.inputElement.style['font-family'].includes('cursive')
   }
 
-  private _functionComponents?: TextBlock[]
+  private _functionComponents?: TextBlock[] = []
   private _headerComponent?: TextBlock
 
   shrinkFuncY(indexOfComponentToRemove: number) {
@@ -180,13 +180,15 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
 
     this.headerComponent.prop('markup', header.markup)
     this.headerComponent.attr('text/props/value', header.attr('text/props/value'))
-    // this.headerComponent = hc
+    this.headerComponent.inputElement = header.inputElement
 
     this.embed(this.headerComponent)
   }
 
   toggleAbstract() {
-    this.headerComponent.inputElement.style['font-family'] = this.isAbstract ? 'sans-serif' : 'cursive'
+    console.log(this.headerComponent.inputElement.style['font-family'])
+    this.headerComponent.inputElement.style['font-family'] = this.isAbstract ? 'sans-serif' : '"system-ui", cursive'
+    console.log(this.headerComponent.inputElement.style['font-family'])
     this.headerComponent.remove()
     this.graph.addCell(this.headerComponent)
   }
