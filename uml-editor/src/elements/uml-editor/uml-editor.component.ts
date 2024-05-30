@@ -180,9 +180,8 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       return
     }
 
-    const paperArea = paperEditor.getArea()
     const contentArea = paperEditor.getContentArea()
-    clickedClass.position((paperArea.width - contentArea.width) / 2, (paperArea.height - contentArea.height) / 2)
+    clickedClass.position(contentArea.width / 2, contentArea.height / 2)
 
     paperEditor.model.addCell(clickedClass)
   }

@@ -56,11 +56,6 @@ export const initCustomPaper = (el: HTMLElement, graph: dia.Graph, options?: dia
 
   resizePaperObserver(paper).observe(el)
 
-  // center diagram
-  const paperArea = paper.getArea()
-  const contentArea = paper.getContentArea()
-  paper.translate((paperArea.width - contentArea.width) / 2, (paperArea.height - contentArea.height) / 2)
-
   // register tools for links and elements
   paper.on('link:mouseenter', linkView => linkView.addTools(globalLinkToolsView))
 
