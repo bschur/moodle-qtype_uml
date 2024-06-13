@@ -1,20 +1,5 @@
-import { FullscreenOverlayContainer, OverlayContainer } from '@angular/cdk/overlay'
-import { provideHttpClient } from '@angular/common/http'
-import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field'
 import { bootstrapApplication } from '@angular/platform-browser'
-import { provideAnimations } from '@angular/platform-browser/animations'
 import { AppComponent } from './app/app.component'
+import { appConfig } from './app/app.config'
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideAnimations(),
-    provideHttpClient(),
-    { provide: OverlayContainer, useClass: FullscreenOverlayContainer },
-    {
-      provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: {
-        subscriptSizing: 'dynamic',
-      },
-    },
-  ],
-}).catch(err => console.error(err))
+bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err))
