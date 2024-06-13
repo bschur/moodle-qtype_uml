@@ -55,7 +55,7 @@ class EditorHelper {
      * @return string The editor html.
      */
     public static function load_editor_html_for_id(string $bindelementid, bool $iseditmode = false,
-            string $diagram = null): string {
+            ?string $diagram = null): string {
         return '<fullscreen-view style="min-height: 300px; height: 1px;"><uml-editor
                     input-id=\'' . $bindelementid . '\'
                     allow-edit=\'' . ($iseditmode ? 'true' : 'false') . '\'
@@ -78,7 +78,7 @@ class EditorHelper {
             string $diagram,
             string $correctanswer,
             int $maxpoints,
-            string $additionalcorrectionprompt = null
+            ?string $additionalcorrectionprompt = null
     ) {
         $promptendpoint = self::is_ai_summary_enabled() ? self::$promptendpoint : '';
 
