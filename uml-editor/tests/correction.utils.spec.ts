@@ -1,6 +1,12 @@
 import { evaluateCorrection } from '../src/utils/correction.utils'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import answerJson from './resources/answer-decoded.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import correctionJson from './resources/output-correction.json'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 import solutionJson from './resources/solution-decoded.json'
 
 const answer = JSON.parse(JSON.stringify(answerJson))

@@ -89,6 +89,11 @@ export class UseCase extends shapes.standard.Rectangle {
       ry: heightNew / 2,
     })
 
+    const textBox = this.getEmbeddedCells().find(cell => cell instanceof TextBlock) as TextBlock
+    const tbWidth = this.position().x + this.size().width / 2 - textBox.size().width / 2
+    const tbHeight = this.position().y + this.size().height / 2 - textBox.size().height / 2
+    textBox.position(tbWidth, tbHeight)
+
     return this
   }
 }

@@ -119,6 +119,8 @@ export class UmlEditorComponent implements OnChanges, AfterViewInit {
       if (containsModel) {
         this.propertyEditorService.hide()
       }
+      this.diagramControl.markAsDirty()
+      this.diagramControl.setValue(graph.toJSON())
     })
 
     paperEditor.on('cell:pointerdown', cellView => {

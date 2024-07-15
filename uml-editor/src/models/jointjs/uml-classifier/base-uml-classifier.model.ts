@@ -190,6 +190,8 @@ export abstract class BaseUmlClassifierModel extends shapes.standard.Rectangle {
     this.headerComponent.inputElement.style['font-family'] = this.isAbstract ? 'sans-serif' : '"system-ui", cursive'
     console.log(this.headerComponent.inputElement.style['font-family'])
     this.headerComponent.remove()
+    this.graph.removeCells([this.headerComponent])
+    this.embed(this.headerComponent)
     this.graph.addCell(this.headerComponent)
   }
 }

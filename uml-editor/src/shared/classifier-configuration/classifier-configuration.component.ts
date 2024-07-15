@@ -57,6 +57,8 @@ export class ClassifierConfigurationComponent<T extends BaseUmlClassifierModel> 
   }
 
   ngOnInit() {
+    const a: any = 0
+
     this.form.setValue(
       {
         classifier: this.model.type,
